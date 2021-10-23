@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/unit_title"
+        android:id="@+id/event_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -13,7 +13,7 @@
         android:textSize="20dp"/>
 
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/event_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:drawable/btn_dropdown"
@@ -56,7 +56,7 @@
     </Button>
 
     <TextView
-        android:id="@+id/dose_title"
+        android:id="@+id/comment_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -64,7 +64,7 @@
         android:textSize="20dp"/>
 
     <EditText
-        android:id="@+id/dose_editText"
+        android:id="@+id/comment_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"

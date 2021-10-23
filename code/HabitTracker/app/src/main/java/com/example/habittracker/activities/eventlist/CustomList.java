@@ -35,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.habittracker.R;
-import com.example.habittracker.activities.eventlist.Medicine;
 
 import java.util.ArrayList;
 
@@ -44,18 +43,18 @@ import java.util.ArrayList;
  * the list. The idea is from CMPUT 301 Lab 3 instruction.
  * @author Yongquan Zhang
  */
-public class CustomList extends ArrayAdapter<Medicine> {
-    private ArrayList<Medicine> meds; // An arraylist that contains Medicine objects.
+public class CustomList extends ArrayAdapter<String> {
+    private ArrayList<String> events;
     private Context context;
 
     /**
      * The constructor of CustomList
      * @param context
-     * @param meds
+     * @param events
      */
-    public CustomList(Context context, ArrayList<Medicine> meds){
-        super(context,0, meds);
-        this.meds = meds;
+    public CustomList(Context context, ArrayList<String> events){
+        super(context,0, events);
+        this.events = this.events;
         this.context = context;
     }
 
@@ -73,17 +72,6 @@ public class CustomList extends ArrayAdapter<Medicine> {
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
         }
-        Medicine medicine = meds.get(position);
-        TextView medicineName = view.findViewById(R.id.contentView);
-        TextView doseNum = view.findViewById(R.id.dose_text);
-        TextView dailyFreq = view.findViewById(R.id.freq_text);
-        TextView eventDate = view.findViewById(R.id.dateView);
-        medicineName.setText(medicine.getName());
-//        doseNum.setText(String.valueOf(medicine.getDose())+medicine.getDoseUnit());
-        doseNum.setText("University of Alberta, Edmonton, CA");
-//        dailyFreq.setText("Daily freq: "+String.valueOf(medicine.getFrequency()));
-        dailyFreq.setText("Comments");
-        eventDate.setText("2021-01-01");
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
         event_image.setImageResource(R.drawable.common_google_signin_btn_icon_dark);

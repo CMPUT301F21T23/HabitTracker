@@ -1,5 +1,5 @@
 /*
- * AddMedFragment
+ * AddEventFragment
  *
  * Version 1.0.0
  *
@@ -21,7 +21,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.example.habittracker.activities.util;
+package com.example.habittracker.activities.fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -42,7 +42,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,7 +50,6 @@ import androidx.fragment.app.DialogFragment;
 
 
 import com.example.habittracker.R;
-import com.example.habittracker.activities.eventlist.Medicine;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -64,20 +62,18 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * This class specified the behavior of the AddMedFragment fragment.
+ * This class specified the behavior of the AddEventFragment fragment.
  * It is a subclass of DialogFragment.
  * Some of the codes are from CMPUT 301 Lab 3 instructions.
  * @author Yongquan Zhang
  */
 public class AddEventFragment extends DialogFragment {
 
-    private EditText medName;
-    private EditText dose;
+    private EditText editText1;
     private EditText date;
     private Spinner s;
     private int spinnerIdx;
-    private String unit;
-    private EditText freq;
+    private String num;
     private OnFragmentInteractionListener listener;
     private boolean editFlag = false;
     FusedLocationProviderClient mFusedLocationClient;
@@ -98,7 +94,7 @@ public class AddEventFragment extends DialogFragment {
     }
 
     /**
-     * Override the onCreateDialog method of DialogFragment. Set up a list of EditText for medicine
+     * Override the onCreateDialog method of DialogFragment. Set up a list of EditText for event
      * information and a spinner for doseUnit.
      * @param savedInstanceState
      * @return a AlertDialog object
@@ -107,10 +103,7 @@ public class AddEventFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_add_event, null);
-//        medName = view.findViewById(R.id.med_name_editText);
-        dose = view.findViewById(R.id.dose_editText);
-//        date = view.findViewById(R.id.date_editText);
-//        freq = view.findViewById(R.id.freq_editText);
+        editText1 = view.findViewById(R.id.comment_body);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
@@ -129,7 +122,7 @@ public class AddEventFragment extends DialogFragment {
         });
 
         /* Set up the spinner. */
-        s = view.findViewById(R.id.spinner1); // The spinner is used for dose unit
+        s = view.findViewById(R.id.event_spinner); // The spinner is used for dose unit
         String[] items = new String[]{"event 1", "event 2", "event 3"};
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, items);
@@ -146,7 +139,7 @@ public class AddEventFragment extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                unit = items[position]; // The selected dose unit
+                num = items[position]; // The selected dose unit
                 spinnerIdx = position; // The index of selected dose unit
             }
 
@@ -158,24 +151,7 @@ public class AddEventFragment extends DialogFragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        /* If we received Medicine object passed from the main activity.
-         * If yes, then we display its information.
-         * If not, we display empty EditTexts.
-         */
-        if (getArguments() != null) {
-//            Medicine selectedMed = (Medicine) getArguments().getSerializable("med"); // get the Medicine object.
-//            date.setText(selectedMed.getDate());
-//            medName.setText(selectedMed.getName());
-//            dose.setText(String.valueOf(selectedMed.getDose()));
-//            /* Display dose unit by using spinner */
-//            spinnerIdx = spinnerAdapter.getPosition(selectedMed.getDoseUnit());
-//            s.setSelection(spinnerIdx);
-//            freq.setText(String.valueOf(selectedMed.getFrequency()));
-        }
-        /*
-         * Set up the DatePickerDialog. Once the user click the EditText widget for Date,
-         * the DatePickerDialog should pop up and allow user to select different date.
-         */
+
         final Calendar myCalendar = Calendar.getInstance();
         EditText edittext = (EditText) view.findViewById(R.id.date_editText);
 
@@ -227,44 +203,16 @@ public class AddEventFragment extends DialogFragment {
                     /* Neutral button is for delete operaion */
                     .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Medicine editM = (Medicine) getArguments().getSerializable("med");
-                            editFlag = true;
-                            listener.onDeletePressed(editM);
+                            listener.onDeletePressed();
                         }
                     })
                     /* Positive button is for edit operation */
                     .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Medicine editM = (Medicine) getArguments().getSerializable("med");
-                            /* Prevent empty inputs */
-                            if (date.getText().toString().isEmpty() || medName.getText().toString().isEmpty() ||
-                                    dose.getText().toString().isEmpty() || freq.getText().toString().isEmpty()) {
-                                Toast toast = Toast.makeText(requireContext(), "Some fields are empty.", Toast.LENGTH_LONG);
-                                toast.show();
-                            }
-                            /* Prevent inputs that are not numbers (double or int)*/
-                            else if (!isDouble(dose.getText().toString()) || !isInt(freq.getText().toString())) {
-                                Toast toast = Toast.makeText(requireContext(), "Please enter NUMBER for Dose Amount(a float) and Daily Frequency(an integer).", Toast.LENGTH_LONG);
-                                toast.show();
-                            } else if (Double.parseDouble(dose.getText().toString()) <= 0 || Integer.parseInt(freq.getText().toString()) <= 0) {
-                                Toast toast = Toast.makeText(requireContext(), "Please enter positive number for Dose Amount and Daily Frequency.", Toast.LENGTH_LONG);
-                                toast.show();
-                            } else if (medName.getText().toString().length() > 40) {
-                                Toast toast = Toast.makeText(requireContext(), "Medicine name needs to be less than 40 characters.", Toast.LENGTH_LONG);
-                                toast.show();
-                            } else {
-                                editM.setDate(date.getText().toString());
-                                editM.setName(medName.getText().toString());
-                                editM.setDose(Double.parseDouble(dose.getText().toString()));
-                                editM.setDoseUnit(unit);
-                                editM.setFreq(Integer.parseInt(freq.getText().toString()));
-                                editFlag = true;
-                                listener.onOkPressed(editM, editFlag);
-                            }
+                            listener.onOkPressed();
                         }
                     }).create();
         }
-        /* No Medicine object is received, start add operation */
         else {
             return builder
                     .setView(view)
@@ -272,41 +220,17 @@ public class AddEventFragment extends DialogFragment {
                     .setNegativeButton("Cancel", null)
                     .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            if (date.getText().toString().isEmpty() || medName.getText().toString().isEmpty() ||
-                                    dose.getText().toString().isEmpty() || freq.getText().toString().isEmpty()) {
-                                Toast toast = Toast.makeText(requireContext(), "Some fields are empty.", Toast.LENGTH_LONG);
-                                toast.show();
-                            } else if (!isDouble(dose.getText().toString()) || !isInt(freq.getText().toString())) {
-                                Toast toast = Toast.makeText(requireContext(), "Please enter numbers for Dose Amount and Daily Frequency.", Toast.LENGTH_LONG);
-                                toast.show();
-                            } else if (Double.parseDouble(dose.getText().toString()) <= 0 || Integer.parseInt(freq.getText().toString()) <= 0) {
-                                Toast toast = Toast.makeText(requireContext(), "Please enter positive number for Dose Amount and Daily Frequency.", Toast.LENGTH_LONG);
-                                toast.show();
-                            } else if (medName.getText().toString().length() > 40) {
-                                Toast toast = Toast.makeText(requireContext(), "Medicine name needs to be less than 40 characters.", Toast.LENGTH_LONG);
-                                toast.show();
-                            } else {
-                                String med = medName.getText().toString();
-                                Double doseNum = Double.parseDouble(dose.getText().toString());
-                                String tempDate = date.getText().toString();
-                                String tempUnit = unit;
-                                int tempFreq = Integer.parseInt(freq.getText().toString());
-                                listener.onOkPressed(new Medicine(tempDate, med, doseNum, tempUnit, tempFreq), editFlag);
-                            }
+                            listener.onOkPressed();
                         }
                     }).create();
         }
     }
 
     /**
-     * This method allows to pass Medicine object between MainActivity
-     * and AddMedFragment.
-     * @param med
      * @return fragment
      */
-    public static AddEventFragment newInstance(Medicine med) {
+    public static AddEventFragment newInstance() {
         Bundle args = new Bundle();
-        args.putSerializable("med", med);
 
         AddEventFragment fragment = new AddEventFragment();
         fragment.setArguments(args);

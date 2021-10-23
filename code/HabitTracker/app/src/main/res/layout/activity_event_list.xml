@@ -11,20 +11,20 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/cityView"
+        android:id="@+id/eventView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".HabitActivity">
 
         <ListView
-            android:id="@+id/med_list"
+            android:id="@+id/event_list"
             android:layout_width="match_parent"
             android:layout_height="645dp">
 
         </ListView>
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/add_med_button"
+            android:id="@+id/add_event_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"

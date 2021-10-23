@@ -31,7 +31,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new HabitInputFragment().show(getSupportFragmentManager(), "EDIT MEDICINE");
+                new HabitInputFragment().show(getSupportFragmentManager(), "EDIT EVENT");
             }
         });
     }
