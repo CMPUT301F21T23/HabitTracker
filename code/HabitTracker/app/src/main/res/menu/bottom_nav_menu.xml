@@ -3,7 +3,7 @@
     <item
         android:id="@+id/sharing"
         android:icon="@drawable/ic_sharing_foreground"
-        android:title="Sharing"/>
+        android:title="Sharing" />
     <item
         android:id="@+id/home"
         android:title="Home"

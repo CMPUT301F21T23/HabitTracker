@@ -3,6 +3,7 @@ package com.example.habittracker;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -16,6 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.example.habittracker.activities.HomeActivity;
+
 public class HabitActivity extends AppCompatActivity {
 
     @Override
@@ -25,6 +28,10 @@ public class HabitActivity extends AppCompatActivity {
 
         // TEST DATABASE
         testDatabase();
+      
+        NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 
     void testDatabase() {

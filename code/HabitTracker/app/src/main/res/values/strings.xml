@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">HabitTracker</string>
+    <string name="title_habit_list">All Habits</string>
+    <string name="add_habit_content_desc">Adds a habit to the list.</string>
+    <string name="title_home">Habits For Today</string>
+    <string name="goto_event_list">Milestone History</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
