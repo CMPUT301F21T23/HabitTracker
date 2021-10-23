@@ -13,13 +13,14 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_habit_button"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:backgroundTint="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|top"
             android:clickable="true"
-            android:contentDescription="@string/add_habit_content_desc"
-            android:focusable="true"
-            android:src="@drawable/ic_add_habit_foreground" />
+            app:backgroundTint="#1DB954"
+            app:srcCompat="@android:drawable/ic_input_add"
+            app:tint="#151515" />
+
     </FrameLayout>
 
     <TextView

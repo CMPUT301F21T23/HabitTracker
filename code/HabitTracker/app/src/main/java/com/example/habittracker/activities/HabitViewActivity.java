@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.fragments.HabitInputFragment;
 
 public class HabitViewActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 

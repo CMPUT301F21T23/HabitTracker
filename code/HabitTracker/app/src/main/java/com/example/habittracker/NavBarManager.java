@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.habittracker.activities.SharingActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.activities.HomeActivity;
 import com.example.habittracker.activities.ListActivity;
@@ -45,6 +46,7 @@ public class NavBarManager{
                     activity = new ListActivity();
                     break;
                 case R.id.sharing:
+                    activity = new SharingActivity();
                     break;
                 case R.id.profile:
                     activity = new ProfileActivity();

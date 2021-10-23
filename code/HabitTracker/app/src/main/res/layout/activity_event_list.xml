@@ -20,9 +20,7 @@
         <ListView
             android:id="@+id/med_list"
             android:layout_width="match_parent"
-            android:layout_height="645dp"
-            android:choiceMode="singleChoice"
-            android:listSelector="@android:color/darker_gray">
+            android:layout_height="645dp">
 
         </ListView>
         <com.google.android.material.floatingactionbutton.FloatingActionButton

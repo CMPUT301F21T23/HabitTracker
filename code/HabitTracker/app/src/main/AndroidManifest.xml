@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTracker">
         <activity
+            android:name=".activities.SharingActivity"
+            android:exported="true" />
+        <activity
             android:name=".activities.profile.ProfileLoginActivity"
             android:exported="true" />
         <activity
