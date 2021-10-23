@@ -4,11 +4,18 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableReference;
+import com.google.firebase.functions.HttpsCallableResult;
 
 import java.util.HashMap;
 
@@ -36,6 +43,11 @@ public class DatabaseManager {
 
     // enforce singleton pattern
     private static DatabaseManager databaseManager;
+
+    /**
+     * Get the DatabaseManager instance
+     * @return      {@code }
+     */
     public static DatabaseManager get() {
         if (databaseManager == null) {
             databaseManager = new DatabaseManager();
@@ -43,18 +55,42 @@ public class DatabaseManager {
         return databaseManager;
     }
 
+    /**
+     * Get the Firestore instance.
+     * @return      {@code FirebaseFirestore} Firestore instance
+     */
     public FirebaseFirestore getInstance() {
         return db;
     }
 
+    /**
+     * Get a reference to the top-level collection: Users
+     * @return      {@code CollectionReference} Users collection reference
+     */
+    public CollectionReference getUsersColRef() {
+        return usersColRef;
+    }
+
+    /**
+     * Get the Users collection name
+     * @return      {@code String} Users collection name
+     */
     public String getUsersColName() {
         return usersColName;
     }
 
+    /**
+     * Get the Habits collection name
+     * @return      {@code String} Habits collection name
+     */
     public String getHabitsColName() {
         return habitsColName;
     }
 
+    /**
+     * Get the Habit Events name
+     * @return      {@code String} HabitEvents collection name
+     */
     public String getHabitEventsColName() {
         return habitEventsColName;
     }
@@ -70,8 +106,7 @@ public class DatabaseManager {
         DocumentReference docRef = usersColRef.document(userid);
 
         // set the data
-        docRef
-                .set(doc)
+        docRef.set(doc)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -101,8 +136,7 @@ public class DatabaseManager {
         DocumentReference docRef = usersColRef.document(userid).collection(habitsColName).document(habitTitle);
 
         // set the data
-        docRef
-                .set(doc)
+        docRef.set(doc)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -133,8 +167,8 @@ public class DatabaseManager {
                 .collection(habitsColName)
                 .document(habitTitle)
                 .collection(habitEventsColName);
-        colRef
-                .add(doc)
+
+        colRef.add(doc)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
@@ -147,6 +181,62 @@ public class DatabaseManager {
                     public void onFailure(@NonNull Exception e) {
                         Log.d(DB_TAG, String.format("HabitEvent failed to be created for Habit with title %s",
                                 habitTitle));
+                    }
+                });
+    }
+
+    /**
+     * Deletes a user document along with all of its subcollections.
+     * @param userid        {@code String} User ID
+     */
+    void deleteUserDocument(String userid) {
+        // delete all habit documents for this user
+        usersColRef.document(userid).collection(habitsColName)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // delete all habit events associated with this document first
+                                document.getReference().collection(habitEventsColName)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot eventDoc : task.getResult()) {
+                                                        eventDoc.getReference().delete();
+                                                    }
+                                                } else {
+                                                    Log.d(DB_TAG, String.format("Error getting HabitEvents documents"));
+                                                }
+                                            }
+                                        });
+                                String id = document.getId();
+                                document.getReference().delete();
+                                Log.d(DB_TAG, String.format("Habit document with id %s successfully deleted", id));
+                            }
+                        } else {
+                            Log.d(DB_TAG,
+                                    String.format("Error getting Habit documents for user %s: ",
+                                            userid, task.getException().toString()));
+                        }
+                    }
+                });
+        // finally, delete the document for this user in the Users collection
+        usersColRef.document(userid)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(DB_TAG, String.format("User with user id %s successfully deleted from the Users collection", userid));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("Delete failed on user id %s. Reason: %s", userid, e.toString()));
                     }
                 });
     }

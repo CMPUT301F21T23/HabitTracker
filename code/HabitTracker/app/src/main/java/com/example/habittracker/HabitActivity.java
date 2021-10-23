@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
@@ -28,8 +29,11 @@ public class HabitActivity extends AppCompatActivity {
 
     void testDatabase() {
         testCreateUser1();
+        testUpdateUser1();
+//        testDeleteUser1();
     }
 
+    // demonstrates how to create a document with the DatabaseManager class
     void testCreateUser1() {
         HashMap<String, Object> userDocument = new HashMap<>();
         HashMap<String, Object> habitDocument = new HashMap<>();
@@ -62,5 +66,24 @@ public class HabitActivity extends AppCompatActivity {
 
         // use database manager
         DatabaseManager.get().addHabitEventDocument(userid, title, habitEventDocument);
+    }
+
+    // demonstrates how to update particular documents in Firestore
+    void testUpdateUser1() {
+        // add a new user to the following list
+        DatabaseManager.get().getUsersColRef().document("user1")
+                .update("following", FieldValue.arrayUnion("user7"))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("HabitActivity", "Following list updated");
+                    }
+                });
+    }
+
+    // demonstrates how to delete a user with the DatabaseManager class
+    void testDeleteUser1() {
+        String userid = "user1";
+        DatabaseManager.get().deleteUserDocument(userid);
     }
 }
