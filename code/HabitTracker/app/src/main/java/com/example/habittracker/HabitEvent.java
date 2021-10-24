@@ -8,6 +8,14 @@ public class HabitEvent {
     private String comment;
     private Date startDate;
 
+
+    /**
+     * An empty constructor for Habit Events
+     */
+    public HabitEvent () {
+
+    }
+    
     /**
      * Creates a habit event.
      * A habit event is an entry that the user might create when they've done a habit as planned.

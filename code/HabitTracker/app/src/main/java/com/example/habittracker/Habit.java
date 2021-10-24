@@ -9,6 +9,12 @@ public class Habit {
     private String [] weekDays;
 
     /**
+     * An empty constructor for Habit
+     */
+    public Habit () {
+
+    }
+    /**
      * Creates a habit belonging to a user.
      * @param title     {string}    the title of the habit (ie. Sleep Early)
      * @param reason    {String}    a description of the habit
