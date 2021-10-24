@@ -38,4 +38,20 @@ public class HabitEvent {
     public Date getStartDate() {
         return startDate;
     }
+
+    /**
+     * Allows editing/setting of the comment field
+     * @param comment {String} the new, edited  comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
+     * Allows editing/setting of the start date
+     * @param startDate {Date} the new, edited start date
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 }

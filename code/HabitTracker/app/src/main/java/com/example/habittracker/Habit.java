@@ -44,4 +44,35 @@ public class Habit {
     public Date getStartDate() {
         return startDate;
     }
+
+    /**
+     * Changes the title of the habit
+     * @param title {String} the title to change
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    /**
+     * Changes the reason of the habit
+     * @param reason {String} the reason to change
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    /**
+     * Changes the startDate of the habit
+     * @param startDate {Date} the date to change
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Changes the set of days of the habit
+     * @param weekDays {String[]} the new set of days
+     */
+    public void setWeekDays(String[] weekDays) {
+        this.weekDays = weekDays;
+    }
 }
