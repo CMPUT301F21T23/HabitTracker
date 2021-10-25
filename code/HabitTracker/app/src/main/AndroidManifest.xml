@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.habittracker">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +11,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTracker">
+        <activity
+            android:name=".activities.SharingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileLoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileFollowRequestsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileFollowersActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileFollowingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.eventlist.EventListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.ListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.HabitViewActivity"
+            android:exported="true" />
         <activity
             android:name=".HabitActivity"
             android:exported="true">
