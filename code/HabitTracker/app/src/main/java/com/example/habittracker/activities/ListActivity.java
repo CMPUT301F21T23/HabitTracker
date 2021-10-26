@@ -51,6 +51,9 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
         });
     }
 
+    /**
+     * Action to be triggered when the user is OK with adding a new Habit.
+     */
     @Override
     public void onOkPressed() {
         adapter.add("Habit "+habitList.size()+" -- Progress: 0-100");

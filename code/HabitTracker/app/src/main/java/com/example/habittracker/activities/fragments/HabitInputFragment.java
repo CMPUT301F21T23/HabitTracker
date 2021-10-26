@@ -23,7 +23,10 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.example.habittracker.Habit;
 import com.example.habittracker.R;
+
+import java.util.Locale;
 
 /**
  * HabitInputFragment prompts the user to enter details about a Habit.
@@ -42,6 +45,7 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
         Log.i("Month Selected", String.valueOf(month));
         Log.i("Day Selected", String.valueOf(dayOfMonth));
     }
+    // TODO: after a date is picked, this should be displayed on screen.
 
     public interface HabitInputDialogListener {
         void onOkPressed();
@@ -79,14 +83,16 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
         inputReason = view.findViewById(R.id.reason);
         inputDate = view.findViewById(R.id.dateToStart);
 
-        // show the date picker dialog when the user clicks the date to start field
-        inputDate.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog();
-            }
-        });
+//        CustomDatePicker datePicker = new CustomDatePicker(getActivity(), view, R.id.dateToStart);
+//        // show the date picker dialog when the user clicks the date to start field
+//        inputDate.setOnClickListener(new View.OnClickListener() {
+//            @RequiresApi(api = Build.VERSION_CODES.N)
+//            @Override
+//            public void onClick(View view) {
+//                showDatePickerDialog();
+//            }
+//        }
+//        );
 
         // build the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -107,6 +113,10 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
                     public void onClick(View view) {
                         String title = inputTitle.getText().toString();
                         String reason = inputReason.getText().toString();
+
+                        // TODO: validation here, if bad, freeze the operation.
+                        //  Leave for extra if you have time
+                        Habit habit = new Habit(); // title, reason, Date Startdate
                         listener.onOkPressed();
                         alertDialog.dismiss();
                     }
