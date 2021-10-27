@@ -9,12 +9,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ListActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 
@@ -55,7 +58,9 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
      * Action to be triggered when the user is OK with adding a new Habit.
      */
     @Override
-    public void onOkPressed() {
+    public void onOkPressed(Habit habit) {
+        // add habit to database
+        habit.addToDB();
         adapter.add("Habit "+habitList.size()+" -- Progress: 0-100");
     }
 }

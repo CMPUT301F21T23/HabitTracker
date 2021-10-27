@@ -5,8 +5,10 @@ import android.content.Context;
 import android.view.View;
 import android.widget.EditText;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
@@ -14,7 +16,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
     private EditText edittext;
     private Context context;
     private View view;
-    CustomDatePicker(Context context, View view, int et_id) {
+    public CustomDatePicker(Context context, View view, int et_id) {
         this.context = context;
         this.edittext = (EditText) view.findViewById(et_id);
         myCalendar = Calendar.getInstance();
@@ -43,6 +45,25 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         updateLabel();
     }
+
+    /**
+     * Returns the Date the datePicker was set to.
+     * @return setDate, the Date
+     *         null,    if no date was selected
+     */
+    public Date getSetDate() {
+        String myFormat = "yyyy-MM-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        Date setDate = null;
+        try {
+            setDate = sdf.parse(edittext.getText().toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return ( setDate );
+    }
+
     private void updateLabel() {
         String myFormat = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);

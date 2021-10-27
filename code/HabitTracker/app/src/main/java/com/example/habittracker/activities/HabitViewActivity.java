@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
@@ -37,7 +38,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
     }
 
     @Override
-    public void onOkPressed() {
+    public void onOkPressed(Habit habit) {
         //Add activity
     }
 }

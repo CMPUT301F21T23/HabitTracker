@@ -25,30 +25,21 @@ import android.widget.EditText;
 
 import com.example.habittracker.Habit;
 import com.example.habittracker.R;
+import com.example.habittracker.utils.CustomDatePicker;
 
 import java.util.Locale;
 
 /**
  * HabitInputFragment prompts the user to enter details about a Habit.
  */
-public class HabitInputFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class HabitInputFragment extends DialogFragment {
 
     private EditText inputTitle;
     private EditText inputReason;
-    private EditText inputDate;
     HabitInputDialogListener listener;
 
-    // this will be called when a date is selected
-    @Override
-    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-        Log.i("Year Selected", String.valueOf(year));
-        Log.i("Month Selected", String.valueOf(month));
-        Log.i("Day Selected", String.valueOf(dayOfMonth));
-    }
-    // TODO: after a date is picked, this should be displayed on screen.
-
     public interface HabitInputDialogListener {
-        void onOkPressed();
+        void onOkPressed(Habit habit);
     }
 
     @Override
@@ -62,18 +53,6 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void showDatePickerDialog() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                getActivity(),
-                (DatePickerDialog.OnDateSetListener) getParentFragment(),
-                Calendar.getInstance().get(Calendar.YEAR),          // year to show
-                Calendar.getInstance().get(Calendar.MONTH),         // month to show
-                Calendar.getInstance().get(Calendar.DAY_OF_MONTH)   // day to show
-        );
-        datePickerDialog.show();
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -81,18 +60,9 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_habit_input, null);
         inputTitle = view.findViewById(R.id.title);
         inputReason = view.findViewById(R.id.reason);
-        inputDate = view.findViewById(R.id.dateToStart);
 
-//        CustomDatePicker datePicker = new CustomDatePicker(getActivity(), view, R.id.dateToStart);
-//        // show the date picker dialog when the user clicks the date to start field
-//        inputDate.setOnClickListener(new View.OnClickListener() {
-//            @RequiresApi(api = Build.VERSION_CODES.N)
-//            @Override
-//            public void onClick(View view) {
-//                showDatePickerDialog();
-//            }
-//        }
-//        );
+        // adds a responsive DatePicker
+        CustomDatePicker datePicker = new CustomDatePicker(getActivity(), view, R.id.dateToStart);
 
         // build the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -116,8 +86,9 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
 
                         // TODO: validation here, if bad, freeze the operation.
                         //  Leave for extra if you have time
-                        Habit habit = new Habit(); // title, reason, Date Startdate
-                        listener.onOkPressed();
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), new String[]{"Mon", "Tues"});
+                        // TODO: remember, you have to get the days of the week from the UI, this is just for testing
+                        listener.onOkPressed(habit);
                         alertDialog.dismiss();
                     }
                 });

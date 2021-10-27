@@ -1,11 +1,18 @@
 package com.example.habittracker;
 
+import com.example.habittracker.utils.DateConverter;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class Habit {
     private String title;
     private String reason;
     private Date startDate;
+    private int progress; // provisional until we determine how to implement progress
     private String [] weekDays;
 
     /**
@@ -25,6 +32,7 @@ public class Habit {
         this.title = title;
         this.reason = reason;
         this.startDate = startDate;
+        this.progress = 0;
 
         this.weekDays = weekDays.clone();
     }
@@ -80,5 +88,37 @@ public class Habit {
      */
     public void setWeekDays(String[] weekDays) {
         this.weekDays = weekDays;
+    }
+
+    /**
+     * Add habit to database.
+     */
+    public void addToDB() {
+        HashMap <String, Object> doc = this.toDocument();
+        DatabaseManager.get().addHabitDocument("Pao_Dummy", title, doc);
+        //TODO: Remember to get user when you are done testing
+    }
+
+    /**
+     * Converts the habit to a document that can directly interact with the database
+     * @return habitMap, the document as a hashmap.
+     */
+    private HashMap <String, Object> toDocument () {
+        HashMap<String,Object> habitMap = new HashMap<>();
+
+        // make necessary conversion to convert to document
+        ArrayList<Integer> dateArrayList = DateConverter.dateToArrayList(startDate);
+        List<String> whatDays =  Arrays.asList(weekDays);
+
+        // the attribute names as specified in the schema and the values that correspond
+        String [] attributes = {"reason", "dateStarted", "whatDays", "progress"};
+        Object [] values = { reason, dateArrayList, whatDays, progress};
+
+        // populate the hash map
+        for (int i = 0; i < attributes.length; i++) {
+            habitMap.put(attributes[i], values[i]);
+        }
+        // done populating
+        return (habitMap);
     }
 }
