@@ -9,9 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:maxLength="20"
         android:inputType="textPersonName"
         android:hint="Habit Title"
-        android:maxLength="20"
         />
 
     <EditText
@@ -19,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
         android:maxLength="30"
+        android:inputType="textPersonName"
         android:hint="Habit Reason" />
 
     <EditText
