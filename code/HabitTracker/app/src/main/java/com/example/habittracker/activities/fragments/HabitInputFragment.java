@@ -86,8 +86,9 @@ public class HabitInputFragment extends DialogFragment {
 
                         // TODO: validation here, if bad, freeze the operation.
                         //  Leave for extra if you have time
-                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), new String[]{"Mon", "Tues"});
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), new String[]{"Mon", "Tues"}, false);
                         // TODO: remember, you have to get the days of the week from the UI, this is just for testing
+                        // todo: will have to make UI to make it public/private
                         listener.onOkPressed(habit);
                         alertDialog.dismiss();
                     }

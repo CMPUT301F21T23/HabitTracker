@@ -1,9 +1,12 @@
 package com.example.habittracker.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateConverter {
 
@@ -28,5 +31,27 @@ public class DateConverter {
                 )));
     }
 
+    /**
+     * Converts a given arraylist to a Date
+     * @param dateArrayList {ArrayList<Long>}   given in the following format: {year, month, day}
+     * @return  date, the converted Date
+     */
+    public static Date arrayListToDate (ArrayList<Long> dateArrayList) {
+        Date date = null;
+
+        if (dateArrayList != null) {
+            long year = dateArrayList.get(0);
+            long month = dateArrayList.get(1);
+            long day = dateArrayList.get(2);
+            String dateAsString = String.format(Locale.US, "%d/%d/%d", month, day, year);
+
+            try {
+                date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(dateAsString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return (date);
+    }
 
 }

@@ -72,6 +72,14 @@ public class DatabaseManager {
     }
 
     /**
+     * Get a reference to the Habit sub-collection of a given user
+     * @return      {@code CollectionReference} Users collection reference
+     */
+    public CollectionReference getHabitsColRef(String userid) {
+        return (usersColRef.document(userid).collection(habitsColName));
+    }
+
+    /**
      * Get the Users collection name
      * @return      {@code String} Users collection name
      */

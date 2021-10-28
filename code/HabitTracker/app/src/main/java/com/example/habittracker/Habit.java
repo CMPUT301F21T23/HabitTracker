@@ -15,6 +15,8 @@ public class Habit {
     private int progress; // provisional until we determine how to implement progress
     private String [] weekDays;
 
+    private boolean isPublic;
+
     /**
      * An empty constructor for Habit
      */
@@ -28,11 +30,12 @@ public class Habit {
      * @param startDate {Date}      the date in which the habit was started
      * @param weekDays  {String[]}  the days of the week during which the habit should be practiced
      */
-    public Habit (String title, String reason, Date startDate, String [] weekDays) {
+    public Habit (String title, String reason, Date startDate, String [] weekDays, Boolean isPublic) {
         this.title = title;
         this.reason = reason;
         this.startDate = startDate;
         this.progress = 0;
+        this.isPublic = isPublic;
 
         this.weekDays = weekDays.clone();
     }
@@ -110,6 +113,7 @@ public class Habit {
         ArrayList<Integer> dateArrayList = DateConverter.dateToArrayList(startDate);
         List<String> whatDays =  Arrays.asList(weekDays);
 
+        // TODO: have to add isPublic attribute to the schema. Check with Zarif for naming
         // the attribute names as specified in the schema and the values that correspond
         String [] attributes = {"reason", "dateStarted", "whatDays", "progress"};
         Object [] values = { reason, dateArrayList, whatDays, progress};
