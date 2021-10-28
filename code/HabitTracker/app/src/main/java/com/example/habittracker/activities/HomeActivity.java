@@ -45,10 +45,6 @@ public class HomeActivity extends AppCompatActivity {
         this.habitAdapter = new CustomHabitList(this, habitList);
         this.list.setAdapter(habitAdapter);
 
-//        adapter = new ArrayAdapter<String>(this, R.layout.home_habit_list,habitList);
-//        list.setAdapter(adapter);
-//        adapter.add("Habit "+habitList.size()+" -- Progress: 0-100");
-
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
@@ -82,8 +78,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
         );
     }
-
-
 
     /**
      * Repopulates the activity that lists all habits belonging to a user
