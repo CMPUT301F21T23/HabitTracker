@@ -13,7 +13,7 @@ public class Habit {
     private String reason;
     private Date startDate;
     private int progress; // provisional until we determine how to implement progress
-    private String [] weekDays;
+    private ArrayList<String> weekDays;
 
     private boolean isPublic;
 
@@ -28,16 +28,16 @@ public class Habit {
      * @param title     {string}    the title of the habit (ie. Sleep Early)
      * @param reason    {String}    a description of the habit
      * @param startDate {Date}      the date in which the habit was started
-     * @param weekDays  {String[]}  the days of the week during which the habit should be practiced
+     * @param weekDays  {ArrayList<String>}  the days of the week during which the habit should be practiced
      */
-    public Habit (String title, String reason, Date startDate, String [] weekDays, Boolean isPublic) {
+    public Habit (String title, String reason, Date startDate, ArrayList<String> weekDays) {
         this.title = title;
         this.reason = reason;
         this.startDate = startDate;
         this.progress = 0;
         this.isPublic = isPublic;
 
-        this.weekDays = weekDays.clone();
+        this.weekDays = weekDays;
     }
 
     /**
@@ -86,14 +86,6 @@ public class Habit {
     }
 
     /**
-     * Changes the set of days of the habit
-     * @param weekDays {String[]} the new set of days
-     */
-    public void setWeekDays(String[] weekDays) {
-        this.weekDays = weekDays;
-    }
-
-    /**
      * Add habit to database.
      */
     public void addToDB() {
@@ -111,12 +103,14 @@ public class Habit {
 
         // make necessary conversion to convert to document
         ArrayList<Integer> dateArrayList = DateConverter.dateToArrayList(startDate);
-        List<String> whatDays =  Arrays.asList(weekDays);
 
         // TODO: have to add isPublic attribute to the schema. Check with Zarif for naming
+        // TODO: the list of attributes for habit should be somewhere commonly accessible.
+        //  prolly database manager. check w Zarif.
+
         // the attribute names as specified in the schema and the values that correspond
         String [] attributes = {"reason", "dateStarted", "whatDays", "progress"};
-        Object [] values = { reason, dateArrayList, whatDays, progress};
+        Object [] values = { reason, dateArrayList, weekDays, progress};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {

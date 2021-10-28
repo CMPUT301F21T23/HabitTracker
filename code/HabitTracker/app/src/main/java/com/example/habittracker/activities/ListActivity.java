@@ -103,14 +103,16 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
 
                 ArrayList<Long> dateTest = (ArrayList<Long>) doc.get(attributes[1]);
                 Date startDate = DateConverter.arrayListToDate(dateTest);
+
+                ArrayList<String> weekDays = (ArrayList<String>) doc.get(attributes[2]);
+
                 habitList.add(
-                        // TODO: fix this add habit thing
                         new Habit(
                                 habitTitle,
                                 habitReason,
                                 startDate,
-                                new String[]{"Mon", "Tues"},
-                                false));
+                                weekDays
+                                ));
             }
         }
     }

@@ -54,4 +54,39 @@ public class DateConverter {
         return (date);
     }
 
+    /**
+     * Gets the current day of the week in an easily comparable format
+     * @return weekDay, the current day of the week
+     */
+    public static String getCurrentWeekDay() {
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        String weekDay = "";
+
+        switch (day) {
+            case Calendar.SUNDAY:
+                weekDay = "Sun";
+                break;
+            case Calendar.MONDAY:
+                weekDay = "Mon";
+                break;
+            case Calendar.TUESDAY:
+                weekDay = "Tue";
+                break;
+            case Calendar.WEDNESDAY:
+                weekDay = "Wed";
+                break;
+            case Calendar.THURSDAY:
+                weekDay = "Thu";
+                break;
+            case Calendar.FRIDAY:
+                weekDay = "Fri";
+                break;
+            case Calendar.SATURDAY:
+                weekDay = "Sat";
+                break;
+        }
+
+        return (weekDay);
+    }
 }

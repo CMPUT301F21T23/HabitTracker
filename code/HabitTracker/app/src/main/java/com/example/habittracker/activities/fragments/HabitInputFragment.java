@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
@@ -27,6 +28,7 @@ import com.example.habittracker.Habit;
 import com.example.habittracker.R;
 import com.example.habittracker.utils.CustomDatePicker;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -79,15 +81,47 @@ public class HabitInputFragment extends DialogFragment {
             public void onShow(DialogInterface dialogInterface) {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener(new View.OnClickListener() {
+
+                    private ArrayList <String> getWeekDaysChecked() {
+                        CheckBox mondayCheck = view.findViewById(R.id.monday);
+                        CheckBox tuesdayCheck = view.findViewById(R.id.tuesday);
+                        CheckBox wednesdayCheck = view.findViewById(R.id.wednesday);
+                        CheckBox thursdayCheck = view.findViewById(R.id.thursday);
+                        CheckBox fridayCheck = view.findViewById(R.id.friday);
+                        CheckBox saturdayCheck = view.findViewById(R.id.saturday);
+                        CheckBox sundayCheck = view.findViewById(R.id.sunday);
+
+                        ArrayList <String> weekDays = new ArrayList<>();
+                        CheckBox [] boxes = {
+                                mondayCheck,
+                                tuesdayCheck,
+                                wednesdayCheck,
+                                thursdayCheck,
+                                fridayCheck,
+                                saturdayCheck,
+                                sundayCheck
+                        };
+
+                        for (CheckBox box : boxes) {
+                            if (box.isChecked()) {
+                                weekDays.add(box.getText().toString());
+                            }
+                        }
+
+                        return (weekDays);
+                    }
+
                     @Override
                     public void onClick(View view) {
                         String title = inputTitle.getText().toString();
                         String reason = inputReason.getText().toString();
 
+                        ArrayList<String> weekDays = getWeekDaysChecked();
+
                         // TODO: validation here, if bad, freeze the operation.
                         //  Leave for extra if you have time
-                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), new String[]{"Mon", "Tues"}, false);
-                        // TODO: remember, you have to get the days of the week from the UI, this is just for testing
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays);
+
                         // todo: will have to make UI to make it public/private
                         listener.onOkPressed(habit);
                         alertDialog.dismiss();
