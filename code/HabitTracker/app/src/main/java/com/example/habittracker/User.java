@@ -1,5 +1,19 @@
 package com.example.habittracker;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class User {
@@ -12,6 +26,7 @@ public class User {
 
     private String username;
     private String password;
+    
     /**
      * Creates a user. Constructor.
      * Add the following to your module build gradle:
@@ -26,10 +41,25 @@ public class User {
         // not sure if this is even necessary.
         this.username = username;
         this.password = hashedPassword;
+        followers = new ArrayList<>();
 
         // TODO: add user to database here
     }
 
-    // possible methods:
-    // assign <?>list to user.
+    /**
+     * Gets the username
+     * @return      {@code String} the username
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets the username
+     * @param username      {@code String} new username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }
