@@ -26,7 +26,7 @@ public class User {
 
     private String username;
     private String password;
-    
+
     /**
      * Creates a user. Constructor.
      * Add the following to your module build gradle:
@@ -41,7 +41,6 @@ public class User {
         // not sure if this is even necessary.
         this.username = username;
         this.password = hashedPassword;
-        followers = new ArrayList<>();
 
         // TODO: add user to database here
     }
