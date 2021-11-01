@@ -24,7 +24,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/followingButton"
+                    android:id="@+id/back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -39,7 +39,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <Button
-                    android:id="@+id/followersButton"
+                    android:id="@+id/unfollowButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -66,14 +66,50 @@
                 android:textSize="20sp" />
 
             <ListView
-                android:id="@+id/profileList"
+                android:id="@+id/followingList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="595dp"
+                android:choiceMode="singleChoice"
                 android:clickable="true"
-                android:focusable="true"
-                android:choiceMode="singleChoice" />
+                android:focusable="true" />
 
         </LinearLayout>
     </FrameLayout>
+    <LinearLayout
+        android:id="@+id/usernameEntry"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <EditText
+            android:id="@+id/username"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="Enter username"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/buttonConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="0dp"
+            android:text="CONFIRM"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="0dp"
+            android:text="CANCEL"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
