@@ -14,7 +14,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
     private EditText edittext;
     private Context context;
     private View view;
-    CustomDatePicker(Context context, View view, int et_id) {
+    public CustomDatePicker(Context context, View view, int et_id) {
         this.context = context;
         this.edittext = (EditText) view.findViewById(et_id);
         myCalendar = Calendar.getInstance();
@@ -47,5 +47,8 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         String myFormat = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         edittext.setText(sdf.format(myCalendar.getTime()));
+    }
+    public Calendar getDate() {
+        return myCalendar;
     }
 }

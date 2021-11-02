@@ -34,6 +34,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
 
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ import java.util.ArrayList;
  * the list. The idea is from CMPUT 301 Lab 3 instruction.
  * @author Yongquan Zhang
  */
-public class CustomList extends ArrayAdapter<String> {
-    private ArrayList<String> events;
+public class CustomList extends ArrayAdapter<HabitEvent> {
+    private ArrayList<HabitEvent> events;
     private Context context;
 
     /**
@@ -52,9 +53,9 @@ public class CustomList extends ArrayAdapter<String> {
      * @param context
      * @param events
      */
-    public CustomList(Context context, ArrayList<String> events){
+    public CustomList(Context context, ArrayList<HabitEvent> events){
         super(context,0, events);
-        this.events = this.events;
+        this.events = events;
         this.context = context;
     }
 
@@ -72,12 +73,17 @@ public class CustomList extends ArrayAdapter<String> {
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
         }
+        HabitEvent tempEvent =events.get(position);
+        TextView Title = (TextView) view.findViewById(R.id.contentView);;
+        TextView startDate = (TextView) view.findViewById(R.id.dateView);;
+        Title.setText(tempEvent.getEventId());
+        startDate.setText(tempEvent.getStartDate());
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
-        event_image.setImageResource(R.drawable.common_google_signin_btn_icon_dark);
-
-        ImageView location_image = (ImageView) view.findViewById(R.id.location_image);;
-        location_image.setImageResource(R.drawable.common_google_signin_btn_icon_dark);
+        event_image.setImageResource(R.drawable.riding);
+//
+//        ImageView location_image = (ImageView) view.findViewById(R.id.location_image);;
+//        location_image.setImageResource(R.drawable.common_google_signin_btn_icon_dark);
         return view;
     }
 }
