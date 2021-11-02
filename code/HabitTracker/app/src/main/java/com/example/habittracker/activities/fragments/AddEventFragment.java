@@ -242,7 +242,7 @@ public class AddEventFragment extends DialogFragment {
                             String tempLocation = location1.getText().toString();
                             String tempComments = editText1.getText().toString();
                             HabitEvent tempHabitEvent = new HabitEvent();
-                            if(tempDate == "") {
+                            if(tempDate.isEmpty()) {
                                 String myFormat = "yyyy-MM-dd";
                                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                                 tempDate = sdf.format(Calendar.getInstance().getTime());
