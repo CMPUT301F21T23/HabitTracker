@@ -3,6 +3,7 @@ package com.example.habittracker;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -10,13 +11,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableReference;
 import com.google.firebase.functions.HttpsCallableResult;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -160,7 +164,7 @@ public class DatabaseManager {
      * @param habitTitle    {@code String} Habit Title
      * @param doc           {@code HashMap<String, Object>} Document
      */
-    void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
+    public void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference colRef = usersColRef
                 .document(userid)
@@ -185,6 +189,89 @@ public class DatabaseManager {
                 });
     }
 
+    public void deleteHabitEventDocument(String userid, String habitTitle, String eventID) {
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        CollectionReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle)
+                .collection(habitEventsColName);
+
+        colRef.document(eventID)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("HabitEvent successfully created for Habit with title %s",
+                                habitTitle));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("HabitEvent failed to be created for Habit with title %s",
+                                habitTitle));
+                    }
+                });
+    }
+    public void updateHabitEventDocument(String userid, String habitTitle, String eventID, HashMap<String, Object> doc) {
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        CollectionReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle)
+                .collection(habitEventsColName);
+
+        colRef.document(eventID)
+                .update(doc)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("HabitEvent successfully created for Habit with title %s",
+                                habitTitle));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("HabitEvent failed to be created for Habit with title %s",
+                                habitTitle));
+                    }
+                });
+    }
+
+    public void fectchEvent(String userid, String habitTitle) {
+        ArrayList<HabitEvent> eventList =  new ArrayList<>();
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        CollectionReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle)
+                .collection(habitEventsColName);
+
+
+        colRef
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(DB_TAG, document.getId() + " => " + document.getData());
+                                String eventID = document.getId();
+                                String habitID = (String) document.getData().get("Habit");
+                                String startDate = (String) document.getData().get("startDate");
+                                String comments = (String) document.getData().get("comment");
+                                String location = (String) document.getData().get("location");
+                                String image = (String) document.getData().get("image");
+                                eventList.add(new HabitEvent(habitID, eventID,comments, startDate, location, image));
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
     /**
      * Deletes a user document along with all of its subcollections.
      * @param userid        {@code String} User ID
