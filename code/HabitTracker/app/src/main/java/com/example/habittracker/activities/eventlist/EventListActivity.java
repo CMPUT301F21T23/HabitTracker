@@ -1,20 +1,35 @@
 package com.example.habittracker.activities.eventlist;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
+import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.AddEventFragment;
 import com.example.habittracker.activities.fragments.OnFragmentInteractionListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,12 +42,13 @@ import java.util.ArrayList;
  */
 public class EventListActivity extends AppCompatActivity implements OnFragmentInteractionListener {
     private ListView eventList;
-    private ArrayAdapter<String> listAdapter;
-    private ArrayList<String> habitEvents;
-    private String delete_city=null;
+    private ArrayAdapter<HabitEvent> eventAdapter;
+    private ArrayList<HabitEvent> eventDataList;
+    private String delete_event=null;
     private Boolean flag = false;
-    private TextView sumText;
 
+    /************************************/
+    /*************************************/
     /**
      * Override the OnCreate method. Set up a list of event objects and display them
      * in a ListView.
@@ -45,12 +61,72 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         eventList = findViewById(R.id.event_list);
-        habitEvents = new ArrayList<>();
+        eventDataList = new ArrayList<>();
+        String []habits={"Habit 1","Habit 1","Habit 1"};
+        String []dates={"2020-01-01","2020-01-01","2020-01-01"};
+        String []commentss={"123","123","123"};
+        for(int i = 0; i < habits.length;i++){
+            HabitEvent temp_1 = new HabitEvent();
+            temp_1.setHabit(habits[i]);
+            temp_1.setStartDate(dates[i]);
+            temp_1.setComment(commentss[i]);
+            eventDataList.add(temp_1);
+//            temp_1.updateDB();
+        }
+        eventAdapter = new CustomList(this, eventDataList);
+        eventList.setAdapter(eventAdapter);
+        /************/
+//
+//        String usersColName = "Users";
+//        String habitsColName = "Habits";
+//        String habitEventsColName = "HabitEvents";
+//        String DB_TAG = "DatabaseManager";
+//
+//        DatabaseManager dm = DatabaseManager.get();
+//
+//        CollectionReference colRef = dm.getUsersColRef()
+//                .document("user1")
+//                .collection(habitsColName)
+//                .document("Habit 1")
+//                .collection(habitEventsColName);
+//
+//
+//        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+//                    FirebaseFirestoreException error) {
+//
+//                eventDataList.clear();
+//                for(QueryDocumentSnapshot doc: queryDocumentSnapshots)
+//                {
+//                    Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
+//                    String eventID = doc.getId();
+//                    String habitID = (String) doc.getData().get("Habit");
+//                    String startDate = (String) doc.getData().get("startDate");
+//                    String comments = (String) doc.getData().get("comment");
+//                    String location = (String) doc.getData().get("location");
+//                    String image = (String) doc.getData().get("image");
+//                    eventDataList.add(new HabitEvent(habitID, eventID,comments, startDate, location, image));
+//
+//                }
+//                eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+//                //from the cloud
+//            }
+//        });
 
-        habitEvents.add("Test");
+        /************/
 
-        listAdapter = new CustomList(this, habitEvents);
-        eventList.setAdapter(listAdapter);
+//        String eventID = document.getId();
+//        String habitID = (String) document.getData().get("Habit");
+//        String startDate = (String) document.getData().get("startDate");
+//        String comments = (String) document.getData().get("comment");
+//        String location = (String) document.getData().get("location");
+//        String image = (String) document.getData().get("image");
+//        eventDataList.add(new HabitEvent(habitID, eventID,comments, startDate, location, image));
+
+//        eventAdapter = new CustomList(this, eventDataList);
+//        eventList.setAdapter(eventAdapter);
+//        eventAdapter.notifyDataSetChanged();
 
         /* Add floating button fragment. */
         final FloatingActionButton addEventButton = findViewById(R.id.add_event_button);
@@ -76,34 +152,89 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
              */
             public void onItemClick(AdapterView<?> adapter, View v, int position,
                                     long arg3) {
-                new AddEventFragment().newInstance().show(getSupportFragmentManager(),"EDIT_EVENT");
+                HabitEvent editE = (HabitEvent) adapter.getItemAtPosition(position);
+                new AddEventFragment().newInstance(editE).show(getSupportFragmentManager(),"EDIT_EVENT");
             }
         });
 
+
+
+
+
+        /************/
+
+        String usersColName = "Users";
+        String habitsColName = "Habits";
+        String habitEventsColName = "HabitEvents";
+        String DB_TAG = "DatabaseManager";
+
+        DatabaseManager dm = DatabaseManager.get();
+
+        CollectionReference colRef = dm.getUsersColRef()
+                .document("user1")
+                .collection(habitsColName)
+                .document("Habit 1")
+                .collection(habitEventsColName);
+//        CollectionReference colRef = dm.getUsersColRef()
+//                .document("user1")
+//                .collection(habitEventsColName);
+        Query query = colRef.orderBy("date", Query.Direction.ASCENDING);
+        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+
+                eventDataList.clear();
+                for(QueryDocumentSnapshot doc: queryDocumentSnapshots)
+                {
+                    Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
+                    String eventID = doc.getId();
+//                    String habitID = (String) doc.getData().get("Habit");
+                    String startDate = (String) doc.getData().get("startDate");
+                    String comments = (String) doc.getData().get("comment");
+//                    String location = (String) doc.getData().get("location");
+//                    String image = (String) doc.getData().get("image");
+                    HabitEvent temp = new HabitEvent();
+                    temp.setStartDate(startDate);
+                    temp.setComment(comments);
+                    temp.setEventId(eventID);
+                    eventDataList.add(temp);
+
+                }
+                eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                //from the cloud
+            }
+        });
+
+        /************/
+
     }
 
-    /**
-     * Override the onOkPressed method of OnFragmentInteractionListener. This method is
-     * used for 2 functions: add new event and edit existed event. If a event object
-     * is passed to the fragment then the method would edit the passed event, otherwise the
-     * method would add new event to the list.
-     */
     @Override
-    public void onOkPressed(){
+    public void onOkPressed(HabitEvent newEvent, boolean editFlag) {
+        if(!editFlag) {
+            eventAdapter.add(newEvent);
+            newEvent.updateDB();
+            onResume();
+        }
+        else{
+            eventAdapter.notifyDataSetChanged();
+            newEvent.editDB();
+            onResume();
+        }
+    }
+
+    @Override
+    public void onDeletePressed(HabitEvent newEvent) {
+        eventAdapter.remove(newEvent);
+        eventAdapter.notifyDataSetChanged();
+        newEvent.deleteDB();
         onResume();
     }
 
     /**
-     * Override the onDeletePressed method of OnFragmentInteractionListener.
-     * The method could delete the selected object from the adapter.
-     */
-    @Override
-    public void onDeletePressed() {
-        onResume();
-    }
-
-    /**
-     * Override the onResume method of OnFragmentInteractionListener
+     * Override the onResume method of OnFragmentInteractionListener.
+     * Update the sum of frequency in the bottom
      */
     @Override
     public void onResume() {
