@@ -2,13 +2,14 @@ package com.example.habittracker;
 
 import com.example.habittracker.utils.DateConverter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class Habit {
+public class Habit implements Serializable {
     private String title;
     private String reason;
     private Date startDate;

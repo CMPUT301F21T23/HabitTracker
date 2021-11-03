@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -32,6 +33,9 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
     private ArrayAdapter<Habit> habitAdapter;
+
+    // constant
+    static final String EXTRA_HABIT = "habit";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +59,11 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("HabitID", list.getItemAtPosition(position).toString());
-                intent.putExtras(bundle);
+                intent.putExtra(EXTRA_HABIT, (Serializable) list.getItemAtPosition(position));
+
+//                Bundle bundle = new Bundle();
+//                bundle.putString("HabitID", list.getItemAtPosition(position).toString());
+//                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
