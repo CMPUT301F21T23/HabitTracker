@@ -3,7 +3,6 @@ package com.example.habittracker.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,9 +36,9 @@ public class HomeActivity extends AppCompatActivity {
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("HabitID", list.getItemAtPosition(position).toString());
-                intent.putExtras(bundle);
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("habit",(Habit) list.getItemAtPosition(position));
+//                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });

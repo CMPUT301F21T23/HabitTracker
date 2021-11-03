@@ -27,7 +27,7 @@ public class HabitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_habit);
 
         // TEST DATABASE
-        testDatabase();
+        //testDatabase();
       
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         Intent intent = new Intent(this, HomeActivity.class);

@@ -1,0 +1,148 @@
+/**
+ * ProgressTrackingActivity.java
+ * This is used for the progress and tracking screen which shows the user how they have done on there habits.
+ *
+ */
+package com.example.habittracker.activities;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
+import com.example.habittracker.HabitEvent;
+import com.example.habittracker.R;
+import com.example.habittracker.activities.tracking.GraphUtil;
+import com.example.habittracker.activities.tracking.ProgressUtil;
+import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.SharedInfo;
+import com.jjoe64.graphview.GraphView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+public class ProgressTrackingActivity extends AppCompatActivity {
+
+    private Habit habit;
+    private ArrayList<HabitEvent> eventList;
+    private DatabaseManager db = DatabaseManager.get();
+
+    /**
+     * Returns the current database object
+     * @return
+     */
+    public DatabaseManager getDb() {
+        return db;
+    }
+
+    /**
+     * Return the current habit.
+     * @return
+     */
+    public Habit getHabit() {
+        return habit;
+    }
+
+    public void setHabit(Habit habit) {
+        this.habit = habit;
+    }
+
+    /**
+     * Returns the current habit event list
+     * @return
+     */
+    public ArrayList<HabitEvent> getEventList() {
+        return eventList;
+    }
+
+    /**
+     * Sets the current habit event list
+     * @param eventList
+     */
+    public void setEventList(ArrayList<HabitEvent> eventList) {
+        this.eventList = eventList;
+    }
+
+    /**
+     * Ran on creation of the activity, handles initial setup.
+     * @param savedInstanceState {Bundle}
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_progress_tracking);
+
+        Button back_button = findViewById(R.id.tracking_back_button);
+
+        // button listener for closing the current activity
+        // param: View
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        // Bundle for intent's extra arguments
+        Bundle b = this.getIntent().getExtras();
+        Habit value = null; // or other values
+        if(b != null)
+            value =(Habit) b.getSerializable("habit");
+        if(value == null) {
+            Log.d("Error", "No habit given to progress activity.");
+            //close activity
+            finish();
+        }
+        //set habit
+        setHabit(value);
+
+        //Code idea from https://stackoverflow.com/questions/50650224/wait-until-firestore-data-is-retrieved-to-launch-an-activity
+        //
+        getDb().getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(),getHabit(),new HabitEventListCallback() {
+            @Override
+            public void onCallbackSuccess(ArrayList<HabitEvent> eventList) {
+                //Do what you need to do with your list
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE,-15);
+                setEventList(eventList);
+                makeGraph(habit);
+            }
+
+            @Override
+            public void onCallbackFailed() {
+                Log.d("Error","Failed to get habit events");
+            }
+        });
+}
+
+    void makeGraph(Habit habit){
+        GraphView graph = (GraphView) findViewById(R.id.progress_graph);
+        TextView progressStats = findViewById(R.id.progress_stats_text_view);
+        TextView overallProgressText = findViewById(R.id.overall_progress_text_view);
+        TextView recentProgressText = findViewById(R.id.recent_progress_text_view);
+        HashMap<String,Integer> scorePlusStats = ProgressUtil.getOverallProgress(habit,eventList,1,100);
+        overallProgressText.setText("Overall Progress: "+scorePlusStats.get("score")+ "%\nPercent of time you are following ideal.");
+        recentProgressText.setText("Recent Progress: "+scorePlusStats.get("recent")+ "%\n Last 30 days percent of time following ideal.");
+        String progressStatsText = "Days on ideal: "+scorePlusStats.get("ideal")+"\n"+
+                "Days under ideal: "+scorePlusStats.get("under")+"\n"+
+                "Days over ideal: "+scorePlusStats.get("over");
+        progressStats.setText(progressStatsText);
+
+        GraphUtil.addHabitToGraph(graph,habit,eventList,1,"You", Color.BLUE,true);
+        GraphUtil.setDateAsXAxis(graph,getApplicationContext(),3);
+        // set manual x bounds to have nice steps
+        GraphUtil.setYAxisScale(graph,0,5);
+        GraphUtil.addSimpleLegend(graph,Color.TRANSPARENT);
+        GraphUtil.setLabelAxis(graph,"#Done","Date");
+    }
+}
