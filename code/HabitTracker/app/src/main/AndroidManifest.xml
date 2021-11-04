@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.habittracker">
+    package="com.example.habittracker" >
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -8,10 +16,63 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HabitTracker">
+        android:theme="@style/Theme.HabitTracker" >
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".activities.eventlist.MapsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_maps" />
+        <activity
+            android:name=".activities.eventlist.LocationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.ProgressTrackingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.SharingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileLoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileFollowRequestsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileFollowersActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileFollowingActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.profile.ProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.eventlist.EventListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.ListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.HomeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.HabitViewActivity"
+            android:exported="true" />
         <activity
             android:name=".HabitActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
