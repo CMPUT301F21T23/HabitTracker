@@ -10,6 +10,7 @@ import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserDetailsCallback;
+import com.example.habittracker.utils.UserExistsCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -379,7 +380,7 @@ public class DatabaseManager {
      * @param username
      * @param callback
      */
-    public void userExists(String username, BooleanCallback callback){
+    public void userExists(String username, UserExistsCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
                 .document(username);
@@ -387,12 +388,14 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    boolean flag = false;
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
-                        flag = true;
+                        callback.onCallbackSuccess(username);
                     }
-                    callback.onCallbackSuccess(flag);
+                    else{
+                        callback.onCallbackFailed();
+                    }
+
                 }
                 else{
                     callback.onCallbackFailed();
