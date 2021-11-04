@@ -24,7 +24,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/followingButton"
+                    android:id="@+id/back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -39,7 +39,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <Button
-                    android:id="@+id/followersButton"
+                    android:id="@+id/decline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -53,7 +53,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <Button
-                    android:id="@+id/followRequestsButton"
+                    android:id="@+id/accept"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -79,7 +79,7 @@
                 android:textSize="20sp" />
 
             <ListView
-                android:id="@+id/profileList"
+                android:id="@+id/pendingFollowersList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"

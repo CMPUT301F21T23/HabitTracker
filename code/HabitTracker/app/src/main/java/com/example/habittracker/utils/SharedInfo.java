@@ -42,3 +42,4 @@ public class SharedInfo {
         return currentUser;
     }
 }
+
