@@ -5,10 +5,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.habittracker.utils.BooleanCallback;
+import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserDetailsCallback;
+import com.example.habittracker.utils.UserExistsCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -268,7 +270,7 @@ public class DatabaseManager {
                 if (task.isSuccessful()) {
                     ArrayList<Habit> habitArray = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Log.d("",""+doc.getData().get("whatDays")+"-----"+doc.getData().get("dateStarted"));
+                        //Log.d("",""+doc.getData().get("whatDays")+"-----"+doc.getData().get("dateStarted"));
                         ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                         ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
                         Calendar cal = Calendar.getInstance();
@@ -335,6 +337,11 @@ public class DatabaseManager {
         });
     }
 
+    /**
+     * reutrns Hashmap of user details (username,follower,etc) from username string
+     * @param username
+     * @param callback
+     */
     public void getUserDetails(String username, UserDetailsCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
@@ -343,18 +350,23 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    User user;
+                    HashMap<String,Object> userDetails = new HashMap<>();
                     DocumentSnapshot document = task.getResult();
                     if(!document.exists()){
                         callback.onCallbackFailed();
                         return;
                     }
-                    String hashedPassword = (String) document.getData().get("hashedPassword");
-                    user = new User(
-                            username,
-                            hashedPassword
-                    );
-                    callback.onCallbackSuccess(user);
+                    ArrayList<String> following = (ArrayList<String>) document.getData().get("following");
+                    ArrayList<String> followers = (ArrayList<String>) document.getData().get("followers");
+                    ArrayList<String> pendingFollowReqs = (ArrayList<String>) document.getData().get("pendingFollowReqs");
+                    ArrayList<String> pendingFollowerReqs = (ArrayList<String>) document.getData().get("pendingFollowReqs");
+                    userDetails.put("username",username);
+                    userDetails.put("following",following);
+                    userDetails.put("followers",followers);
+                    userDetails.put("pendingFollowReqs",pendingFollowReqs);
+                    userDetails.put("pendingFollowerReqs",pendingFollowerReqs);
+
+                    callback.onCallbackSuccess(userDetails);
                 }
                 else{
                     callback.onCallbackFailed();
@@ -363,7 +375,12 @@ public class DatabaseManager {
         });
     }
 
-    public void userExists(String username, BooleanCallback callback){
+    /**
+     * Check if username exists
+     * @param username
+     * @param callback
+     */
+    public void userExists(String username, UserExistsCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
                 .document(username);
@@ -371,12 +388,14 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    boolean flag = false;
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
-                        flag = true;
+                        callback.onCallbackSuccess(username);
                     }
-                    callback.onCallbackSuccess(flag);
+                    else{
+                        callback.onCallbackFailed();
+                    }
+
                 }
                 else{
                     callback.onCallbackFailed();
@@ -385,7 +404,13 @@ public class DatabaseManager {
         });
     }
 
-    public void checkPassword(String username, String hashedPassword, BooleanCallback callback){
+    /**
+     * Check if username and password is correct and then returns username and hashed password
+     * @param username
+     * @param hashedPassword
+     * @param callback
+     */
+    public void checkPassword(String username, String hashedPassword, CheckPasswordCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
                 .document(username);
@@ -401,7 +426,7 @@ public class DatabaseManager {
                     }else if(hashedPassword.equals((String)document.getData().get("hashedPassword"))){
                         flag = true;
                     }
-                    callback.onCallbackSuccess(flag);
+                    callback.onCallbackSuccess(username,hashedPassword);
                 }
                 else{
                     callback.onCallbackFailed();
