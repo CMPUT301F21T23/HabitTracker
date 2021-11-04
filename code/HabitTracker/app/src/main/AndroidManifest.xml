@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTracker">
         <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ProgressTrackingActivity"
             android:exported="true" />
         <activity

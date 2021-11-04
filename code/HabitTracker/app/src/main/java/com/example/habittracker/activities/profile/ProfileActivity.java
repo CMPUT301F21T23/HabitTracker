@@ -9,9 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.LoginActivity;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.utils.SharedInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +73,37 @@ public class ProfileActivity extends AppCompatActivity {
         logout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ProfileLoginActivity.class);
+                // Log the user out
+
+                // Set the global user instance
+                SharedInfo.getInstance().clearCurrentUser();
+
+                // Switch to login screen
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button delete_button = findViewById(R.id.delete_account);
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Delete the user from the database
+                DatabaseManager db = DatabaseManager.get();
+                String username = SharedInfo.getInstance().getCurrentUser().getUsername();
+                if (username != null && !username.equals("")) {
+                    db.deleteUserDocument(username);
+                } else {
+                    System.out.println("Trying to log out a null user :/");
+                }
+
+                // Log the user out
+
+                // Set the global user instance
+                SharedInfo.getInstance().clearCurrentUser();
+
+                // Switch to login screen
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
             }
         });
