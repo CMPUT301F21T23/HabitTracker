@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.habittracker.utils.BooleanCallback;
+import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserDetailsCallback;
@@ -36,11 +37,11 @@ public class HabitActivity extends AppCompatActivity {
         //testDatabase();
 
         DatabaseManager db = DatabaseManager.get();
-        db.checkPassword("user1","12345",new BooleanCallback() {
+        db.getUserDetails("user1",new UserDetailsCallback() {
             @Override
-            public void onCallbackSuccess(boolean exists) {
+            public void onCallbackSuccess(HashMap<String,Object> userDetails) {
                 //Do what you need to do with your list
-                Log.d("User",""+exists);
+                Log.d("User",""+userDetails);
             }
 
             @Override
