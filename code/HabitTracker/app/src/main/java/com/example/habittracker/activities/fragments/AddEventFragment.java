@@ -91,7 +91,7 @@ public class AddEventFragment extends DialogFragment {
 
     /**
      * Override the onAttach method of DialogFragment.
-     * @param context
+     * @param context       {@code Context} required context
      */
     @Override
     public void onAttach(Context context) {
@@ -129,7 +129,6 @@ public class AddEventFragment extends DialogFragment {
                 } else {
                     getLocation();
                 }
-//                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         });
 
@@ -170,9 +169,6 @@ public class AddEventFragment extends DialogFragment {
         if (getArguments() != null) {
             HabitEvent selectedEvent = (HabitEvent) getArguments().getSerializable("event"); // get the HabitEvent object.
             date.setText(selectedEvent.getStartDate());
-//            eventTitle.setText(selectedEvent.getTitle());
-//            dose.setText(String.valueOf(selectedMed.getDose()));
-//            /* Display dose unit by using spinner */
             editText1.setText(String.valueOf(selectedEvent.getComment()));
             spinnerIdx = spinnerAdapter.getPosition(selectedEvent.getHabit());
             s.setSelection(spinnerIdx);
@@ -263,7 +259,9 @@ public class AddEventFragment extends DialogFragment {
     }
 
     /**
-     * @return fragment
+     * create a new instance of the selected habit event
+     * @param event
+     * @return
      */
     public static AddEventFragment newInstance(HabitEvent event) {
         Bundle args = new Bundle();
@@ -301,8 +299,10 @@ public class AddEventFragment extends DialogFragment {
         }
     }
 
+    /**
+     * get location function, should be replaced by Aparna's function in the future.
+     */
     private void getLocation() {
-
         mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
             public void onComplete(@NonNull Task<Location> task) {

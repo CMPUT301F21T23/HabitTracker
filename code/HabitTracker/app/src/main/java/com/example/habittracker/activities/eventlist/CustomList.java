@@ -50,8 +50,8 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
 
     /**
      * The constructor of CustomList
-     * @param context
-     * @param events
+     * @param context       {@code Context} required context
+     * @param events        {@code ArrayList<HabitEvent>} a habit event list
      */
     public CustomList(Context context, ArrayList<HabitEvent> events){
         super(context,0, events);
@@ -61,9 +61,9 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
 
     /**
      * Override the getView method. Display multiple information in a single row of the list.
-     * @param position
-     * @param convertView
-     * @param parent
+     * @param position          {@code int} index of the selected item
+     * @param convertView       {@code View} convert view
+     * @param parent            {@code ViewGroup} parent view
      * @return
      */
     @NonNull
@@ -81,9 +81,6 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
         event_image.setImageResource(R.drawable.riding);
-//
-//        ImageView location_image = (ImageView) view.findViewById(R.id.location_image);;
-//        location_image.setImageResource(R.drawable.common_google_signin_btn_icon_dark);
         return view;
     }
 }

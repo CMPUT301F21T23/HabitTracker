@@ -35,7 +35,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
- * The standard MainActivity class that extends AppCompatActivity and implements
+ * The EventListActivity class that extends AppCompatActivity and implements
  * a custom interface called OnFragmentInteractionListener. Some of the codes are
  * from CMPUT 301 Lab 3 instructions.
  * @author Yongquan Zhang
@@ -47,12 +47,10 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
     private String delete_event=null;
     private Boolean flag = false;
 
-    /************************************/
-    /*************************************/
     /**
      * Override the OnCreate method. Set up a list of event objects and display them
      * in a ListView.
-     * @param savedInstanceState
+     * @param savedInstanceState        {@code Bundle} savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,69 +69,16 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
             temp_1.setStartDate(dates[i]);
             temp_1.setComment(commentss[i]);
             eventDataList.add(temp_1);
-//            temp_1.updateDB();
         }
         eventAdapter = new CustomList(this, eventDataList);
         eventList.setAdapter(eventAdapter);
-        /************/
-//
-//        String usersColName = "Users";
-//        String habitsColName = "Habits";
-//        String habitEventsColName = "HabitEvents";
-//        String DB_TAG = "DatabaseManager";
-//
-//        DatabaseManager dm = DatabaseManager.get();
-//
-//        CollectionReference colRef = dm.getUsersColRef()
-//                .document("user1")
-//                .collection(habitsColName)
-//                .document("Habit 1")
-//                .collection(habitEventsColName);
-//
-//
-//        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-//                    FirebaseFirestoreException error) {
-//
-//                eventDataList.clear();
-//                for(QueryDocumentSnapshot doc: queryDocumentSnapshots)
-//                {
-//                    Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
-//                    String eventID = doc.getId();
-//                    String habitID = (String) doc.getData().get("Habit");
-//                    String startDate = (String) doc.getData().get("startDate");
-//                    String comments = (String) doc.getData().get("comment");
-//                    String location = (String) doc.getData().get("location");
-//                    String image = (String) doc.getData().get("image");
-//                    eventDataList.add(new HabitEvent(habitID, eventID,comments, startDate, location, image));
-//
-//                }
-//                eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-//                //from the cloud
-//            }
-//        });
-
-        /************/
-
-//        String eventID = document.getId();
-//        String habitID = (String) document.getData().get("Habit");
-//        String startDate = (String) document.getData().get("startDate");
-//        String comments = (String) document.getData().get("comment");
-//        String location = (String) document.getData().get("location");
-//        String image = (String) document.getData().get("image");
-//        eventDataList.add(new HabitEvent(habitID, eventID,comments, startDate, location, image));
-
-//        eventAdapter = new CustomList(this, eventDataList);
-//        eventList.setAdapter(eventAdapter);
-//        eventAdapter.notifyDataSetChanged();
 
         /* Add floating button fragment. */
         final FloatingActionButton addEventButton = findViewById(R.id.add_event_button);
         addEventButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Override the onClick method for the "+" button located bottom end of the screen.
-             * @param v
+             * @param v         {@code View} view
              */
             @Override
             public void onClick(View v) {
@@ -145,10 +90,10 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
             /**
              * Override the onItemClick method. Once an item on the list is clicked,
              * we pass the selected event object to the floating fragment.
-             * @param adapter
-             * @param v
-             * @param position
-             * @param arg3
+             * @param adapter       {@code AdapterView<?>} the habit event adapter
+             * @param v             {@code View} view
+             * @param position      {@code int} index of selected item
+             * @param arg3          {@code long} arg3
              */
             public void onItemClick(AdapterView<?> adapter, View v, int position,
                                     long arg3) {
@@ -157,63 +102,61 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
             }
         });
 
-
-
-
-
-        /************/
-
+        // set up snapshot listener
         String usersColName = "Users";
         String habitsColName = "Habits";
         String habitEventsColName = "HabitEvents";
         String DB_TAG = "DatabaseManager";
 
         DatabaseManager dm = DatabaseManager.get();
-
-        CollectionReference colRef = dm.getUsersColRef()
-                .document("user1")
-                .collection(habitsColName)
-                .document("Habit 1")
-                .collection(habitEventsColName);
-//        CollectionReference colRef = dm.getUsersColRef()
-//                .document("user1")
-//                .collection(habitEventsColName);
-        Query query = colRef.orderBy("date", Query.Direction.ASCENDING);
-        colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-
-                eventDataList.clear();
-                for(QueryDocumentSnapshot doc: queryDocumentSnapshots)
-                {
-                    Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
-                    String eventID = doc.getId();
-//                    String habitID = (String) doc.getData().get("Habit");
-                    String startDate = (String) doc.getData().get("startDate");
-                    String comments = (String) doc.getData().get("comment");
+        CollectionReference colRef;
+        String []habit_list = {"Habit 1","Habit 2","Habit 3"};
+        eventDataList.clear();
+        for (int i = 0;i<3;i++) {
+            colRef = dm.getUsersColRef()
+                    .document("user1")
+                    .collection(habitsColName)
+                    .document(habit_list[i])
+                    .collection(habitEventsColName);
+            Query query = colRef.orderBy("date", Query.Direction.ASCENDING);
+            colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                        FirebaseFirestoreException error) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
+                        String eventID = doc.getId();
+                        String habitID = (String) doc.getData().get("Habit");
+                        String startDate = (String) doc.getData().get("startDate");
+                        String comments = (String) doc.getData().get("comment");
 //                    String location = (String) doc.getData().get("location");
 //                    String image = (String) doc.getData().get("image");
-                    HabitEvent temp = new HabitEvent();
-                    temp.setStartDate(startDate);
-                    temp.setComment(comments);
-                    temp.setEventId(eventID);
-                    eventDataList.add(temp);
+                        HabitEvent temp = new HabitEvent();
+                        temp.setStartDate(startDate);
+                        temp.setComment(comments);
+                        temp.setEventId(eventID);
+                        temp.setHabit(habitID);
+                        if(!habitID.isEmpty()) {
+                            eventDataList.add(temp);
+                        }
 
+                    }
+                    eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                    //from the cloud
                 }
-                eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                //from the cloud
-            }
-        });
-
-        /************/
-
+            });
+        }
     }
 
+    /**
+     * Override the onOkPressed method of OnFragmentInteractionListener.
+     * @param newEvent       {@code HabitEvent} the habit event need to be added or edited
+     * @param editFlag       {@code boolean} if need to edit: editFlag = true; otherwise false.
+     */
     @Override
     public void onOkPressed(HabitEvent newEvent, boolean editFlag) {
         if(!editFlag) {
-            eventAdapter.add(newEvent);
+//            eventAdapter.add(newEvent);
             newEvent.updateDB();
             onResume();
         }
@@ -224,11 +167,15 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         }
     }
 
+    /**
+     * Override the onDeletePressed method of OnFragmentInteractionListener.
+     * @param deleteEvent      {@code HabitEvent} the habit event need to be deleted
+     */
     @Override
-    public void onDeletePressed(HabitEvent newEvent) {
-        eventAdapter.remove(newEvent);
+    public void onDeletePressed(HabitEvent deleteEvent) {
+        eventAdapter.remove(deleteEvent);
         eventAdapter.notifyDataSetChanged();
-        newEvent.deleteDB();
+        deleteEvent.deleteDB();
         onResume();
     }
 
