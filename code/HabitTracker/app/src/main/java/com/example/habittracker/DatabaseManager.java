@@ -4,15 +4,18 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.habittracker.utils.BooleanCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
+import com.example.habittracker.utils.UserDetailsCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -324,6 +327,81 @@ public class DatabaseManager {
                         ));
                     }
                     callback.onCallbackSuccess(eventArray);
+                }
+                else{
+                    callback.onCallbackFailed();
+                }
+            }
+        });
+    }
+
+    public void getUserDetails(String username, UserDetailsCallback callback){
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        DocumentReference doc = usersColRef
+                .document(username);
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    User user;
+                    DocumentSnapshot document = task.getResult();
+                    if(!document.exists()){
+                        callback.onCallbackFailed();
+                        return;
+                    }
+                    String hashedPassword = (String) document.getData().get("hashedPassword");
+                    user = new User(
+                            username,
+                            hashedPassword
+                    );
+                    callback.onCallbackSuccess(user);
+                }
+                else{
+                    callback.onCallbackFailed();
+                }
+            }
+        });
+    }
+
+    public void userExists(String username, BooleanCallback callback){
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        DocumentReference doc = usersColRef
+                .document(username);
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    boolean flag = false;
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        flag = true;
+                    }
+                    callback.onCallbackSuccess(flag);
+                }
+                else{
+                    callback.onCallbackFailed();
+                }
+            }
+        });
+    }
+
+    public void checkPassword(String username, String hashedPassword, BooleanCallback callback){
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        DocumentReference doc = usersColRef
+                .document(username);
+        doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    boolean flag = false;
+                    DocumentSnapshot document = task.getResult();
+                    if(!document.exists()){
+                        callback.onCallbackFailed();
+                        return;
+                    }else if(hashedPassword.equals((String)document.getData().get("hashedPassword"))){
+                        flag = true;
+                    }
+                    callback.onCallbackSuccess(flag);
                 }
                 else{
                     callback.onCallbackFailed();

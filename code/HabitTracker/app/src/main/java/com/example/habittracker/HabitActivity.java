@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.habittracker.utils.BooleanCallback;
+import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.SharedInfo;
+import com.example.habittracker.utils.UserDetailsCallback;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -14,7 +18,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import com.example.habittracker.activities.HomeActivity;
@@ -28,6 +34,20 @@ public class HabitActivity extends AppCompatActivity {
 
         // TEST DATABASE
         //testDatabase();
+
+        DatabaseManager db = DatabaseManager.get();
+        db.checkPassword("user1","12345",new BooleanCallback() {
+            @Override
+            public void onCallbackSuccess(boolean exists) {
+                //Do what you need to do with your list
+                Log.d("User",""+exists);
+            }
+
+            @Override
+            public void onCallbackFailed() {
+                Log.d("Error","Failed to get user");
+            }
+        });
       
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         Intent intent = new Intent(this, HomeActivity.class);
