@@ -76,7 +76,7 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         HabitEvent tempEvent =events.get(position);
         TextView Title = (TextView) view.findViewById(R.id.contentView);;
         TextView startDate = (TextView) view.findViewById(R.id.dateView);;
-        Title.setText(tempEvent.getEventId());
+        Title.setText(tempEvent.getHabit());
         startDate.setText(tempEvent.getStartDate());
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;

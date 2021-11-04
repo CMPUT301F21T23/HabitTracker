@@ -20,6 +20,8 @@ import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.AddEventFragment;
 import com.example.habittracker.activities.fragments.OnFragmentInteractionListener;
+import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.SharedInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -108,44 +110,105 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         String habitEventsColName = "HabitEvents";
         String DB_TAG = "DatabaseManager";
 
+        ArrayList<String> habit_list = new ArrayList<>();
+
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
-        String []habit_list = {"Habit 1","Habit 2","Habit 3"};
-        eventDataList.clear();
-        for (int i = 0;i<3;i++) {
-            colRef = dm.getUsersColRef()
-                    .document("user1")
-                    .collection(habitsColName)
-                    .document(habit_list[i])
-                    .collection(habitEventsColName);
-            Query query = colRef.orderBy("date", Query.Direction.ASCENDING);
-            colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                        FirebaseFirestoreException error) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
-                        String eventID = doc.getId();
-                        String habitID = (String) doc.getData().get("Habit");
-                        String startDate = (String) doc.getData().get("startDate");
-                        String comments = (String) doc.getData().get("comment");
+        dm.getAllHabits("user1", new HabitListCallback() {
+            @Override
+            public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                for(int i = 0;i<habitList.size();i++) {
+                    System.out.println(habitList.get(i).getTitle());
+                    habit_list.add(habitList.get(i).getTitle());
+                    Log.d("Here", habit_list.get(i));
+                }
+                CollectionReference colRef;
+                eventDataList.clear();
+                for (int i = 0;i<habit_list.size();i++) {
+                    colRef = dm.getUsersColRef()
+                            /**********/
+                            .document("user1")
+                            // uncomment this line when SharedInfo is set up.
+//                    .document(SharedInfo.getInstance().getCurrentUser().getUsername())
+                            /*********/
+                            .collection(habitsColName)
+                            .document(habit_list.get(i))
+                            .collection(habitEventsColName);
+                    Query query = colRef.orderBy("date", Query.Direction.ASCENDING);
+                    colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                                FirebaseFirestoreException error) {
+                            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
+                                String eventID = doc.getId();
+                                String habitID = (String) doc.getData().get("Habit");
+                                String startDate = (String) doc.getData().get("startDate");
+                                String comments = (String) doc.getData().get("comment");
 //                    String location = (String) doc.getData().get("location");
 //                    String image = (String) doc.getData().get("image");
-                        HabitEvent temp = new HabitEvent();
-                        temp.setStartDate(startDate);
-                        temp.setComment(comments);
-                        temp.setEventId(eventID);
-                        temp.setHabit(habitID);
-                        if(!habitID.isEmpty()) {
-                            eventDataList.add(temp);
-                        }
+                                HabitEvent temp = new HabitEvent();
+                                temp.setStartDate(startDate);
+                                temp.setComment(comments);
+                                temp.setEventId(eventID);
+                                temp.setHabit(habitID);
+                                if(!habitID.isEmpty()) {
+                                    eventDataList.add(temp);
+                                }
 
-                    }
-                    eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                    //from the cloud
+                            }
+                            eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                            //from the cloud
+                        }
+                    });
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onCallbackFailed() {
+
+            }
+        });
+//        String []habit_list = {"Habit 1","Habit 2","Habit 3"};
+//        eventDataList.clear();
+//        for (int i = 0;i<3;i++) {
+//            colRef = dm.getUsersColRef()
+//                    /**********/
+//                    .document("user1")
+//                    // uncomment this line when SharedInfo is set up.
+////                    .document(SharedInfo.getInstance().getCurrentUser().getUsername())
+//                    /*********/
+//                    .collection(habitsColName)
+//                    .document(habit_list.get(i))
+//                    .collection(habitEventsColName);
+//            Query query = colRef.orderBy("date", Query.Direction.ASCENDING);
+//            colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                @Override
+//                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+//                        FirebaseFirestoreException error) {
+//                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+//                        Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
+//                        String eventID = doc.getId();
+//                        String habitID = (String) doc.getData().get("Habit");
+//                        String startDate = (String) doc.getData().get("startDate");
+//                        String comments = (String) doc.getData().get("comment");
+////                    String location = (String) doc.getData().get("location");
+////                    String image = (String) doc.getData().get("image");
+//                        HabitEvent temp = new HabitEvent();
+//                        temp.setStartDate(startDate);
+//                        temp.setComment(comments);
+//                        temp.setEventId(eventID);
+//                        temp.setHabit(habitID);
+//                        if(!habitID.isEmpty()) {
+//                            eventDataList.add(temp);
+//                        }
+//
+//                    }
+//                    eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+//                    //from the cloud
+//                }
+//            });
+//        }
     }
 
     /**
