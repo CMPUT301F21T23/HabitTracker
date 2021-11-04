@@ -15,7 +15,7 @@ public class HabitEvent {
     public HabitEvent () {
 
     }
-    
+
     /**
      * Creates a habit event.
      * A habit event is an entry that the user might create when they've done a habit as planned.
