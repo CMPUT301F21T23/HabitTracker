@@ -26,10 +26,10 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         Habit value = null; // or other values
         if(b != null)
             value =(Habit) b.getSerializable("habit");
-        if(value == null)
-            Log.d("Error","No habit given to progress activity.");
-        //close activity
-        finish();
+        if(value == null) {
+            Log.d("Error", "No habit given to progress activity.");
+            finish();
+        }
 
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         Button editButton = findViewById(R.id.editButton);
