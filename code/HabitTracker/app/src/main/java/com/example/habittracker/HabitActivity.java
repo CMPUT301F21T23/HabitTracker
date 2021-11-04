@@ -34,7 +34,7 @@ public class HabitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_habit);
 
         // TEST DATABASE
-        //testDatabase();
+        testDatabase();
 
         DatabaseManager db = DatabaseManager.get();
         db.getUserDetails("user1",new UserDetailsCallback() {
@@ -72,7 +72,7 @@ public class HabitActivity extends AppCompatActivity {
         userDocument.put("following", Arrays.asList("user2"));
         userDocument.put("followers", Arrays.asList("user2"));
         userDocument.put("pendingFollowReqs", Arrays.asList("user3"));
-        userDocument.put("pendingFollowerReqs", Arrays.asList("user3"));
+        userDocument.put("pendingFollowerReqs", Arrays.asList("user3", "user9", "user10"));
 
         // use database manager
         DatabaseManager.get().addUsersDocument(userid, userDocument);

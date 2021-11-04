@@ -11,10 +11,8 @@ import android.widget.ListView;
 
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
-import com.example.habittracker.activities.eventlist.EventListActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -52,7 +50,7 @@ public class ProfileActivity extends AppCompatActivity {
         follower_requests_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ProfileFollowRequestsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfilePendingFollowersActivity.class);
                 startActivity(intent);
             }
         });

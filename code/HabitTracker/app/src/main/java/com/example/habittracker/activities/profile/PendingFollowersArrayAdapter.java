@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.R;
 import com.example.habittracker.User;
-import com.example.habittracker.utils.PendingRequestCallback;
+import com.example.habittracker.utils.UserListOperationCallback;
 import com.example.habittracker.utils.SharedInfo;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class PendingFollowersArrayAdapter extends ArrayAdapter<User> {
     /**
      * Constructs PendingFollowersArrayAdapter.
      * @param context                   {@code Context} Global information about the application environment
-     * @param pendingFollowersList      {@code ArrayList<String>} List of userids representing pending requests
+     * @param pendingFollowersList      {@code ArrayList<User>} List of userids representing pending requests
      */
     PendingFollowersArrayAdapter(@NonNull Context context, ArrayList<User> pendingFollowersList) {
         super(context, 0, pendingFollowersList);
@@ -58,15 +58,16 @@ public class PendingFollowersArrayAdapter extends ArrayAdapter<User> {
         TextView pendingFollower = convertView.findViewById(R.id.pendingFollowerId);
         pendingFollower.setText(userid);
 
-        // set action to the decline button
+        // declines a follow request upon pressing the decline button
         Button declineButton = convertView.findViewById(R.id.decline);
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseManager.get().declineFollowRequest(
+                DatabaseManager.get().removeUserListItem(
                         SharedInfo.getInstance().getCurrentUser().getUsername(),
                         userid,
-                        new PendingRequestCallback() {
+                        "pendingFollowerReqs",
+                        new UserListOperationCallback() {
                             @Override
                             public void onCallbackSuccess(String userid) {
                                 // remove the user from the pending list
@@ -81,7 +82,7 @@ public class PendingFollowersArrayAdapter extends ArrayAdapter<User> {
             }
         });
 
-        // set action for the accept button
+        // accepts a follow request upon pressing the accept button
         Button acceptButton = convertView.findViewById(R.id.accept);
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +90,7 @@ public class PendingFollowersArrayAdapter extends ArrayAdapter<User> {
                 DatabaseManager.get().acceptFollowRequest(
                         SharedInfo.getInstance().getCurrentUser().getUsername(),
                         userid,
-                        new PendingRequestCallback() {
+                        new UserListOperationCallback() {
                             @Override
                             public void onCallbackSuccess(String userid) {
                                 // remove the user from the pending list

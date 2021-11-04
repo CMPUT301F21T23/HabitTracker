@@ -12,12 +12,14 @@
         android:text="TextView"
         android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/followStatus"
+    <Button
+        android:id="@+id/unfollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
         android:layout_weight="1"
-        android:padding="20dp"
-        android:text=""
-        android:textAlignment="textEnd" />
+        android:text="Unfollow" />
 </LinearLayout>

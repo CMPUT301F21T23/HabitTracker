@@ -27,6 +27,10 @@ public class ProfilePendingFollowersActivity extends AppCompatActivity {
     private User currentUser = new User("user1");
     private String currentUsername = currentUser.getUsername();
 
+    /**
+     * Defines what to do when the ProfilePendingFollowersActivity is created
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +61,8 @@ public class ProfilePendingFollowersActivity extends AppCompatActivity {
      */
     void populateList() {
         // get the list of the current user's pending follow requests
-        DatabaseManager.get().getPendingFollowers(currentUsername, new SharingListCallback() {
+        DatabaseManager.get().getPendingFollowers(SharedInfo.getInstance().getCurrentUser().getUsername(),
+                new SharingListCallback() {
             @Override
             public void onCallbackSuccess(ArrayList<String> dataList) {
                 for (String userid : dataList) {
