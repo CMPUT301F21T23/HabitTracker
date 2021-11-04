@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.habittracker.R;
-import com.example.habittracker.User;
 
 import java.util.ArrayList;
 
@@ -34,7 +33,7 @@ public class FollowersArrayAdapter extends ArrayAdapter<String> {
         }
         // populate the list view content
         String followerId = followersList.get(position);
-        TextView followerIdView = convertView.findViewById(R.id.followerId);
+        TextView followerIdView = convertView.findViewById(R.id.pendingFollowerId);
         followerIdView.setText(followerId);
         return convertView;
     }

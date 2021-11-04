@@ -37,7 +37,7 @@ public class ProfileFollowersActivity extends AppCompatActivity {
     private Button cancelButton;
 
     // TODO: the user will be retrieved using the SharedInfo class later
-    private User currentUser = new User("user1", "password");
+    private User currentUser = new User("user1");
     private String currentUsername = currentUser.getUsername();
 
     @Override
