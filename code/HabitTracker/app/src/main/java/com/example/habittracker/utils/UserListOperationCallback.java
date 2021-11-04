@@ -1,6 +1,6 @@
 package com.example.habittracker.utils;
 
-public interface PendingRequestCallback {
+public interface UserListOperationCallback {
     /**
      * Defines what to do upon callback success.
      * @param userid        {@code String} User ID of the requester
