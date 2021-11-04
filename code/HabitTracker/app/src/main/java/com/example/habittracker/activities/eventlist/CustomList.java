@@ -23,7 +23,10 @@
  */
 package com.example.habittracker.activities.eventlist;
 
+import static com.example.habittracker.utils.DateConverter.arrayListToString;
+
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +36,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
@@ -66,6 +70,7 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
      * @param parent            {@code ViewGroup} parent view
      * @return
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -77,7 +82,7 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         TextView Title = (TextView) view.findViewById(R.id.contentView);;
         TextView startDate = (TextView) view.findViewById(R.id.dateView);;
         Title.setText(tempEvent.getHabit());
-        startDate.setText(tempEvent.getStartDate());
+        startDate.setText(arrayListToString(tempEvent.getStartDate()));
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
         event_image.setImageResource(R.drawable.riding);

@@ -62,16 +62,16 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         eventList = findViewById(R.id.event_list);
         eventDataList = new ArrayList<>();
-        String []habits={"Habit 1","Habit 1","Habit 1"};
-        String []dates={"2020-01-01","2020-01-01","2020-01-01"};
-        String []commentss={"123","123","123"};
-        for(int i = 0; i < habits.length;i++){
-            HabitEvent temp_1 = new HabitEvent();
-            temp_1.setHabit(habits[i]);
-            temp_1.setStartDate(dates[i]);
-            temp_1.setComment(commentss[i]);
-            eventDataList.add(temp_1);
-        }
+//        String []habits={"Habit 1","Habit 1","Habit 1"};
+//        String []dates={"2020-01-01","2020-01-01","2020-01-01"};
+//        String []commentss={"123","123","123"};
+//        for(int i = 0; i < habits.length;i++){
+//            HabitEvent temp_1 = new HabitEvent();
+//            temp_1.setHabit(habits[i]);
+//            temp_1.setStartDate(dates[i]);
+//            temp_1.setComment(commentss[i]);
+//            eventDataList.add(temp_1);
+//        }
         eventAdapter = new CustomList(this, eventDataList);
         eventList.setAdapter(eventAdapter);
 
@@ -143,7 +143,9 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                                 Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
                                 String eventID = doc.getId();
                                 String habitID = (String) doc.getData().get("Habit");
-                                String startDate = (String) doc.getData().get("startDate");
+                                Log.d("date", String.valueOf(doc.getId()));
+                                Log.d("date", String.valueOf(doc.getData().get("startDate")));
+                                ArrayList<Integer> startDate = (ArrayList<Integer>) doc.getData().get("startDate");
                                 String comments = (String) doc.getData().get("comment");
 //                    String location = (String) doc.getData().get("location");
 //                    String image = (String) doc.getData().get("image");
@@ -152,7 +154,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                                 temp.setComment(comments);
                                 temp.setEventId(eventID);
                                 temp.setHabit(habitID);
-                                if(!habitID.isEmpty()) {
+                                if(!(habitID=="")) {
                                     eventDataList.add(temp);
                                 }
 

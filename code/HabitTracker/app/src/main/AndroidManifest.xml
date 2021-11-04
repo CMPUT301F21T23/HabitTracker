@@ -12,6 +12,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTracker">
+
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBvcz3ySNbZU8DVauJjIhy7UNBrYlyTAR0" />
+
+        <activity
+            android:name=".activities.eventlist.MapsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_maps" />
+        <activity
+            android:name=".activities.eventlist.LocationActivity"
+            android:exported="true" />
+
         <activity
             android:name=".activities.SharingActivity"
             android:exported="true" />

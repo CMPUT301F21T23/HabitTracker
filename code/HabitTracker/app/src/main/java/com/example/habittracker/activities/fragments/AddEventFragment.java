@@ -23,16 +23,21 @@
  */
 package com.example.habittracker.activities.fragments;
 
+import static com.example.habittracker.utils.DateConverter.arrayListToString;
+import static com.example.habittracker.utils.DateConverter.stringToArraylist;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +52,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
@@ -55,6 +61,7 @@ import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.activities.eventlist.LocationActivity;
 import com.example.habittracker.utils.CustomDatePicker;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -63,6 +70,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -110,6 +118,7 @@ public class AddEventFragment extends DialogFragment {
      * @param savedInstanceState
      * @return a AlertDialog object
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -124,11 +133,13 @@ public class AddEventFragment extends DialogFragment {
         get_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
-                } else {
-                    getLocation();
-                }
+//                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+//                } else {
+//                    getLocation();
+//                }
+                Intent intent = new Intent(getActivity(), LocationActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -168,7 +179,9 @@ public class AddEventFragment extends DialogFragment {
          */
         if (getArguments() != null) {
             HabitEvent selectedEvent = (HabitEvent) getArguments().getSerializable("event"); // get the HabitEvent object.
-            date.setText(selectedEvent.getStartDate());
+            ArrayList<Integer> temp_date = selectedEvent.getStartDate();
+
+            date.setText(arrayListToString(temp_date));
             editText1.setText(String.valueOf(selectedEvent.getComment()));
             spinnerIdx = spinnerAdapter.getPosition(selectedEvent.getHabit());
             s.setSelection(spinnerIdx);
@@ -206,7 +219,7 @@ public class AddEventFragment extends DialogFragment {
                             HabitEvent editM = (HabitEvent) getArguments().getSerializable("event");
                             if(editM.getHabit()!=attachedHabit) {
                                 editM.deleteDB();
-                                editM.setStartDate(date.getText().toString());
+                                editM.setStartDate(stringToArraylist(date.getText().toString()));
                                 editM.setLocation(location1.getText().toString());
                                 editM.setHabit(attachedHabit);
                                 editM.setComment(editText1.getText().toString());
@@ -214,7 +227,7 @@ public class AddEventFragment extends DialogFragment {
                                 editFlag = false;
                             }
                             else {
-                                editM.setStartDate(date.getText().toString());
+                                editM.setStartDate(stringToArraylist(date.getText().toString()));
                                 editM.setLocation(location1.getText().toString());
                                 editM.setHabit(attachedHabit);
                                 editM.setComment(editText1.getText().toString());
@@ -233,7 +246,7 @@ public class AddEventFragment extends DialogFragment {
                     .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
 //                            String title = eventTitle.getText().toString();
-                            String tempDate = date.getText().toString();
+                            ArrayList<Integer> tempDate = stringToArraylist(date.getText().toString());
                             String tempHabit = attachedHabit;
                             String tempLocation = location1.getText().toString();
                             String tempComments = editText1.getText().toString();
@@ -241,11 +254,11 @@ public class AddEventFragment extends DialogFragment {
                             if(tempDate.isEmpty()) {
                                 String myFormat = "yyyy-MM-dd";
                                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                                tempDate = sdf.format(Calendar.getInstance().getTime());
-                                tempHabitEvent.setCalendar(Calendar.getInstance().getTime());
+                                tempDate = stringToArraylist(sdf.format(Calendar.getInstance().getTime()));
+//                                tempHabitEvent.setCalendar(Calendar.getInstance().getTime());
                             }
                             else {
-                                tempHabitEvent.setCalendar(date_calendar);
+//                                tempHabitEvent.setCalendar(date_calendar);
                             }
                             tempHabitEvent.setLocation(tempLocation);
                             tempHabitEvent.setStartDate(tempDate);

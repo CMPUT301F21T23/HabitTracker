@@ -1,6 +1,7 @@
 package com.example.habittracker;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class HabitEvent implements Serializable {
     private String title;
     private String location;
     private String comment;
-    private String startDate;
+    private ArrayList<Integer> startDate;
     private String userId;
     private Date date_calendar;
     private String habitId;
@@ -41,7 +42,7 @@ public class HabitEvent implements Serializable {
      * @param location  {String}    The location where the habit was accomplished
      * @param image     {String}    Path to the image of the accomplishment.
      */
-    public HabitEvent (String habit, String eventId ,String comment, String startDate, String location, String image) {
+    public HabitEvent (String habit, String eventId ,String comment, ArrayList<Integer> startDate, String location, String image) {
 
         this.userId = "user1";
         this.eventId = eventId;
@@ -65,7 +66,7 @@ public class HabitEvent implements Serializable {
      * Gets the starting date for the habit event
      * @return startDate
      */
-    public String getStartDate() {
+    public ArrayList<Integer> getStartDate() {
         return this.startDate;
     }
 
@@ -82,7 +83,7 @@ public class HabitEvent implements Serializable {
      * Allows editing/setting of the start date
      * @param startDate {String} the new, edited start date
      */
-    public void setStartDate(String startDate) {
+    public void setStartDate(ArrayList<Integer> startDate) {
         this.habitEventDocument.put("startDate", startDate);
         this.startDate = startDate;
     }
