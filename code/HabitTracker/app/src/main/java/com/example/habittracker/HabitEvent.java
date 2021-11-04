@@ -28,7 +28,7 @@ public class HabitEvent implements Serializable {
      * userId and habitId are set to a default value because they are mandatory.
      */
     public HabitEvent () {
-        this.userId = "user1";
+        this.userId = "John_test_user";
         this.habitId = "Habit 1";
         this.habitEventDocument = new HashMap<>();
     }

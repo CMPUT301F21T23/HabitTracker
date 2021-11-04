@@ -114,7 +114,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
-        dm.getAllHabits("user1", new HabitListCallback() {
+        dm.getAllHabits("John_test_user", new HabitListCallback() {
             @Override
             public void onCallbackSuccess(ArrayList<Habit> habitList) {
                 for(int i = 0;i<habitList.size();i++) {
@@ -127,7 +127,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                 for (int i = 0;i<habit_list.size();i++) {
                     colRef = dm.getUsersColRef()
                             /**********/
-                            .document("user1")
+                            .document("John_test_user")
                             // uncomment this line when SharedInfo is set up.
 //                    .document(SharedInfo.getInstance().getCurrentUser().getUsername())
                             /*********/
@@ -143,8 +143,10 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                                 Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
                                 String eventID = doc.getId();
                                 String habitID = (String) doc.getData().get("Habit");
-                                Log.d("date", String.valueOf(doc.getId()));
+
+                                Log.d("eventID", String.valueOf(doc.getId()));
                                 Log.d("date", String.valueOf(doc.getData().get("startDate")));
+
                                 ArrayList<Integer> startDate = (ArrayList<Integer>) doc.getData().get("startDate");
                                 String comments = (String) doc.getData().get("comment");
 //                    String location = (String) doc.getData().get("location");

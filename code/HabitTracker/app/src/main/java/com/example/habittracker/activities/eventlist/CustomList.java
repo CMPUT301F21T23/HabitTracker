@@ -27,6 +27,7 @@ import static com.example.habittracker.utils.DateConverter.arrayListToString;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,7 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         TextView Title = (TextView) view.findViewById(R.id.contentView);;
         TextView startDate = (TextView) view.findViewById(R.id.dateView);;
         Title.setText(tempEvent.getHabit());
+        Log.d("eventID", String.valueOf(tempEvent.getEventId()));
         startDate.setText(arrayListToString(tempEvent.getStartDate()));
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
