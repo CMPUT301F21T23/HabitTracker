@@ -1,8 +1,9 @@
 package com.example.habittracker;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Habit {
+public class Habit implements Serializable {
     private String title;
     private String reason;
     private Date startDate;
@@ -49,6 +50,14 @@ public class Habit {
      */
     public Date getStartDate() {
         return startDate;
+    }
+
+    /**
+     * Gets the weekdays for the habit
+     * @return weekDays
+     */
+    public String[] getWeekDays() {
+        return weekDays;
     }
 
     /**
