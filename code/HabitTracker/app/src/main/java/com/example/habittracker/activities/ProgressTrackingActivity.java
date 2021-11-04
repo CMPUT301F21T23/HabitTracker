@@ -1,7 +1,6 @@
 /**
  * ProgressTrackingActivity.java
  * This is used for the progress and tracking screen which shows the user how they have done on there habits.
- *
  */
 package com.example.habittracker.activities;
 
@@ -31,6 +30,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class is used in displaying progress of a habit to the user.
+ */
 public class ProgressTrackingActivity extends AppCompatActivity {
 
     private Habit habit;
@@ -53,6 +55,10 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         return habit;
     }
 
+    /**
+     * Set the habit of the class
+     * @param habit
+     */
     public void setHabit(Habit habit) {
         this.habit = habit;
     }
@@ -95,7 +101,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
 
         // Bundle for intent's extra arguments
         Bundle b = this.getIntent().getExtras();
-        Habit value = null; // or other values
+        Habit value = null;
         if(b != null)
             value =(Habit) b.getSerializable("habit");
         if(value == null) {
@@ -107,8 +113,11 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         setHabit(value);
 
         //Code idea from https://stackoverflow.com/questions/50650224/wait-until-firestore-data-is-retrieved-to-launch-an-activity
-        //
         getDb().getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(),getHabit(),new HabitEventListCallback() {
+            /**
+             * Called when success to get habit events
+             * @param eventList {ArrayList<HabitEvent>}
+             */
             @Override
             public void onCallbackSuccess(ArrayList<HabitEvent> eventList) {
                 //Do what you need to do with your list
@@ -118,19 +127,30 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                 makeGraph(habit);
             }
 
+            /**
+             * called when failed to get habit events
+             */
             @Override
             public void onCallbackFailed() {
                 Log.d("Error","Failed to get habit events");
             }
         });
-}
+    }
 
+    /**
+     * This makes a graph on the progress screen
+     * @param habit
+     */
     void makeGraph(Habit habit){
+        //get all UI elements
         GraphView graph = (GraphView) findViewById(R.id.progress_graph);
         TextView progressStats = findViewById(R.id.progress_stats_text_view);
         TextView overallProgressText = findViewById(R.id.overall_progress_text_view);
         TextView recentProgressText = findViewById(R.id.recent_progress_text_view);
+
+        //get the overall score
         HashMap<String,Integer> scorePlusStats = ProgressUtil.getOverallProgress(habit,eventList,1,100);
+        //display score and stats
         overallProgressText.setText("Overall Progress: "+scorePlusStats.get("score")+ "%\nPercent of time you are following ideal.");
         recentProgressText.setText("Recent Progress: "+scorePlusStats.get("recent")+ "%\n Last 30 days percent of time following ideal.");
         String progressStatsText = "Days on ideal: "+scorePlusStats.get("ideal")+"\n"+
@@ -138,10 +158,10 @@ public class ProgressTrackingActivity extends AppCompatActivity {
                 "Days over ideal: "+scorePlusStats.get("over");
         progressStats.setText(progressStatsText);
 
+        //add habit to the graph
         GraphUtil.addHabitToGraph(graph,habit,eventList,1,"You", Color.BLUE,true);
         GraphUtil.setDateAsXAxis(graph,getApplicationContext(),3);
-        // set manual x bounds to have nice steps
-        GraphUtil.setYAxisScale(graph,0,5);
+        // add legend, label axis
         GraphUtil.addSimpleLegend(graph,Color.TRANSPARENT);
         GraphUtil.setLabelAxis(graph,"#Done","Date");
     }

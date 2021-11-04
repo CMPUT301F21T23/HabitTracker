@@ -16,11 +16,22 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * This class is for creating and displaying a graph for the progress of a habit
+ */
 public class GraphUtil {
 
-
-
-    static public void addHabitToGraph(GraphView graph,Habit habit,ArrayList<HabitEvent> habitEvents,int idealPerDay,String dataTitle,int dataColor,boolean autoXAxisScale){
+    /**
+     * Adds a habit progress to the graph
+     * @param graph {GraphView}
+     * @param habit {Habit}
+     * @param habitEvents {Arraylist<HabitEvent>}
+     * @param idealPerDay {int}
+     * @param dataTitle {String}
+     * @param dataColor {int}
+     * @param autoAxisScale {boolean}
+     */
+    static public void addHabitToGraph(GraphView graph,Habit habit,ArrayList<HabitEvent> habitEvents,int idealPerDay,String dataTitle,int dataColor,boolean autoAxisScale){
          LineGraphSeries<DataPoint> series = getSeries(habit,habitEvents);
          LineGraphSeries<DataPoint> seriesIdeal = getTargetSeries(habit,idealPerDay);
          seriesIdeal.setTitle("Ideal");
@@ -29,16 +40,23 @@ public class GraphUtil {
          series.setColor(dataColor);
          addSeriesToGraph(graph,series);
          addSeriesToGraph(graph,seriesIdeal);
-         if(autoXAxisScale){
+         if(autoAxisScale){
              setXAxisScale(graph,series.getLowestValueX(),series.getHighestValueX());
+             setYAxisScale(graph,Math.min(0,series.getLowestValueY()),Math.max(idealPerDay,series.getHighestValueY()));
          }
     }
 
+    /**
+     * returns series of datapoints for a target
+     * @param habit {Habit}
+     * @param idealPerDay {int}
+     * @return {LineGraphSeries<DataPoint>}
+     */
     static private LineGraphSeries<DataPoint> getTargetSeries(Habit habit, int idealPerDay){
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
         Date habitStart = habit.getStartDate();
 
-        ArrayList<Integer> daysOfHabit = DaysUtil.getHabitDays(habit);
+        ArrayList<Integer> daysOfHabit = ProgressUtil.getHabitDays(habit);
 
         Calendar start = Calendar.getInstance();
         start.add(Calendar.MONTH,-1);
@@ -62,12 +80,18 @@ public class GraphUtil {
         return series;
     }
 
+    /**
+     * reutrns a series of datapoint based on habit and eventlist of habit
+     * @param habit {Habit}
+     * @param habitEvents {ArrayList<HabitEvent>}
+     * @return {LineGraphSeries<DataPoint>}
+     */
     static public LineGraphSeries<DataPoint> getSeries(Habit habit, ArrayList<HabitEvent> habitEvents){
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
 
         Date habitStart = habit.getStartDate();
 
-        ArrayList<Integer> daysOfHabit = DaysUtil.getHabitDays(habit);
+        ArrayList<Integer> daysOfHabit = ProgressUtil.getHabitDays(habit);
 
         Calendar start = Calendar.getInstance();
         start.add(Calendar.MONTH,-1);
@@ -95,34 +119,68 @@ public class GraphUtil {
         return series;
     }
 
+    /**
+     * sets the scale of a graph's x axis
+     * @param graph {GraphView}
+     * @param minX {double}
+     * @param maxX {double}
+     */
     static public void setXAxisScale(GraphView graph, double minX, double maxX){
         graph.getViewport().setMinX(minX);
         graph.getViewport().setMaxX(maxX);
         graph.getViewport().setXAxisBoundsManual(true);
     }
 
+    /**
+     * set the scale of the y axis of a graph
+     * @param graph {GraphView}
+     * @param minY {double}
+     * @param maxY {double}
+     */
     static public void setYAxisScale(GraphView graph, double minY, double maxY){
         graph.getViewport().setMinY(minY);
         graph.getViewport().setMaxY(maxY);
         graph.getViewport().setYAxisBoundsManual(true);
     }
 
+    /**
+     * add a legend using a background color
+     * @param graph {GraphView}
+     * @param backgroundColor {int}
+     */
     static public void addSimpleLegend(GraphView graph, int backgroundColor){
         graph.getLegendRenderer().setVisible(true);
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
         graph.getLegendRenderer().setBackgroundColor(backgroundColor);
     }
 
+    /**
+     * adds a seris list to a graph
+     * @param graph {GraphView}
+     * @param series {LineGraphSeries}
+     */
     static public void addSeriesToGraph(GraphView graph, LineGraphSeries<DataPoint> series){
         graph.addSeries(series);
     }
 
+    /**
+     * sets the x axis type to date type
+     * @param graph {GraphView}
+     * @param context {Context}
+     * @param numberOfLabels {int}
+     */
     static public void setDateAsXAxis(GraphView graph, Context context, int numberOfLabels){
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(context));
         graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
         graph.getGridLabelRenderer().setHumanRounding(false);
     }
 
+    /**
+     * sets the labels of the X and Y axis
+     * @param graph {GraphView}
+     * @param x {String}
+     * @param y {String}
+     */
     static public void setLabelAxis(GraphView graph,String x,String y){
          graph.getGridLabelRenderer().setHorizontalAxisTitle(y);
          graph.getGridLabelRenderer().setVerticalAxisTitle(x);
