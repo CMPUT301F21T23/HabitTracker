@@ -149,6 +149,11 @@ public class LoginActivity extends AppCompatActivity {
     public void loginPressed(View view) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String username = usernameField.getText().toString();
 
+        if (username.length() == 0) {
+            Toast.makeText(LoginActivity.this, "Username cannot be empty!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         DatabaseManager db = DatabaseManager.get();
 
         db.userExists(username, new UserExistsCallback() {
@@ -207,6 +212,20 @@ public class LoginActivity extends AppCompatActivity {
         //DatabaseManager.get().getUsersColName()
 
         String username = usernameField.getText().toString();
+
+        if (username.length() == 0) {
+            Toast.makeText(LoginActivity.this, "Username cannot be empty!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (passwordField.getText().toString().length() < 6) {
+            Toast.makeText(LoginActivity.this, "Password must be at least 6 characters long!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (username.equals(passwordField.getText().toString())) {
+            Toast.makeText(LoginActivity.this, "Username cannot be identical to the password!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String hashedPassword = generateStrongPasswordHash(passwordField.getText().toString());
 
         DatabaseManager db = DatabaseManager.get();
