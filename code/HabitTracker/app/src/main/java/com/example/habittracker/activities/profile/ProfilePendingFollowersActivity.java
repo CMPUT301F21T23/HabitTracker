@@ -18,7 +18,7 @@ import com.example.habittracker.utils.SharingListCallback;
 import java.util.ArrayList;
 
 public class ProfilePendingFollowersActivity extends AppCompatActivity {
-    private ListView pendingFollowersListView;
+    public ListView pendingFollowersListView;
     private ArrayAdapter<User> pendingFollowersArrayAdapter;
     private ArrayList<User> pendingFollowersList;
     private String TAG = "ProfilePendingFollowersActivity";
