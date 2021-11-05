@@ -38,6 +38,14 @@ import java.util.HashMap;
  * Intent test for EventListActivity.
  *
  * Please NOTE: This test only works when user is 'John_test_user'
+ * In order to do that, comment out line 131 in EventListActivity.java
+ * and uncomment line 129;
+ * comment out line 111 in EventListActivity.java
+ * and uncomment line 109;
+ * comment out line 200 in AddEventFragment.java
+ * and uncomment line 199.
+ *
+ * After testing, please revise the above changes.
  */
 public class EventListTest {
     private Solo solo;
