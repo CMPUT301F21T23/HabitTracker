@@ -36,8 +36,16 @@ public class DateConverter {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static String arrayListToString (ArrayList<Integer> date_list) {
-        String date = date_list.stream().map(String::valueOf)
-                .collect(Collectors.joining("-"));
+
+        String date = "";
+        for (int i = 0;i<date_list.size();i++) {
+            if(i<date_list.size()-1) {
+                date = date + date_list.get(i) + "-";
+            }
+            else {
+                date = date + date_list.get(i);
+            }
+        }
         return date;
     }
 

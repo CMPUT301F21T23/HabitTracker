@@ -35,6 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * The EventListActivity class that extends AppCompatActivity and implements
@@ -62,16 +63,14 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         eventList = findViewById(R.id.event_list);
         eventDataList = new ArrayList<>();
-//        String []habits={"Habit 1","Habit 1","Habit 1"};
-//        String []dates={"2020-01-01","2020-01-01","2020-01-01"};
-//        String []commentss={"123","123","123"};
-//        for(int i = 0; i < habits.length;i++){
-//            HabitEvent temp_1 = new HabitEvent();
-//            temp_1.setHabit(habits[i]);
-//            temp_1.setStartDate(dates[i]);
-//            temp_1.setComment(commentss[i]);
-//            eventDataList.add(temp_1);
-//        }
+        ArrayList<Integer> date1 = new ArrayList<>(Arrays.asList(2021,2,3));
+
+        HabitEvent temp_1 = new HabitEvent();
+        temp_1.setHabit("Habit 1");
+        temp_1.setStartDate(date1);
+        temp_1.setComment("123");
+        eventDataList.add(temp_1);
+
         eventAdapter = new CustomList(this, eventDataList);
         eventList.setAdapter(eventAdapter);
 

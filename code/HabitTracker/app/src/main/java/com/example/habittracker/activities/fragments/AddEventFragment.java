@@ -223,7 +223,7 @@ public class AddEventFragment extends DialogFragment {
                                 editM.setLocation(location1.getText().toString());
                                 editM.setHabit(attachedHabit);
                                 editM.setComment(editText1.getText().toString());
-                                editM.setCalendar(date_calendar);
+//                                editM.setCalendar(date_calendar);
                                 editFlag = false;
                             }
                             else {
@@ -231,7 +231,7 @@ public class AddEventFragment extends DialogFragment {
                                 editM.setLocation(location1.getText().toString());
                                 editM.setHabit(attachedHabit);
                                 editM.setComment(editText1.getText().toString());
-                                editM.setCalendar(date_calendar);
+//                                editM.setCalendar(date_calendar);
                                 editFlag = true;
                             }
                             listener.onOkPressed(editM, editFlag);

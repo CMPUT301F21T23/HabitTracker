@@ -44,7 +44,7 @@ public class HabitEvent implements Serializable {
      */
     public HabitEvent (String habit, String eventId ,String comment, ArrayList<Integer> startDate, String location, String image) {
 
-        this.userId = "user1";
+        this.userId = "John_test_user";
         this.eventId = eventId;
         this.habitId = habit;
         this.comment = comment;
