@@ -1,13 +1,14 @@
 package com.example.habittracker;
 
+
 import com.example.habittracker.utils.DateConverter;
+import com.example.habittracker.utils.SharedInfo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 public class Habit implements Serializable {
     private String title;
@@ -110,7 +111,9 @@ public class Habit implements Serializable {
      */
     public void addToDB() {
         HashMap <String, Object> doc = this.toDocument();
-        DatabaseManager.get().addHabitDocument("Pao_Dummy", title, doc);
+        DatabaseManager
+                .get()
+                .addHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(), title, doc);
         //TODO: Remember to get user when you are done testing
     }
 

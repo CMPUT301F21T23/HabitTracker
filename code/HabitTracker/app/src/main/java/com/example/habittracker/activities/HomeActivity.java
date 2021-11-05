@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,15 +13,18 @@ import android.widget.ListView;
 
 import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.Habit;
+
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
+import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,7 +35,6 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
     private ArrayAdapter<Habit> habitAdapter;
-//    private ArrayAdapter<String> adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,10 @@ public class HomeActivity extends AppCompatActivity {
 
         // TODO: Remember to change this with getuser when you are not testing anymore
         // snapshot
-        DatabaseManager.get().getHabitsColRef("Pao_Dummy").addSnapshotListener(
+        DatabaseManager
+                .get()
+                .getHabitsColRef(SharedInfo.getInstance().getCurrentUser().getUsername())
+                .addSnapshotListener(
                 new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -118,8 +122,4 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
-
-}
+    }

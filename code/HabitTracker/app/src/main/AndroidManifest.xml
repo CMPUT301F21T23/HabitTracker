@@ -12,13 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTracker">
         <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ProgressTrackingActivity"
+            android:exported="true" />
+        <activity
             android:name=".activities.SharingActivity"
             android:exported="true" />
         <activity
             android:name=".activities.profile.ProfileLoginActivity"
             android:exported="true" />
         <activity
-            android:name=".activities.profile.ProfileFollowRequestsActivity"
+            android:name=".activities.profile.ProfilePendingFollowersActivity"
             android:exported="true" />
         <activity
             android:name=".activities.profile.ProfileFollowersActivity"

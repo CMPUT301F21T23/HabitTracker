@@ -5,21 +5,22 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+
 import com.example.habittracker.DatabaseManager;
+
 import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
-import com.google.android.gms.common.util.ArrayUtils;
+import com.example.habittracker.utils.SharedInfo;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +30,6 @@ import java.util.Locale;
  * HabitViewActivity class: the activity that displays details concerning a Habit
  */
 public class HabitViewActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
-
     private Habit habit;
     /**
      * Populates the screen with data reagrding the specified habit. Some fields are optional.
@@ -124,8 +124,24 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
              */
             @Override
             public void onClick(View view) {
-                DatabaseManager.get().deleteHabitDocument("Pao_Dummy", habit.getTitle());
+                DatabaseManager
+                        .get()
+                        .deleteHabitDocument(
+                                SharedInfo.getInstance().getCurrentUser().getUsername(),
+                                habit.getTitle());
                 Intent intent = new Intent(getApplicationContext(),ListActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button seeProgressButton = findViewById(R.id.see_progress_button);
+        seeProgressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),ProgressTrackingActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", habit);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -142,7 +158,13 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         String newTitle = habit.getTitle();
 
         HashMap<String, Object> habitHm= habit.toDocument();
-        DatabaseManager.get().updateHabitDocument("Pao_Dummy", prevTitle, newTitle, habitHm);
+        DatabaseManager
+                .get()
+                .updateHabitDocument(
+                        SharedInfo.getInstance().getCurrentUser().getUsername(),
+                        prevTitle,
+                        newTitle,
+                        habitHm);
 
         Intent intent = new Intent(getApplicationContext(),ListActivity.class);
         startActivity(intent);

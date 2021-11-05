@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +17,8 @@ import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
+
+import com.example.habittracker.utils.SharedInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -64,9 +65,10 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
             }
         });
 
-        // TODO: Remember to change this with getuser when you are not testing anymore
-        // snapshot
-        DatabaseManager.get().getHabitsColRef("Pao_Dummy").addSnapshotListener(
+        DatabaseManager
+                .get()
+                .getHabitsColRef(SharedInfo.getInstance().getCurrentUser().getUsername())
+                .addSnapshotListener(
                         new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

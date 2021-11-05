@@ -1,3 +1,9 @@
+/**
+ * NavBarManager.java
+ * This class is for universal use for the navigation bar.
+ * It swaps between multiple activities when the navigation bar icon are clicked on.
+ */
+
 package com.example.habittracker;
 
 import android.content.Intent;
@@ -53,6 +59,7 @@ public class NavBarManager{
                     break;
             }
             if(activity != null){
+                //starts the new activity
                 startNewActivity(activity);
             }
             return false;

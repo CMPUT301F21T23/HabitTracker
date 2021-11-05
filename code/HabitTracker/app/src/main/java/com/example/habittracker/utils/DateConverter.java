@@ -1,13 +1,19 @@
 package com.example.habittracker.utils;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import android.os.Build;
+import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
+/**
+ * This class is responsible for several date-related utilities. It allows for conversion between
+ * different date formats (used on convenience)
+ */
 public class DateConverter {
 
     /**
@@ -88,5 +94,49 @@ public class DateConverter {
         }
 
         return (weekDay);
+    }
+
+     /**
+     * converts date array list to string
+     * @param date_list
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static String arrayListToString (ArrayList<Integer> date_list) {
+        String date = date_list.stream().map(String::valueOf)
+                .collect(Collectors.joining("-"));
+        return date;
+    }
+
+    /**
+     * convert string to arraylist
+     * @param date_string
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static ArrayList<Integer> stringToArraylist (String date_string) {
+        String [] temp = date_string.split("-");
+        ArrayList<Integer> date = new ArrayList<>();
+        for (int i = 0; i<temp.length;i++) {
+            date.add(Integer.parseInt(temp[i]));
+        }
+        return date;
+    }
+
+    /**
+     * converts arraylist to Date object
+     * @param array
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static Date intArrayListToDate(ArrayList<Integer> array){ //
+
+        Calendar cal = Calendar.getInstance();
+        Object[] objArray = array.toArray();
+        Integer year = Long.valueOf(objArray[0].toString()).intValue();
+        Integer month = Long.valueOf(objArray[1].toString()).intValue();
+        Integer day = Long.valueOf(objArray[2].toString()).intValue();
+        cal.set( year,month-1,day);
+        return cal.getTime();
     }
 }
