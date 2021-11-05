@@ -113,9 +113,9 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
-        dm.getAllHabits("John_test_user", new HabitListCallback() {
+//        dm.getAllHabits("John_test_user", new HabitListCallback() {
             // Replace with this line when sharedInfo is up
-//        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
+        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
             @Override
             public void onCallbackSuccess(ArrayList<Habit> habitList) {
                 for(int i = 0;i<habitList.size();i++) {
@@ -128,9 +128,9 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                 for (int i = 0;i<habit_list.size();i++) {
                     colRef = dm.getUsersColRef()
                             /**********/
-                            .document("John_test_user")
+//                            .document("John_test_user")
                             // Replace with this line when sharedInfo is up
-//                            .document(SharedInfo.getInstance().getCurrentUser().getUsername())
+                            .document(SharedInfo.getInstance().getCurrentUser().getUsername())
                             /*********/
                             .collection(habitsColName)
                             .document(habit_list.get(i))
