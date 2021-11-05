@@ -285,12 +285,13 @@ public class AddEventFragment extends DialogFragment {
                     .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
 //                            String title = eventTitle.getText().toString();
-                            ArrayList<Integer> tempDate = stringToArraylist(date.getText().toString());
+                            String temp_dateString = date.getText().toString();
+                            ArrayList<Integer> tempDate;
                             String tempHabit = attachedHabit;
                             String tempLocation = location1.getText().toString();
                             String tempComments = editText1.getText().toString();
                             HabitEvent tempHabitEvent = new HabitEvent();
-                            if(tempDate.isEmpty()) {
+                            if(temp_dateString.isEmpty()) {
                                 String myFormat = "yyyy-MM-dd";
                                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                                 tempDate = stringToArraylist(sdf.format(Calendar.getInstance().getTime()));
@@ -298,6 +299,7 @@ public class AddEventFragment extends DialogFragment {
                             }
                             else {
 //                                tempHabitEvent.setCalendar(date_calendar);
+                                tempDate = stringToArraylist(date.getText().toString());
                             }
                             tempHabitEvent.setLocation(tempLocation);
                             tempHabitEvent.setStartDate(tempDate);

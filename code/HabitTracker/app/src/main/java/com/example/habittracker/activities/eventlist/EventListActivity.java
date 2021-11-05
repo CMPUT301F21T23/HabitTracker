@@ -63,13 +63,13 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         eventList = findViewById(R.id.event_list);
         eventDataList = new ArrayList<>();
-        ArrayList<Integer> date1 = new ArrayList<>(Arrays.asList(2021,2,3));
+//        ArrayList<Integer> date1 = new ArrayList<>(Arrays.asList(2021,2,3));
 
-        HabitEvent temp_1 = new HabitEvent();
-        temp_1.setHabit("Habit 1");
-        temp_1.setStartDate(date1);
-        temp_1.setComment("123");
-        eventDataList.add(temp_1);
+//        HabitEvent temp_1 = new HabitEvent();
+//        temp_1.setHabit("Habit 1");
+//        temp_1.setStartDate(date1);
+//        temp_1.setComment("123");
+//        eventDataList.add(temp_1);
 
         eventAdapter = new CustomList(this, eventDataList);
         eventList.setAdapter(eventAdapter);
@@ -113,34 +113,44 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
-//        dm.getAllHabits("John_test_user", new HabitListCallback() {
+        dm.getAllHabits("John_test_user", new HabitListCallback() {
             // Replace with this line when sharedInfo is up
-        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
+//        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
             @Override
             public void onCallbackSuccess(ArrayList<Habit> habitList) {
                 for(int i = 0;i<habitList.size();i++) {
                     System.out.println(habitList.get(i).getTitle());
                     habit_list.add(habitList.get(i).getTitle());
                     Log.d("Here", habit_list.get(i));
+                    Log.d("list size", String.valueOf(habitList.size()));
                 }
                 CollectionReference colRef;
                 eventDataList.clear();
                 for (int i = 0;i<habit_list.size();i++) {
                     colRef = dm.getUsersColRef()
                             /**********/
-//                            .document("John_test_user")
+                            .document("John_test_user")
                             // Replace with this line when sharedInfo is up
-                            .document(SharedInfo.getInstance().getCurrentUser().getUsername())
+//                            .document(SharedInfo.getInstance().getCurrentUser().getUsername())
                             /*********/
                             .collection(habitsColName)
                             .document(habit_list.get(i))
                             .collection(habitEventsColName);
-                    Query query = colRef.orderBy("date", Query.Direction.ASCENDING);
                     colRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
                         @Override
                         public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
                                 FirebaseFirestoreException error) {
                             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                                boolean duplicate_flag = false;
+                                for (int i = 0;i<eventDataList.size();i++) {
+                                    if(eventDataList.get(i).getEventId() == doc.getId()) {
+                                        duplicate_flag = true;
+                                        Log.d("same!", String.valueOf(doc.getId()));
+                                    }
+                                }
+                                if(duplicate_flag) {
+                                    continue;
+                                }
                                 Log.d(DB_TAG, String.valueOf(doc.getData().get("Habit")));
                                 String eventID = doc.getId();
                                 String habitID = (String) doc.getData().get("Habit");
@@ -167,6 +177,8 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                         }
                     });
                 }
+//                eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+
             }
 
             @Override
