@@ -22,8 +22,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     // Variables
     ListView profileList;
-    ArrayAdapter<String> profileListAdapter;
-    ArrayList<String> profileDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
         //setContentView(R.layout.profile.xml);
         setContentView(R.layout.activity_profile);
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
-        //setContentView(R.layout.login);
-/*
-        profileList = findViewById(R.id.profileList);
-        String [] people = {"Alice", "Bob", "Carol", "David", "Eve", "Fred", "Gradle", "Hecklin", "Indigogo", "Jawvah", "Khotlynn", "Lemniskate", "Marks", "Nizzle", "Opossum", "Poutina", "Qwertyuiop", "Rusty", "Spacy", "Trampauline", "Uragay", "Vangogh", "Wango", "Xango", "Yango", "Zango"};
-        profileDataList = new ArrayList<>();
-        // Take string array and add each element to the array
-        profileDataList.addAll(Arrays.asList(people));
-        profileListAdapter = new ArrayAdapter<>(this, R.layout.content, profileDataList);
-        profileList.setAdapter(profileListAdapter);
-*/
+        
         Button followers_button = findViewById(R.id.followersButton);
         followers_button.setOnClickListener(new View.OnClickListener() {
             @Override
