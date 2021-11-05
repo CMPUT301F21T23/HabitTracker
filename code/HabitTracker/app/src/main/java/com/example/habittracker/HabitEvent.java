@@ -151,21 +151,4 @@ public class HabitEvent implements Serializable {
     public String getEventId() {
         return this.eventId;
     }
-
-    /**
-     * Allows editing/setting of the start date of the habit event (in Date format)
-     * @param date {Date} the habit event start date
-     */
-    public void setCalendar(Date date) {
-        this.date_calendar = date;
-        this.habitEventDocument.put("date", date);
-    }
-
-    /**
-     * Gets the the start date of the habit event (in Date format)
-     * @return date_calendar
-     */
-    public Date getCalendar() {
-        return this.date_calendar;
-    }
 }
