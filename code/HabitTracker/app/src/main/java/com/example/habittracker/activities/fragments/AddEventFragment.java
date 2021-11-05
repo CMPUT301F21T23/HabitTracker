@@ -23,17 +23,24 @@
  */
 package com.example.habittracker.activities.fragments;
 
+import static com.example.habittracker.utils.DateConverter.arrayListToString;
+import static com.example.habittracker.utils.DateConverter.stringToArraylist;
+import com.example.habittracker.utils.SharedInfo;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -41,23 +48,37 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
 
+import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
+import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.activities.eventlist.LocationActivity;
+import com.example.habittracker.utils.CustomDatePicker;
+import com.example.habittracker.utils.HabitListCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,18 +90,21 @@ import java.util.Locale;
  */
 public class AddEventFragment extends DialogFragment {
 
+    private TextView eventTitle;
+    private EditText location1;
     private EditText editText1;
     private EditText date;
     private Spinner s;
+    private ImageView event_image;
     private int spinnerIdx;
-    private String num;
+    private String attachedHabit;
     private OnFragmentInteractionListener listener;
     private boolean editFlag = false;
     FusedLocationProviderClient mFusedLocationClient;
 
     /**
      * Override the onAttach method of DialogFragment.
-     * @param context
+     * @param context       {@code Context} required context
      */
     @Override
     public void onAttach(Context context) {
@@ -99,31 +123,38 @@ public class AddEventFragment extends DialogFragment {
      * @param savedInstanceState
      * @return a AlertDialog object
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_add_event, null);
         editText1 = view.findViewById(R.id.comment_body);
-
+        date = view.findViewById(R.id.date_editText);
+        location1 = view.findViewById(R.id.address);
+        event_image = (ImageView) view.findViewById(R.id.img_f);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
         Button get_location = view.findViewById(R.id.getPermission);
         get_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    getLocation();
-                } else {
-                    ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 123);
-//                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
-                }
-//                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+//                } else {
+//                    getLocation();
+//                }
+                Intent intent = new Intent(getActivity(), LocationActivity.class);
+                startActivity(intent);
             }
         });
 
         /* Set up the spinner. */
         s = view.findViewById(R.id.event_spinner); // The spinner is used for dose unit
-        String[] items = new String[]{"event 1", "event 2", "event 3"};
+//        String[] items = new String[]{"Habit 1", "Habit 2", "Habit 3"};
+        ArrayList<String> items = new ArrayList<>();
+        items.add("Habit 1");
+        items.add("Habit 2");
+        items.add("Habit 3");
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, items);
         s.setAdapter(spinnerAdapter);
@@ -131,6 +162,7 @@ public class AddEventFragment extends DialogFragment {
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * Override the onItemSelected method. Record selected spinner item and index.
+             *
              * @param parent
              * @param view
              * @param position
@@ -139,12 +171,13 @@ public class AddEventFragment extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                num = items[position]; // The selected dose unit
+                attachedHabit = items.get(position); // The selected dose unit
                 spinnerIdx = position; // The index of selected dose unit
             }
 
             /**
              * Override the onNothingSelected method (no actual modification).
+             *
              * @param parent
              */
             @Override
@@ -152,40 +185,52 @@ public class AddEventFragment extends DialogFragment {
             }
         });
 
-        final Calendar myCalendar = Calendar.getInstance();
-        EditText edittext = (EditText) view.findViewById(R.id.date_editText);
 
-        DatePickerDialog.OnDateSetListener dateD = new DatePickerDialog.OnDateSetListener() {
+        // set up snapshot listener
+        String usersColName = "Users";
+        String habitsColName = "Habits";
+        String habitEventsColName = "HabitEvents";
+        String DB_TAG = "DatabaseManager";
+
+        ArrayList<String> habit_list = new ArrayList<>();
+
+        DatabaseManager dm = DatabaseManager.get();
+        CollectionReference colRef;
+        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+            public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                items.clear();
+                for (int i = 0; i < habitList.size(); i++) {
+                    System.out.println(habitList.get(i).getTitle());
+                    items.add(habitList.get(i).getTitle());
+                    Log.d("Here", items.get(i));
+                }
+                spinnerAdapter.notifyDataSetChanged();
             }
 
-            private void updateLabel() {
-                String myFormat = "yyyy-MM-dd";
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                edittext.setText(sdf.format(myCalendar.getTime()));
-            }
-        };
-
-        edittext.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Override the onClick method. Set up the DatePickerDialog.
-             * Once the user click the date EditText, the date picker would
-             * pop up.
-             * @param v
-             */
             @Override
-            public void onClick(View v) {
-                new DatePickerDialog(requireContext(), dateD, myCalendar
-                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            public void onCallbackFailed() {
+
             }
         });
+        /* If we received HabitEvent object passed from the main activity.
+         * If yes, then we display its information.
+         * If not, we display empty EditTexts.
+         */
+        if (getArguments() != null) {
+            HabitEvent selectedEvent = (HabitEvent) getArguments().getSerializable("event"); // get the HabitEvent object.
+            ArrayList<Integer> temp_date = selectedEvent.getStartDate();
+
+            date.setText(arrayListToString(temp_date));
+            editText1.setText(String.valueOf(selectedEvent.getComment()));
+            spinnerIdx = spinnerAdapter.getPosition(selectedEvent.getHabit());
+            s.setSelection(spinnerIdx);
+            location1.setText(selectedEvent.getLocation());
+            event_image.setImageResource(R.drawable.riding);
+        }
+        CustomDatePicker dp = new CustomDatePicker(getContext(), view, R.id.date_editText);
+        Calendar ccc = dp.getDate();
+        Date date_calendar = ccc.getTime();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         Bundle b = getArguments();
@@ -203,13 +248,33 @@ public class AddEventFragment extends DialogFragment {
                     /* Neutral button is for delete operaion */
                     .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            listener.onDeletePressed();
+                            HabitEvent editE = (HabitEvent) getArguments().getSerializable("event");
+                            editFlag = true;
+                            listener.onDeletePressed(editE);
                         }
                     })
                     /* Positive button is for edit operation */
                     .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            listener.onOkPressed();
+                            HabitEvent editM = (HabitEvent) getArguments().getSerializable("event");
+                            if(editM.getHabit()!=attachedHabit) {
+                                editM.deleteDB();
+                                editM.setStartDate(stringToArraylist(date.getText().toString()));
+                                editM.setLocation(location1.getText().toString());
+                                editM.setHabit(attachedHabit);
+                                editM.setComment(editText1.getText().toString());
+//                                editM.setCalendar(date_calendar);
+                                editFlag = false;
+                            }
+                            else {
+                                editM.setStartDate(stringToArraylist(date.getText().toString()));
+                                editM.setLocation(location1.getText().toString());
+                                editM.setHabit(attachedHabit);
+                                editM.setComment(editText1.getText().toString());
+//                                editM.setCalendar(date_calendar);
+                                editFlag = true;
+                            }
+                            listener.onOkPressed(editM, editFlag);
                         }
                     }).create();
         }
@@ -220,18 +285,42 @@ public class AddEventFragment extends DialogFragment {
                     .setNegativeButton("Cancel", null)
                     .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            listener.onOkPressed();
+//                            String title = eventTitle.getText().toString();
+                            String temp_dateString = date.getText().toString();
+                            ArrayList<Integer> tempDate;
+                            String tempHabit = attachedHabit;
+                            String tempLocation = location1.getText().toString();
+                            String tempComments = editText1.getText().toString();
+                            HabitEvent tempHabitEvent = new HabitEvent();
+                            if(temp_dateString.isEmpty()) {
+                                String myFormat = "yyyy-MM-dd";
+                                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                                tempDate = stringToArraylist(sdf.format(Calendar.getInstance().getTime()));
+//                                tempHabitEvent.setCalendar(Calendar.getInstance().getTime());
+                            }
+                            else {
+//                                tempHabitEvent.setCalendar(date_calendar);
+                                tempDate = stringToArraylist(date.getText().toString());
+                            }
+                            tempHabitEvent.setLocation(tempLocation);
+                            tempHabitEvent.setStartDate(tempDate);
+                            tempHabitEvent.setComment(tempComments);
+                            tempHabitEvent.setHabit(tempHabit);
+
+                            listener.onOkPressed(tempHabitEvent, editFlag);
                         }
                     }).create();
         }
     }
 
     /**
-     * @return fragment
+     * create a new instance of the selected habit event
+     * @param event
+     * @return
      */
-    public static AddEventFragment newInstance() {
+    public static AddEventFragment newInstance(HabitEvent event) {
         Bundle args = new Bundle();
-
+        args.putSerializable("event", event);
         AddEventFragment fragment = new AddEventFragment();
         fragment.setArguments(args);
         return fragment;
@@ -265,17 +354,10 @@ public class AddEventFragment extends DialogFragment {
         }
     }
 
+    /**
+     * get location function, should be replaced by Aparna's function in the future.
+     */
     private void getLocation() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
         mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
             public void onComplete(@NonNull Task<Location> task) {
@@ -285,6 +367,7 @@ public class AddEventFragment extends DialogFragment {
                         Geocoder geocoder = new Geocoder(requireContext(),
                                 Locale.getDefault());
                         List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                        location1.setText(addresses.get(0).getAddressLine(0).toString());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
