@@ -39,6 +39,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -58,15 +59,18 @@ import androidx.fragment.app.DialogFragment;
 
 
 import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.eventlist.LocationActivity;
 import com.example.habittracker.utils.CustomDatePicker;
+import com.example.habittracker.utils.HabitListCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -145,7 +149,11 @@ public class AddEventFragment extends DialogFragment {
 
         /* Set up the spinner. */
         s = view.findViewById(R.id.event_spinner); // The spinner is used for dose unit
-        String[] items = new String[]{"Habit 1", "Habit 2", "Habit 3"};
+//        String[] items = new String[]{"Habit 1", "Habit 2", "Habit 3"};
+        ArrayList<String> items = new ArrayList<>();
+        items.add("Habit 1");
+        items.add("Habit 2");
+        items.add("Habit 3");
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, items);
         s.setAdapter(spinnerAdapter);
@@ -153,6 +161,7 @@ public class AddEventFragment extends DialogFragment {
         s.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             /**
              * Override the onItemSelected method. Record selected spinner item and index.
+             *
              * @param parent
              * @param view
              * @param position
@@ -161,16 +170,46 @@ public class AddEventFragment extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                attachedHabit = items[position]; // The selected dose unit
+                attachedHabit = items.get(position); // The selected dose unit
                 spinnerIdx = position; // The index of selected dose unit
             }
 
             /**
              * Override the onNothingSelected method (no actual modification).
+             *
              * @param parent
              */
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+
+        // set up snapshot listener
+        String usersColName = "Users";
+        String habitsColName = "Habits";
+        String habitEventsColName = "HabitEvents";
+        String DB_TAG = "DatabaseManager";
+
+        ArrayList<String> habit_list = new ArrayList<>();
+
+        DatabaseManager dm = DatabaseManager.get();
+        CollectionReference colRef;
+        dm.getAllHabits("John_test_user", new HabitListCallback() {
+            @Override
+            public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                items.clear();
+                for (int i = 0; i < habitList.size(); i++) {
+                    System.out.println(habitList.get(i).getTitle());
+                    items.add(habitList.get(i).getTitle());
+                    Log.d("Here", items.get(i));
+                }
+                spinnerAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCallbackFailed() {
+
             }
         });
         /* If we received HabitEvent object passed from the main activity.
