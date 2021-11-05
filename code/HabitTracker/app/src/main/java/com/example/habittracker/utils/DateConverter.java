@@ -71,9 +71,9 @@ public class DateConverter {
 
         Calendar cal = Calendar.getInstance();
         Object[] objArray = array.toArray();
-        Integer year =  ((Long) objArray[0]).intValue();
-        Integer month =  ((Long) objArray[1]).intValue();
-        Integer day =  ((Long) objArray[2]).intValue();
+        Integer year = Long.valueOf(objArray[0].toString()).intValue();
+        Integer month = Long.valueOf(objArray[1].toString()).intValue();
+        Integer day = Long.valueOf(objArray[2].toString()).intValue();
         cal.set( year,month-1,day);
         return cal.getTime();
     }
