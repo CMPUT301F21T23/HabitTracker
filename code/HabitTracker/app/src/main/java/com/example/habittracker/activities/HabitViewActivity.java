@@ -115,6 +115,20 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                 hif.show(getSupportFragmentManager(), "EDIT EVENT");
             }
         });
+
+        Button deleteButton = findViewById(R.id.deleteBtn);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Performs an action (pop up edit fragment, send info) when the edit button is pressed
+             * @param view {view} the view clicked, the edit button in this case.
+             */
+            @Override
+            public void onClick(View view) {
+                DatabaseManager.get().deleteHabitDocument("Pao_Dummy", habit.getTitle());
+                Intent intent = new Intent(getApplicationContext(),ListActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -128,7 +142,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         String newTitle = habit.getTitle();
 
         HashMap<String, Object> habitHm= habit.toDocument();
-        DatabaseManager.get().updateHabitDocument(prevTitle, newTitle, habitHm);
+        DatabaseManager.get().updateHabitDocument("Pao_Dummy", prevTitle, newTitle, habitHm);
 
         Intent intent = new Intent(getApplicationContext(),ListActivity.class);
         startActivity(intent);

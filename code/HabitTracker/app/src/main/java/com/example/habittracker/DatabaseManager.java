@@ -163,6 +163,34 @@ public class DatabaseManager {
     }
 
     /**
+     * Delete a habit for a user
+     * @param userid        {@code String} User ID
+     * @param habitTitle    {@code String} The title of the habit to be deleted
+     */
+    public void deleteHabitDocument(String userid, String habitTitle) {
+        DocumentReference docRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle);
+
+        docRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("Habit successfully deleted for Habit with title %s",
+                                habitTitle));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("Habit failed to be deleted for Habit with title %s",
+                                habitTitle));
+                    }
+                });
+    }
+
+    /**
      * Adds a habit event for a given habit.
      * @param userid        {@code String} User ID
      * @param habitTitle    {@code String} Habit Title
@@ -193,20 +221,20 @@ public class DatabaseManager {
                 });
     }
 
+    /**
+     * Updates a habit document
+     * @param prevTitle {@code String}                  The original title of the habit
+     * @param title     {@code String}                  The new title of the habit
+     * @param doc       {@code HashMap<String,Object>}  The newly updated document
+     */
+    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
 
-    public void updateHabitDocument(String prevTitle, String title, HashMap<String,Object> habitHm) {
-//        DatabaseManager.get().updateHabitDocument(prevTitle, newTitle, date, reason,weekDays);
-        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference colRef = usersColRef
-                .document("Pao_Dummy")
+                .document(userid)
                 .collection(habitsColName)
                 .document(prevTitle);
 
-        // updates everything except the title
-        colRef.update(habitHm);
-//        colRef.update()
-
-
+        colRef.update(doc);
     }
 
     /**
