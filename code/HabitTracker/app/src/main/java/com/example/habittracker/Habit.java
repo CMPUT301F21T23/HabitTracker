@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * This class represents a habit object,
+ * it is a data class holding information but also performs some operations on the habit
+ */
 public class Habit implements Serializable {
     private String title;
     private String titleDisplay;

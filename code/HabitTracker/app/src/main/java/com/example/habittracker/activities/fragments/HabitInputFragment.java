@@ -31,10 +31,18 @@ public class HabitInputFragment extends DialogFragment {
     private EditText inputReason;
     HabitInputDialogListener listener;
 
+    /**
+     * This interface, HabitInputDialogListener,
+     * should be implemented by anybody trying to listen into a habit input fragment
+     */
     public interface HabitInputDialogListener {
         void onOkPressed(Habit habit, String prevTitle);
     }
 
+    /**
+     * Performs an action (initi a listener) on attach
+     * @param context {@code Context} the pplication context
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         // this method automatically gets called when a fragment attaches to an activity
@@ -46,6 +54,11 @@ public class HabitInputFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Created dialog options in popup dialog
+     * @param savedInstanceState {@code Bundle} the bundle containing information
+     * @return alertDialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -71,13 +84,17 @@ public class HabitInputFragment extends DialogFragment {
 
             /**
              * Displays user interface to enter all fields to make a Habit.
-             * @param dialogInterface
+             * @param dialogInterface {@code DialogInterface} the dialog interface
              */
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener(new View.OnClickListener() {
 
+                    /**
+                     * Returns an arraylist containing the days of the week that have been checked
+                     * @return the arraylist
+                     */
                     private ArrayList <String> getWeekDaysChecked() {
                         CheckBox mondayCheck = view.findViewById(R.id.monday);
                         CheckBox tuesdayCheck = view.findViewById(R.id.tuesday);
@@ -103,7 +120,6 @@ public class HabitInputFragment extends DialogFragment {
                                 weekDays.add(box.getText().toString());
                             }
                         }
-
                         return (weekDays);
                     }
 
@@ -124,8 +140,6 @@ public class HabitInputFragment extends DialogFragment {
                         if (bundle!= null) {
                             oldTitle = bundle.getString("old_habit_title");
                         }
-                        // TODO: need to check that there is no other title by that name
-
                         Habit habit = new Habit(title, title, reason, datePicker.getSetDate(), weekDays);
                         // todo: will have to make UI to make it public/private
 

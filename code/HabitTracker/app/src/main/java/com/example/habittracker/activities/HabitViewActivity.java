@@ -30,7 +30,9 @@ import java.util.Locale;
  * HabitViewActivity class: the activity that displays details concerning a Habit
  */
 public class HabitViewActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
+
     private Habit habit;
+
     /**
      * Populates the screen with data reagrding the specified habit. Some fields are optional.
      * It may (or may not) include date, reason, link to progress, days of the week to perform habit
@@ -101,6 +103,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         Button editButton = findViewById(R.id.editBtn);
         editButton.setOnClickListener(new View.OnClickListener() {
+
             /**
              * Performs an action (pop up edit fragment, send info) when the edit button is pressed
              * @param view {view} the view clicked, the edit button in this case.
@@ -136,6 +139,11 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
 
         Button seeProgressButton = findViewById(R.id.see_progress_button);
         seeProgressButton.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Performs an action (moves user to progress graph view) when the progress button is clicked
+             * @para view {@code view}  the view that was clicked, the progress button view.
+             */
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(),ProgressTrackingActivity.class);

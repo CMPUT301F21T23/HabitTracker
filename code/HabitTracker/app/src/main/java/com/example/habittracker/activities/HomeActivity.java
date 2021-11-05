@@ -30,12 +30,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * This activity, HomeActivity displays the "home" aka, the daily view of activities
+ */
 public class HomeActivity extends AppCompatActivity {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
     private ArrayAdapter<Habit> habitAdapter;
 
+    /**
+     * Populates the screen's interactables (nav bar click, button clicks, etc..)
+     * @param savedInstanceState    {@code Bundle}  the bundle info used to create
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +55,13 @@ public class HomeActivity extends AppCompatActivity {
         this.list.setAdapter(habitAdapter);
 
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * Performs an action (open habit view details) when click on habit
+             * @param adapter   {@code AdapterView<?> } the adapter view related to this list
+             * @param v         {@code View}            the view clicked
+             * @param position  {@code int}             the index of the item clicked
+             * @param id        {@code long}            the id
+             */
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
                 Bundle bundle = new Bundle();
@@ -59,6 +73,11 @@ public class HomeActivity extends AppCompatActivity {
 
         Button event_list_button = findViewById(R.id.event_list_button);
         event_list_button.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Performs an action (takes user to event list ivew) when milestone button is pressed.
+             * @param view  {@code View} the view that was pressed
+             */
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
@@ -66,13 +85,18 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: Remember to change this with getuser when you are not testing anymore
         // snapshot
         DatabaseManager
                 .get()
                 .getHabitsColRef(SharedInfo.getInstance().getCurrentUser().getUsername())
                 .addSnapshotListener(
                 new EventListener<QuerySnapshot>() {
+                    /**
+                     * Populates daily habit view when visiting this activity again or changes occur
+                     * (or really, an event occurs)
+                     * @param value {@code QuerySnapshot}               the snapshot result
+                     * @param error {@code FirebaseFirestoreException}  in case of error, result.
+                     */
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         // Clear the old list
