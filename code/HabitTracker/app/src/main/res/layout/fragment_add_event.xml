@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Habits"
+            android:textSize="20dp"/>
+
+        <Spinner
+            android:id="@+id/event_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:padding="5dp"
+            android:spinnerMode="dropdown"/>
+        <TextView
+            android:id="@+id/date_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Date Started"
+            android:textSize="20dp"/>
+
+        <EditText
+            android:id="@+id/date_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:padding="5dp"
+            android:focusableInTouchMode="false"/>
+
+        <TextView
+            android:id="@+id/comment_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="Add Comments"
+            android:textSize="20dp"/>
+
+        <EditText
+            android:id="@+id/comment_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:padding="5dp"
+            android:inputType="textPersonName"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:id="@+id/img_f">
+            </ImageView>
+            <Button
+                android:id="@+id/addPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Select a photo">
+            </Button>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/address"
+                android:layout_width="200dp"
+                android:layout_height="match_parent">
+            </EditText>
+            <Button
+                android:id="@+id/getPermission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Share my location">
+
+            </Button>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

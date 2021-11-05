@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HabitActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container"
+        android:orientation="vertical"
+        >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/habitTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:paddingTop="30dp"
+                android:text="HabitTitle"
+                android:textAlignment="center"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/editBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/habitTitle">
+            </LinearLayout>
+
+            <ScrollView
+                android:id="@+id/scrollView2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
+                app:layout_constraintBottom_toTopOf="@+id/filler"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/dateToStart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Date To Start"
+                        android:textAlignment="gravity"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:paddingStart="10dp"
+                        android:text="2022-01-01"
+                        android:textAlignment="gravity"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/reason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Reason:"
+                        android:textAlignment="gravity"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/habitReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:paddingStart="10dp"
+                        android:text=" "
+                        android:textAlignment="gravity"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/days"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:text="Scheduled"
+                        android:textAlignment="gravity"
+                        android:textSize="20sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="81dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/mon"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/ic_circle_background"
+                            android:clickable="false"
+                            android:minHeight="48dp"
+                            android:scaleType="fitXY"
+                            android:text="Mon"
+                            app:backgroundTint="@color/grey_1"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:id="@+id/tue"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/ic_circle_background"
+                            android:clickable="false"
+                            android:minHeight="48dp"
+                            android:scaleType="fitXY"
+                            android:text="Tue"
+                            app:backgroundTint="@color/grey_1"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:id="@+id/wed"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/ic_circle_background"
+                            android:clickable="false"
+                            android:minHeight="48dp"
+                            android:scaleType="fitXY"
+                            android:text="Wed"
+                            app:backgroundTint="@color/grey_1"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:id="@+id/thu"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/ic_circle_background"
+                            android:clickable="false"
+                            android:minHeight="48dp"
+                            android:scaleType="fitXY"
+                            android:text="Thu"
+                            app:backgroundTint="@color/grey_1"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="81dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/fri"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/ic_circle_background"
+                            android:clickable="false"
+                            android:minHeight="48dp"
+                            android:scaleType="fitXY"
+                            android:text="Fri"
+                            app:backgroundTint="@color/grey_1"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:id="@+id/sat"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/ic_circle_background"
+                            android:clickable="false"
+                            android:minHeight="48dp"
+                            android:scaleType="fitXY"
+                            android:text="Sat"
+                            app:backgroundTint="@color/grey_1"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:id="@+id/sun"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/ic_circle_background"
+                            android:clickable="false"
+                            android:minHeight="48dp"
+                            android:scaleType="fitXY"
+                            android:text="Sun"
+                            app:backgroundTint="@color/grey_1"
+                            app:layout_constraintStart_toStartOf="parent" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingTop="10dp"
+                        android:text="Progress"
+                        android:textAlignment="gravity"
+                        android:textSize="20sp" />
+
+                    <Button
+                        android:id="@+id/see_progress_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="0dp"
+                        android:layout_weight="1"
+                        android:minWidth="20dp"
+                        android:minHeight="48dp"
+                        android:text="SEE PROGRESS"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+            <LinearLayout
+                android:id="@+id/filler"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollView2"></LinearLayout>
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                app:itemIconSize="35dp"
+                app:itemIconTint="@color/bottom_nav_foreground"
+                app:itemTextColor="#151515"
+                app:labelVisibilityMode="labeled"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/scrollView2"
+                app:layout_constraintTop_toBottomOf="@+id/filler"
+                app:menu="@menu/bottom_nav_menu" />
+
+            <Button
+                android:id="@+id/deleteBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/delete_red"
+                android:text="DELETE"
+
+                app:layout_constraintBaseline_toBaselineOf="@+id/editBtn"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/editBtn" />
+
+            <Button
+                android:id="@+id/editBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="EDIT"
+                app:layout_constraintTop_toBottomOf="@id/habitTitle"
+                app:layout_constraintBottom_toTopOf="@id/scrollView2"
+
+                app:layout_constraintLeft_toRightOf="@id/deleteBtn"
+                app:layout_constraintRight_toRightOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
