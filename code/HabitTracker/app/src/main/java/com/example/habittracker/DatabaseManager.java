@@ -23,6 +23,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -111,7 +114,7 @@ public class DatabaseManager {
      * @param doc       {@code HashMap<String, Object>} Document
      * @return          {@code DocumentReference} DocumentReference for the User document created
      */
-    DocumentReference addUsersDocument(String userid, HashMap<String, Object> doc) {
+    public DocumentReference addUsersDocument(String userid, HashMap<String, Object> doc) {
         // instantiate the document
         DocumentReference docRef = usersColRef.document(userid);
 
@@ -199,7 +202,7 @@ public class DatabaseManager {
      * Deletes a user document along with all of its subcollections.
      * @param userid        {@code String} User ID
      */
-    void deleteUserDocument(String userid) {
+    public void deleteUserDocument(String userid) {
         // delete all habit documents for this user
         usersColRef.document(userid).collection(habitsColName)
                 .get()
@@ -404,10 +407,9 @@ public class DatabaseManager {
     /**
      * Check if username and password is correct and then returns username and hashed password
      * @param username
-     * @param hashedPassword
      * @param callback
      */
-    public void checkPassword(String username, String hashedPassword, CheckPasswordCallback callback){
+    public void checkPassword(String username, CheckPasswordCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
                 .document(username);
@@ -415,17 +417,20 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    boolean flag = false;
                     DocumentSnapshot document = task.getResult();
-                    if(!document.exists()){
+                    if (!document.exists()) {
                         callback.onCallbackFailed();
                         return;
-                    }else if(hashedPassword.equals((String)document.getData().get("hashedPassword"))){
-                        flag = true;
                     }
-                    callback.onCallbackSuccess(username,hashedPassword);
-                }
-                else{
+                    String hashedPassword = (String)document.getData().get("hashedPassword");
+                    try {
+                        callback.onCallbackSuccess(username, hashedPassword);
+                    } catch (InvalidKeySpecException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                } else {
                     callback.onCallbackFailed();
                 }
             }
