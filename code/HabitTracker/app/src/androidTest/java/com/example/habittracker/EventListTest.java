@@ -36,23 +36,13 @@ import java.util.HashMap;
 
 /**
  * Intent test for EventListActivity.
- *
- * Please NOTE: This test only works when user is 'John_test_user'
- * In order to do that, comment out line 131 in EventListActivity.java
- * and uncomment line 129;
- * comment out line 111 in EventListActivity.java
- * and uncomment line 109;
- * comment out line 200 in AddEventFragment.java
- * and uncomment line 199.
- *
- * After testing, please revise the above changes.
  */
 public class EventListTest {
     private Solo solo;
     @Rule
-    public ActivityTestRule<EventListActivity> rule =
-            new ActivityTestRule<>(EventListActivity.class, true, true);
-
+    public ActivityTestRule<ProfileActivity> rule =
+            new ActivityTestRule<>(ProfileActivity.class, true, true);
+    User mockUser;
 
 //    /**
 //     * Adds a mock user document to Firestore.
@@ -91,7 +81,10 @@ public class EventListTest {
      */
     @Before
     public void setUp() throws Exception{
-        solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
+        mockUser = new User("mockUser");
+        SharedInfo.getInstance().setCurrentUser(mockUser);
+        solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
+        addMockUser();
     }
 
     /**
@@ -99,15 +92,18 @@ public class EventListTest {
      */
     @Test
     public void testEventListActivity() {
+        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
+        solo.clickOnView(solo.getView(R.id.home));
+        solo.clickOnView(solo.getView(R.id.event_list_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
         solo.clickOnView(solo.getView(R.id.add_event_button));
         assertTrue(solo.waitForText("Add Event", 1, 2000));
         solo.clickOnView(solo.getView(android.R.id.button2));
-        assertTrue(solo.waitForText("Habit 1", 1, 2000));
+        assertTrue(solo.waitForText("habit", 1, 2000));
         EventListActivity activity = (EventListActivity) solo.getCurrentActivity();
         final ListView eventList = activity.eventList; // Get the listview
         HabitEvent event = (HabitEvent) eventList.getItemAtPosition(0); // Get item from first position
-        assertEquals("Habit 1", event.getHabit());
+        assertEquals("habit", event.getHabit());
         solo.clickInList(1);
         assertTrue(solo.waitForText("Edit event/Delete event", 1, 2000));
     }
@@ -117,11 +113,14 @@ public class EventListTest {
      */
     @Test
     public void testAddNewHabitEvent() {
+        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
+        solo.clickOnView(solo.getView(R.id.home));
+        solo.clickOnView(solo.getView(R.id.event_list_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
         solo.clickOnView(solo.getView(R.id.add_event_button));
         solo.waitForText("Add Event",1,20000);
         solo.pressSpinnerItem(0,0);
-        assertTrue(solo.isSpinnerTextSelected(0,"Habit 1"));
+        assertTrue(solo.isSpinnerTextSelected(0,"habit"));
         solo.clickOnView(solo.getView(R.id.date_editText));
         solo.setDatePicker(0, 2021, 10, 1);
         solo.clickOnView(solo.getView(android.R.id.button1));
@@ -141,11 +140,14 @@ public class EventListTest {
      */
     @Test
     public void testEditDeleteHabitEvent() {
+        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
+        solo.clickOnView(solo.getView(R.id.home));
+        solo.clickOnView(solo.getView(R.id.event_list_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
         solo.clickInList(0);
         solo.waitForText("Edit event/Delete event",1,2000);
         solo.pressSpinnerItem(0,0);
-        assertTrue(solo.isSpinnerTextSelected(0,"Habit 1"));
+        assertTrue(solo.isSpinnerTextSelected(0,"habit"));
         solo.clickOnView(solo.getView(R.id.date_editText));
         solo.setDatePicker(0, 2021, 10, 1);
         solo.clickOnView(solo.getView(android.R.id.button1));
@@ -155,16 +157,57 @@ public class EventListTest {
         assertTrue(solo.waitForText("another comment",1,2000));
         // add the event
         solo.clickOnView(solo.getView(android.R.id.button1));
+
+
     }
 
     /**
-     * Close activity after each test
+     * Closes the activity after each test
      * @throws Exception
      */
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();
+        deleteMockUser();
     }
 
+    /**
+     * Adds a mock user document to Firestore.
+     */
+    public void addMockUser() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        HashMap<String, Object> mockDoc = new HashMap<>();
+        mockDoc.put("followers", Arrays.asList("milkyman"));
+        mockDoc.put("following", Arrays.asList("strangeman"));
+        mockDoc.put("pendingFollowReqs", Arrays.asList("happyman"));
+        mockDoc.put("pendingFollowerReqs", Arrays.asList("sadman", "stalkerman"));
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
+                .set(mockDoc);
+        HashMap<String, Object> habitDoc = new HashMap<>();
+        habitDoc.put("dateStarted", Arrays.asList(2021,11,1));
+        habitDoc.put("display", "habit");
+        habitDoc.put("reason", "");
+        habitDoc.put("progress", "");
+        habitDoc.put("whatDays", Arrays.asList("Mon", "Wed"));
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
+                .set(habitDoc);
 
+        HashMap<String, Object> mockDoc3 = new HashMap<>();
+        mockDoc3.put("startDate", DateConverter.dateToArrayList(Calendar.getInstance().getTime()));
+        mockDoc3.put("Habit", "habit");
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
+                .collection(DatabaseManager.get().getHabitsColName()).document("habit")
+                .collection(DatabaseManager.get().getHabitEventsColName()).add(mockDoc3);
+    }
+    /**
+     * Deletes the mock user added to the database.
+     */
+    public void deleteMockUser() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
+                .delete();
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
+                .delete();
+
+    }
 }
