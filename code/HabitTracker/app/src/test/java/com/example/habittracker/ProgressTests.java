@@ -22,10 +22,11 @@ public class ProgressTests {
      * @return
      */
     private Habit mockHabit(){
-        String[] weekdays = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
+        ArrayList<String> weekdays = new ArrayList<>();
+        weekdays.add("MON");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE,-2);
-        Habit habit = new Habit("Habit","Reason", cal.getTime(), weekdays);
+        Habit habit = new Habit("Habit","displayHabit","Reason", cal.getTime(), weekdays);
         return habit;
     }
 
