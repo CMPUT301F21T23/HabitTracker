@@ -193,6 +193,22 @@ public class DatabaseManager {
                 });
     }
 
+
+    public void updateHabitDocument(String prevTitle, String title, HashMap<String,Object> habitHm) {
+//        DatabaseManager.get().updateHabitDocument(prevTitle, newTitle, date, reason,weekDays);
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        DocumentReference colRef = usersColRef
+                .document("Pao_Dummy")
+                .collection(habitsColName)
+                .document(prevTitle);
+
+        // updates everything except the title
+        colRef.update(habitHm);
+//        colRef.update()
+
+
+    }
+
     /**
      * Deletes a user document along with all of its subcollections.
      * @param userid        {@code String} User ID

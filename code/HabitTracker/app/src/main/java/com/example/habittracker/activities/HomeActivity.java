@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -49,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putString("HabitID", list.getItemAtPosition(position).toString());
+                bundle.putSerializable("habit", (Serializable) list.getItemAtPosition(position));
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -85,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
      * @param error {FirebaseFirestoreException}    error, if any
      */
     private void repopulate (QuerySnapshot value, FirebaseFirestoreException error) {
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress"};
+        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
 
         if (error == null) {
             for (QueryDocumentSnapshot doc : value) {
@@ -101,11 +102,13 @@ public class HomeActivity extends AppCompatActivity {
 
                     if (today.after(startDate)) {
                         String habitTitle = doc.getId();
+                        String displayTitle = (String) doc.getData().get(attributes[4]);
                         String habitReason = (String) doc.getData().get(attributes[0]);
 
                         habitList.add(
                                 new Habit(
                                         habitTitle,
+                                        displayTitle,
                                         habitReason,
                                         startDate,
                                         weekDays

@@ -1,27 +1,19 @@
 package com.example.habittracker.activities.fragments;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.icu.util.Calendar;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.example.habittracker.Habit;
@@ -29,7 +21,6 @@ import com.example.habittracker.R;
 import com.example.habittracker.utils.CustomDatePicker;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * HabitInputFragment prompts the user to enter details about a Habit.
@@ -41,7 +32,7 @@ public class HabitInputFragment extends DialogFragment {
     HabitInputDialogListener listener;
 
     public interface HabitInputDialogListener {
-        void onOkPressed(Habit habit);
+        void onOkPressed(Habit habit, String prevTitle);
     }
 
     @Override
@@ -77,6 +68,11 @@ public class HabitInputFragment extends DialogFragment {
 
         // process the data entered through the dialog
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            /**
+             * Displays user interface to enter all fields to make a Habit.
+             * @param dialogInterface
+             */
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
@@ -111,6 +107,10 @@ public class HabitInputFragment extends DialogFragment {
                         return (weekDays);
                     }
 
+                    /**
+                     * Action performed when the habit is done modifying.
+                     * @param view
+                     */
                     @Override
                     public void onClick(View view) {
                         String title = inputTitle.getText().toString();
@@ -118,12 +118,18 @@ public class HabitInputFragment extends DialogFragment {
 
                         ArrayList<String> weekDays = getWeekDaysChecked();
 
-                        // TODO: validation here, if bad, freeze the operation.
-                        //  Leave for extra if you have time
-                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays);
+                        Bundle bundle = getArguments();
+                        String oldTitle = null;
+                        // editing case
+                        if (bundle!= null) {
+                            oldTitle = bundle.getString("old_habit_title");
+                        }
+                        // TODO: need to check that there is no other title by that name
 
+                        Habit habit = new Habit(title, title, reason, datePicker.getSetDate(), weekDays);
                         // todo: will have to make UI to make it public/private
-                        listener.onOkPressed(habit);
+
+                        listener.onOkPressed(habit, oldTitle);
                         alertDialog.dismiss();
                     }
                 });

@@ -21,6 +21,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         this.edittext = (EditText) view.findViewById(et_id);
         myCalendar = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener theDP = this;
+        updateLabel(new Date());
 
         edittext.setOnClickListener(new View.OnClickListener() {
             /**
@@ -43,7 +44,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         myCalendar.set(Calendar.YEAR, year);
         myCalendar.set(Calendar.MONTH, month);
         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        updateLabel();
+        updateLabel(myCalendar.getTime());
     }
 
     /**
@@ -64,9 +65,9 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         return ( setDate );
     }
 
-    private void updateLabel() {
+    private void updateLabel(Date dateLabel) {
         String myFormat = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-        edittext.setText(sdf.format(myCalendar.getTime()));
+        edittext.setText(sdf.format(dateLabel));
     }
 }

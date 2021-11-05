@@ -60,10 +60,6 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
                 intent.putExtra(EXTRA_HABIT, (Serializable) list.getItemAtPosition(position));
-
-//                Bundle bundle = new Bundle();
-//                bundle.putString("HabitID", list.getItemAtPosition(position).toString());
-//                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -87,7 +83,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
      * Action to be triggered when the user is OK with adding a new Habit.
      */
     @Override
-    public void onOkPressed(Habit habit) {
+    public void onOkPressed(Habit habit, String prevTitle) {
         // add habit to database
         habit.addToDB();
         habitAdapter.add(habit);
@@ -99,7 +95,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
      * @param error {FirebaseFirestoreException}    error, if any
      */
     private void repopulate (QuerySnapshot value, FirebaseFirestoreException error) {
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress"};
+        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
 
         if (error == null) {
             for (QueryDocumentSnapshot doc : value) {
@@ -108,6 +104,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
                 String habitReason = (String) doc.getData().get(attributes[0]);
 
                 ArrayList<Long> dateTest = (ArrayList<Long>) doc.get(attributes[1]);
+                String displayTitle = (String) doc.getData().get(attributes[4]);
                 Date startDate = DateConverter.arrayListToDate(dateTest);
 
                 ArrayList<String> weekDays = (ArrayList<String>) doc.get(attributes[2]);
@@ -115,6 +112,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
                 habitList.add(
                         new Habit(
                                 habitTitle,
+                                displayTitle,
                                 habitReason,
                                 startDate,
                                 weekDays

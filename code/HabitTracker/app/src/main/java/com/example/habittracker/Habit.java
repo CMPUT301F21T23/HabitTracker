@@ -11,12 +11,13 @@ import java.util.List;
 
 public class Habit implements Serializable {
     private String title;
+    private String titleDisplay;
     private String reason;
     private Date startDate;
     private int progress; // provisional until we determine how to implement progress
     private ArrayList<String> weekDays;
 
-    private boolean isPublic;
+    private boolean isPublic = false;
 
     /**
      * An empty constructor for Habit
@@ -26,13 +27,15 @@ public class Habit implements Serializable {
     }
     /**
      * Creates a habit belonging to a user.
-     * @param title     {string}    the title of the habit (ie. Sleep Early)
-     * @param reason    {String}    a description of the habit
-     * @param startDate {Date}      the date in which the habit was started
-     * @param weekDays  {ArrayList<String>}  the days of the week during which the habit should be practiced
+     * @param titleDisplay      {string}    the title of the habit (ie. Sleep Early)
+     * @param titlePermanent    {string}    the title of the habit (ie. Sleep Early)
+     * @param reason            {String}    a description of the habit
+     * @param startDate         {Date}      the date in which the habit was started
+     * @param weekDays          {ArrayList<String>}  the days of the week during which the habit should be practiced
      */
-    public Habit (String title, String reason, Date startDate, ArrayList<String> weekDays) {
-        this.title = title;
+    public Habit (String titlePermanent, String titleDisplay, String reason, Date startDate, ArrayList<String> weekDays) {
+        this.title = titlePermanent;
+        this.titleDisplay = titleDisplay;
         this.reason = reason;
         this.startDate = startDate;
         this.progress = 0;
@@ -48,6 +51,14 @@ public class Habit implements Serializable {
     public String getTitle() {
         return title;
     }
+
+    /**
+     * Gets the displayable title for the habit
+     * @return title
+     */
+    public String getTitleDisplay() {
+        return(titleDisplay);
+    }
     /**
      * Gets the description for the habit
      * @return reason
@@ -61,6 +72,14 @@ public class Habit implements Serializable {
      */
     public Date getStartDate() {
         return startDate;
+    }
+
+    /**
+     * Gets the week days where the habit is meant to be practiced
+     * @return weekDays
+     */
+    public ArrayList<String> getWeekDays() {
+        return (weekDays);
     }
 
     /**
@@ -99,7 +118,7 @@ public class Habit implements Serializable {
      * Converts the habit to a document that can directly interact with the database
      * @return habitMap, the document as a hashmap.
      */
-    private HashMap <String, Object> toDocument () {
+    public HashMap <String, Object> toDocument () {
         HashMap<String,Object> habitMap = new HashMap<>();
 
         // make necessary conversion to convert to document
@@ -110,8 +129,8 @@ public class Habit implements Serializable {
         //  prolly database manager. check w Zarif.
 
         // the attribute names as specified in the schema and the values that correspond
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress"};
-        Object [] values = { reason, dateArrayList, weekDays, progress};
+        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
+        Object [] values = { reason, dateArrayList, weekDays, progress, titleDisplay};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {
