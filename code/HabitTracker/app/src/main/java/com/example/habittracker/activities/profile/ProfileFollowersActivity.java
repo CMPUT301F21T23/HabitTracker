@@ -25,10 +25,7 @@ public class ProfileFollowersActivity extends AppCompatActivity {
     private ArrayAdapter<User> followersArrayAdapter;
     private ArrayList<User> followersList;
     private String TAG = "ProfileFollowersActivity";
-
-    // TODO: the user will be retrieved using the SharedInfo class later
-    private User currentUser = new User("user1");
-    private String currentUsername = currentUser.getUsername();
+    private User currentUser = SharedInfo.getInstance().getCurrentUser();
 
     /**
      * Defines what to do when the ProfileFollowersActivity is created.
@@ -51,14 +48,11 @@ public class ProfileFollowersActivity extends AppCompatActivity {
         // get the View objects
         followersListView = findViewById(R.id.followersList);
 
-        // TODO: remove this later
-        SharedInfo.getInstance().setCurrentUser(currentUser);
-
+        // initialize array adapter
         followersList = new ArrayList<>();
         followersArrayAdapter = new FollowersArrayAdapter(this, followersList);
         followersListView.setAdapter(followersArrayAdapter);
         populateList();
-
     }
 
     /**

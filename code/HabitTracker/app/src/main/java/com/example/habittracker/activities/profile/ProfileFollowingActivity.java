@@ -35,9 +35,6 @@ public class ProfileFollowingActivity extends AppCompatActivity {
                                                       // pendingStatus is true for a pending request
     private String TAG = "ProfileFollowingActivity";
 
-    // TODO: the user will be retrieved using the SharedInfo class later
-    private User currentUser = new User("user1");
-    private String currentUsername = currentUser.getUsername();
 
     /**
      * Defines what to do when ProfileFollowingActivity is created
@@ -58,8 +55,7 @@ public class ProfileFollowingActivity extends AppCompatActivity {
         // get the View objects
         followingListView = findViewById(R.id.followingList);
 
-        SharedInfo.getInstance().setCurrentUser(currentUser);
-
+        // initialize the array adapter
         followingList = new ArrayList<>();
         pendingStatus = new HashMap<>();
         followingArrayAdapter = new FollowingArrayAdapter(this, followingList, pendingStatus);

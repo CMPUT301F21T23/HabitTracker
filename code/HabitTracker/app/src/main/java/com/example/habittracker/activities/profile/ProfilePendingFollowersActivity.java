@@ -23,10 +23,6 @@ public class ProfilePendingFollowersActivity extends AppCompatActivity {
     private ArrayList<User> pendingFollowersList;
     private String TAG = "ProfilePendingFollowersActivity";
 
-    // TODO: the user will be retrieved using the SharedInfo class later
-    private User currentUser = new User("user1");
-    private String currentUsername = currentUser.getUsername();
-
     /**
      * Defines what to do when the ProfilePendingFollowersActivity is created
      * @param savedInstanceState
@@ -46,13 +42,10 @@ public class ProfilePendingFollowersActivity extends AppCompatActivity {
         // get the View objects
         pendingFollowersListView = findViewById(R.id.pendingFollowersList);
 
-        // TODO: to be removed
-        SharedInfo.getInstance().setCurrentUser(currentUser);
-
+        // instantiate the array adapter
         pendingFollowersList = new ArrayList<>();
         pendingFollowersArrayAdapter = new PendingFollowersArrayAdapter(this, pendingFollowersList);
         pendingFollowersListView.setAdapter(pendingFollowersArrayAdapter);
-
         populateList();
     }
 
