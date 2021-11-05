@@ -24,10 +24,11 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/followingButton"
+                    android:id="@+id/back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp"
@@ -38,34 +39,6 @@
                     android:text="Back"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <Button
-                    android:id="@+id/followersButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:minWidth="20dp"
-                    android:minHeight="10dp"
-                    android:text="Revoke"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <Button
-                    android:id="@+id/followRequestsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:minWidth="20dp"
-                    android:minHeight="10dp"
-                    android:text="Follow Back"
-                    app:layout_constraintStart_toStartOf="parent" />
             </LinearLayout>
 
             <TextView
@@ -79,14 +52,51 @@
                 android:textSize="18sp" />
 
             <ListView
-                android:id="@+id/profileList"
+                android:id="@+id/followersList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="585dp"
+                android:choiceMode="singleChoice"
                 android:clickable="true"
-                android:focusable="true"
-                android:choiceMode="singleChoice" />
+                android:focusable="true" />
 
         </LinearLayout>
     </FrameLayout>
+    <LinearLayout
+        android:id="@+id/usernameEntry"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:visibility="invisible">
+
+        <EditText
+            android:id="@+id/username"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="Enter username"
+            android:textColor="#000000" />
+
+        <Button
+            android:id="@+id/buttonConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="0dp"
+            android:text="CONFIRM"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/buttonCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="0dp"
+            android:text="CANCEL"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

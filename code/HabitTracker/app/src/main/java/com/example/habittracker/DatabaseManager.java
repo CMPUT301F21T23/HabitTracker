@@ -4,11 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.habittracker.utils.BooleanCallback;
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
-import com.example.habittracker.utils.SharedInfo;
+import com.example.habittracker.utils.UserListOperationCallback;
+import com.example.habittracker.utils.SharingListCallback;
 import com.example.habittracker.utils.UserDetailsCallback;
 import com.example.habittracker.utils.UserExistsCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,13 +18,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.HttpsCallableReference;
-import com.google.firebase.functions.HttpsCallableResult;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public class DatabaseManager {
      * @param doc       {@code HashMap<String, Object>} Document
      * @return          {@code DocumentReference} DocumentReference for the User document created
      */
-    DocumentReference addUsersDocument(String userid, HashMap<String, Object> doc) {
+    public DocumentReference addUsersDocument(String userid, HashMap<String, Object> doc) {
         // instantiate the document
         DocumentReference docRef = usersColRef.document(userid);
 
@@ -272,7 +272,7 @@ public class DatabaseManager {
      * Deletes a user document along with all of its subcollections.
      * @param userid        {@code String} User ID
      */
-    void deleteUserDocument(String userid) {
+    public void deleteUserDocument(String userid) {
         // delete all habit documents for this user
         usersColRef.document(userid).collection(habitsColName)
                 .get()
@@ -475,10 +475,9 @@ public class DatabaseManager {
     /**
      * Check if username and password is correct and then returns username and hashed password
      * @param username
-     * @param hashedPassword
      * @param callback
      */
-    public void checkPassword(String username, String hashedPassword, CheckPasswordCallback callback){
+    public void checkPassword(String username, CheckPasswordCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
                 .document(username);
@@ -486,20 +485,127 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    boolean flag = false;
                     DocumentSnapshot document = task.getResult();
-                    if(!document.exists()){
+                    if (!document.exists()) {
                         callback.onCallbackFailed();
                         return;
-                    }else if(hashedPassword.equals((String)document.getData().get("hashedPassword"))){
-                        flag = true;
                     }
-                    callback.onCallbackSuccess(username,hashedPassword);
-                }
-                else{
+                    String hashedPassword = (String)document.getData().get("hashedPassword");
+                    try {
+                        callback.onCallbackSuccess(username, hashedPassword);
+                    } catch (InvalidKeySpecException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                } else {
                     callback.onCallbackFailed();
                 }
             }
         });
     }
+
+    /**
+     * Gets the list of pending requests for a user.
+     * @param userid        {@code String} User ID
+     * @param callback      {@code SharingListCallback} Callback object
+     */
+    public void getPendingFollowers(String userid, SharingListCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        ArrayList<String> pendingFollowersList = (ArrayList<String>) document.get("pendingFollowerReqs");
+                        callback.onCallbackSuccess(pendingFollowersList);
+                    } else {
+                        callback.onCallbackFailure(String.format("Document for %s does not exist", userid));
+                    }
+                } else {
+                    callback.onCallbackFailure(task.getException().toString());
+                }
+            }
+        });
+    }
+
+    /**
+     * Removes an item from any of the ArrayList fields of the User document.
+     * This can be used to decline a follow request or remove a follower or unfollow another user.
+     * @param userid        {@code String} The current user's id
+     * @param requestid     {@code String} The user id of the person who sent the follow request
+     * @param field         {@code String}  Either 'followers' or 'following' or 'pendingFollowReqs'
+     *                                      or 'pendingFollowerReqs'
+     * @param callback      {@code UserListOperationCallback} Callback object
+     */
+    public void removeUserListItem(String userid, String requestid, String field, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.update(field, FieldValue.arrayRemove(requestid))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        callback.onCallbackSuccess(requestid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallbackFailure(e.toString());
+                    }
+                });
+    }
+
+    /**
+     * Accepts a follow request for a user.
+     * @param userid            {@code String} The current user's id
+     * @param requestid         {@code String} The user id of the person who sent the follow request
+     * @param callback          {@code UserListOperationCallback} Callback objects
+     */
+    public void acceptFollowRequest(String userid, String requestid, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        // remove the user from 'pendingFollowerReqs' and add them to 'followers'
+        docRef.update("pendingFollowerReqs", FieldValue.arrayRemove(requestid),
+                "followers", FieldValue.arrayUnion(requestid))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        callback.onCallbackSuccess(requestid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallbackFailure(e.toString());
+                    }
+                });
+    }
+
+    /**
+     * Gets the followers/following/pendingFollowers/pendingFollowing list for a user
+     * @param userid        {@code String} User ID
+     * @param field         {@code String} Either 'followers' or 'following' or 'pendingFollowReqs'
+     *                                    or 'pendingFollowerReqs'
+     * @param callback      {@code SharingListCallback} Callback object
+     */
+    public void getUserListItems(String userid, String field, SharingListCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        ArrayList<String> followersList = (ArrayList<String>) document.get(field);
+                        callback.onCallbackSuccess(followersList);
+                    } else {
+                        callback.onCallbackFailure(String.format("Document for %s does not exist", userid));
+                    }
+                } else {
+                    callback.onCallbackFailure(task.getException().toString());
+                }
+            }
+        });
+    }
+
 }
