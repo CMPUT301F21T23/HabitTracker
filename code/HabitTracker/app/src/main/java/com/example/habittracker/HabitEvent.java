@@ -66,6 +66,7 @@ public class HabitEvent implements Serializable {
     public String getComment() {
         return this.comment;
     }
+
     /**
      * Gets the starting date for the habit event
      * @return startDate

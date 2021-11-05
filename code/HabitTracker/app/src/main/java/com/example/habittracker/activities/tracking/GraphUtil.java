@@ -113,7 +113,7 @@ public class GraphUtil {
             for (int i = 0 ; i < habitEvents.size(); i++){
                 Calendar first = Calendar.getInstance();
                 Calendar sec = Calendar.getInstance();
-                first.setTime(DateConverter.arrayListToDate(habitEvents.get(i).getStartDate()));
+                first.setTime(DateConverter.intArrayListToDate(habitEvents.get(i).getStartDate()));
                 sec.setTime(date);
                 boolean sameDay = first.get(Calendar.DAY_OF_YEAR) == sec.get(Calendar.DAY_OF_YEAR) && first.get(Calendar.YEAR) == sec.get(Calendar.YEAR);
                 if(sameDay){

@@ -9,16 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:maxLength="20"
         android:inputType="textPersonName"
-        android:hint="Habit Title (upto 20 characters)"/>
+        android:hint="Habit Title"
+        />
 
     <EditText
         android:id="@+id/reason"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:maxLength="30"
         android:inputType="textPersonName"
-        android:hint="Habit Reason (upto 30 characters)" />
+        android:hint="Habit Reason" />
 
     <EditText
         android:id="@+id/dateToStart"
