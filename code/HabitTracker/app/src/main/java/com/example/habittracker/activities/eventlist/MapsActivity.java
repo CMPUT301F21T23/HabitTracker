@@ -34,6 +34,10 @@ import java.util.List;
 import java.util.Locale;
 
 /**
+ * @author aparna4
+ */
+
+/**
  * Maps Activity helps get user's current location
  */
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
