@@ -84,6 +84,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        /*
         Button delete_button = findViewById(R.id.delete_account);
         delete_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +108,7 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+         */
 
     }
 }
