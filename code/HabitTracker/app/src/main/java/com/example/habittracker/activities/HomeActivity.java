@@ -49,8 +49,8 @@ public class HomeActivity extends AppCompatActivity {
                         //Do what you need to do with your list
                         Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
                         Bundle bundle = new Bundle();
-                        Log.d("testing",""+habitList.get(1).getTitle());//remove once real habit is implemented
-                        Habit habit = habitList.get(1);//remove once real habit is implemented
+//                        Log.d("testing",""+habitList.get(1).getTitle());//remove once real habit is implemented
+                        Habit habit = habitList.get(0);//remove once real habit is implemented
                         bundle.putSerializable("habit", habit);
                         intent.putExtras(bundle);
                         startActivity(intent);

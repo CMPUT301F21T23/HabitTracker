@@ -54,7 +54,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
                         //Do what you need to do with your list
                         Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
                         Bundle bundle = new Bundle();
-                        Log.d("testing",""+habitList.get(3).getTitle());//remove once real habit is implemented
+//                        Log.d("testing",""+habitList.get(3).getTitle());//remove once real habit is implemented
                         Habit habit = habitList.get(0);//remove once real habit is implemented
                         bundle.putSerializable("habit", habit);
                         intent.putExtras(bundle);
