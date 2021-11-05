@@ -25,6 +25,7 @@ package com.example.habittracker.activities.fragments;
 
 import static com.example.habittracker.utils.DateConverter.arrayListToString;
 import static com.example.habittracker.utils.DateConverter.stringToArraylist;
+import com.example.habittracker.utils.SharedInfo;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -195,7 +196,7 @@ public class AddEventFragment extends DialogFragment {
 
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
-        dm.getAllHabits("John_test_user", new HabitListCallback() {
+        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
             @Override
             public void onCallbackSuccess(ArrayList<Habit> habitList) {
                 items.clear();
