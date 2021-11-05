@@ -44,6 +44,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     Double myLatitude = 0.0;
     Double myLongitude = 0.0;
 
+    /**
+     * ask for permission
+     */
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -56,6 +59,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * enable location
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -74,9 +83,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Long click to select location
+     * @param map
+     */
     private void setMapLongClick(final GoogleMap map) {
 
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            /**
+             * Override long click function
+             * @param latLng
+             */
             @Override
             public void onMapLongClick(LatLng latLng) {
                 String snippet = String.format(Locale.getDefault(),
@@ -104,8 +121,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    /**
+     * set poi click
+     * @param map
+     */
     private void setPoiClick(final GoogleMap map) {
         map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
+            /**
+             * Override onPoiClick
+             * @param poi
+             */
             @Override
             public void onPoiClick(PointOfInterest poi) {
                 Marker poiMarker = mMap.addMarker(new MarkerOptions()
@@ -152,6 +177,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        }
 //    }
 
+    /**
+     * Override onCreate fucntion
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,6 +207,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    /**
+     * Override onMaprReady function
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -194,6 +227,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         enableMyLocation();
     }
 
+    /**
+     * implement back button functionality
+     */
     public void onBackPressed() {
         super.onBackPressed();
         Intent myIntent = new Intent(MapsActivity.this, LocationActivity.class);
