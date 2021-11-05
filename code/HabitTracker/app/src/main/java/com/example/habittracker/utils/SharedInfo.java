@@ -46,3 +46,4 @@ public class SharedInfo {
         currentUser.clearUsername();
     }
 }
+

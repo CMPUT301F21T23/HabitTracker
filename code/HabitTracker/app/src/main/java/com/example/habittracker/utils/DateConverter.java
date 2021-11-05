@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -34,22 +33,24 @@ public class DateConverter {
                         day
                 )));
     }
-  
+
+    /**
+     * converts date array list to string
+     * @param date_list
+     * @return
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static String arrayListToString (ArrayList<Integer> date_list) {
-
-        String date = "";
-        for (int i = 0;i<date_list.size();i++) {
-            if(i<date_list.size()-1) {
-                date = date + date_list.get(i) + "-";
-            }
-            else {
-                date = date + date_list.get(i);
-            }
-        }
+        String date = date_list.stream().map(String::valueOf)
+                .collect(Collectors.joining("-"));
         return date;
     }
 
+    /**
+     * convert string to arraylist
+     * @param date_string
+     * @return
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static ArrayList<Integer> stringToArraylist (String date_string) {
         String [] temp = date_string.split("-");

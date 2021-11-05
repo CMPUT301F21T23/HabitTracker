@@ -23,11 +23,7 @@
  */
 package com.example.habittracker.activities.eventlist;
 
-import static com.example.habittracker.utils.DateConverter.arrayListToString;
-
 import android.content.Context;
-import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +33,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
-import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
 
 import java.util.ArrayList;
@@ -49,29 +43,28 @@ import java.util.ArrayList;
  * the list. The idea is from CMPUT 301 Lab 3 instruction.
  * @author Yongquan Zhang
  */
-public class CustomList extends ArrayAdapter<HabitEvent> {
-    private ArrayList<HabitEvent> events;
+public class CustomList extends ArrayAdapter<String> {
+    private ArrayList<String> events;
     private Context context;
 
     /**
      * The constructor of CustomList
-     * @param context       {@code Context} required context
-     * @param events        {@code ArrayList<HabitEvent>} a habit event list
+     * @param context
+     * @param events
      */
-    public CustomList(Context context, ArrayList<HabitEvent> events){
+    public CustomList(Context context, ArrayList<String> events){
         super(context,0, events);
-        this.events = events;
+        this.events = this.events;
         this.context = context;
     }
 
     /**
      * Override the getView method. Display multiple information in a single row of the list.
-     * @param position          {@code int} index of the selected item
-     * @param convertView       {@code View} convert view
-     * @param parent            {@code ViewGroup} parent view
+     * @param position
+     * @param convertView
+     * @param parent
      * @return
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -79,15 +72,12 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
         }
-        HabitEvent tempEvent =events.get(position);
-        TextView Title = (TextView) view.findViewById(R.id.contentView);;
-        TextView startDate = (TextView) view.findViewById(R.id.dateView);;
-        Title.setText(tempEvent.getHabit());
-        Log.d("eventID", String.valueOf(tempEvent.getEventId()));
-        startDate.setText(arrayListToString(tempEvent.getStartDate()));
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
-        event_image.setImageResource(R.drawable.riding);
+        event_image.setImageResource(R.drawable.common_google_signin_btn_icon_dark);
+
+        ImageView location_image = (ImageView) view.findViewById(R.id.location_image);;
+        location_image.setImageResource(R.drawable.common_google_signin_btn_icon_dark);
         return view;
     }
 }
