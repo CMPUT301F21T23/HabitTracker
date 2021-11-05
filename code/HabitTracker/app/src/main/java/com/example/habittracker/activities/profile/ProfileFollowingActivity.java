@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProfileFollowingActivity extends AppCompatActivity {
-    private ListView followingListView;
+    public ListView followingListView;
     private ArrayAdapter<User> followingArrayAdapter;
     private ArrayList<User> followingList;
     private HashMap<User, Boolean> pendingStatus;     // maps a user to their follow status
