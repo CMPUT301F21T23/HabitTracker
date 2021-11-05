@@ -58,7 +58,7 @@ public class ProgressUtil {
             for (int i = 0 ; i < habitEvents.size(); i++){
                 Calendar first = Calendar.getInstance();
                 Calendar sec = Calendar.getInstance();
-                Log.d("Integer",""+habitEvents.getClass().getName());
+//                Log.d("Integer",""+habitEvents.getClass().getName());
                 first.setTime(DateConverter.arrayListToDate(habitEvents.get(i).getStartDate()));
                 sec.setTime(date);
                 //check if two dates are on same date
