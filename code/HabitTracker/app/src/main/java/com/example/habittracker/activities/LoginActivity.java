@@ -113,10 +113,14 @@ public class LoginActivity extends AppCompatActivity {
 
         // Add data for the user document
         String userid = username;
-        userDocument.put("following", Arrays.asList(""));
-        userDocument.put("followers", Arrays.asList(""));
-        userDocument.put("pendingFollowReqs", Arrays.asList(""));
-        userDocument.put("pendingFollowerReqs", Arrays.asList(""));
+        ArrayList<String> following = new ArrayList<>();
+        ArrayList<String> followers = new ArrayList<>();
+        ArrayList<String> pendingFollowReqs = new ArrayList<>();
+        ArrayList<String> pendingFollowerReqs = new ArrayList<>();
+        userDocument.put("following", following);
+        userDocument.put("followers", followers);
+        userDocument.put("pendingFollowReqs", pendingFollowReqs);
+        userDocument.put("pendingFollowerReqs", pendingFollowerReqs);
         userDocument.put("hashedPassword", hashedPassword);
 
         // Use database manager
@@ -232,6 +236,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Push this stuff into the cloud database
                 dbCreateUser(username, hashedPassword);
+                SharedInfo.getInstance().setCurrentUser(new User(username));
 
                 switchToHomeActivity();
             }
