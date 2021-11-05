@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     // Hashing code taken from https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/#PBKDF2WithHmacSHA1
     // Never roll your own crypto!
 
-    private static String generateStrongPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static String generateStrongPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // Keep the iterations low enough so that the delay is negligible. 10000 iterations is about a second of hashing.
         int iterations = 1000;
         char[] chars = password.toCharArray();
@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String[] parts = storedPassword.split(":");
         int iterations = Integer.parseInt(parts[0]);
         byte[] salt = fromHex(parts[1]);
