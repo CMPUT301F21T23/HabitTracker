@@ -32,6 +32,8 @@ public class HabitEvent implements Serializable {
     public HabitEvent () {
         // By default
         this.userId = SharedInfo.getInstance().getCurrentUser().getUsername();
+        // For test
+//        this.userId = "John_test_user";
         // By default
         this.habitId = "Habit 1";
         this.habitEventDocument = new HashMap<>();
