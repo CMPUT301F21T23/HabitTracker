@@ -19,18 +19,34 @@ public class LocationActivity extends AppCompatActivity {
     public String longitude = "";
     public String address = "";
 
+    /**
+     * Get latitude of selected location
+     * @return
+     */
     public String getLatitude() {
         return this.latitude;
     }
 
+    /**
+     * Get longitude for selected location
+     * @return
+     */
     public String getLongitude() {
         return this.longitude;
     }
 
+    /**
+     * Get address for selected location
+     * @return
+     */
     public String getAddress() {
         return this.address;
     }
 
+    /**
+     * Override onCreate method to get location
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +69,11 @@ public class LocationActivity extends AppCompatActivity {
                 "Address: " + address);
 
     }
+
+    /**
+     * Override onClick method for passing intent
+     * @param v
+     */
     public void onClick(View v) {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
