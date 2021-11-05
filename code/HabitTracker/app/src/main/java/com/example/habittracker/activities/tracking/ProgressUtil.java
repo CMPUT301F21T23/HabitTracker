@@ -129,25 +129,25 @@ public class ProgressUtil {
         for(int i = 0 ; i < days.length; i++ ){
             //switch for converting string to proper int value
             switch(days[i]){
-                case "Mon":
+                case "Monday":
                     dayInt.add(1);
                     break;
-                case "Tues":
+                case "Tuesday":
                     dayInt.add(2);
                     break;
-                case "Wed":
+                case "Wednesday":
                     dayInt.add(3);
                     break;
-                case "Thu":
+                case "Thursday":
                     dayInt.add(4);
                     break;
-                case "Fri":
+                case "Friday":
                     dayInt.add(5);
                     break;
-                case "Sat":
+                case "Saturday":
                     dayInt.add(6);
                     break;
-                case "Sun":
+                case "Sunday":
                     dayInt.add(7);
                     break;
             }

@@ -16,6 +16,7 @@ import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.SharedInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 DatabaseManager db = DatabaseManager.get();
-                db.getAllHabits("user1",new HabitListCallback() {
+                db.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(),new HabitListCallback() {
                     @Override
                     public void onCallbackSuccess(ArrayList<Habit> habitList) {
                         //Do what you need to do with your list

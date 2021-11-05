@@ -19,6 +19,7 @@ import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.SharedInfo;
 
 import java.util.ArrayList;
 
@@ -42,14 +43,14 @@ public class HomeActivity extends AppCompatActivity {
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 DatabaseManager db = DatabaseManager.get();
-                db.getAllHabits("user1",new HabitListCallback() {
+                db.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(),new HabitListCallback() {
                     @Override
                     public void onCallbackSuccess(ArrayList<Habit> habitList) {
                         //Do what you need to do with your list
                         Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
                         Bundle bundle = new Bundle();
                         Log.d("testing",""+habitList.get(1).getTitle());//remove once real habit is implemented
-                        Habit habit = habitList.get(0);//remove once real habit is implemented
+                        Habit habit = habitList.get(1);//remove once real habit is implemented
                         bundle.putSerializable("habit", habit);
                         intent.putExtras(bundle);
                         startActivity(intent);
