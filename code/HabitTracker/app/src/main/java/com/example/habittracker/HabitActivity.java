@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.habittracker.activities.LoginActivity;
 import com.example.habittracker.utils.BooleanCallback;
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
@@ -37,6 +38,7 @@ public class HabitActivity extends AppCompatActivity {
         //testDatabase();
 
         DatabaseManager db = DatabaseManager.get();
+        /*
         db.getUserDetails("user1",new UserDetailsCallback() {
             @Override
             public void onCallbackSuccess(HashMap<String,Object> userDetails) {
@@ -49,9 +51,9 @@ public class HabitActivity extends AppCompatActivity {
                 Log.d("Error","Failed to get user");
             }
         });
-      
+        */
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
