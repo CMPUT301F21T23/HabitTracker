@@ -11,11 +11,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * This is a custom date picker class.
+ */
 public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
     final Calendar myCalendar;
     private EditText edittext;
     private Context context;
     private View view;
+
+    /**
+     * Constructor of the customDatePicker class
+     * @param context
+     * @param view
+     * @param et_id
+     */
     public CustomDatePicker(Context context, View view, int et_id) {
         this.context = context;
         this.edittext = (EditText) view.findViewById(et_id);
@@ -39,6 +49,13 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         });
     }
 
+    /**
+     * override onDateSet function to set year,month,day for the calendar object.
+     * @param view
+     * @param year
+     * @param month
+     * @param dayOfMonth
+     */
     @Override
     public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
         myCalendar.set(Calendar.YEAR, year);
@@ -69,5 +86,13 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         String myFormat = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         edittext.setText(sdf.format(dateLabel));
+    }
+
+    /**
+     * get the calendar object
+     * @return Calendar
+     */
+    public Calendar getDate() {
+        return myCalendar;
     }
 }

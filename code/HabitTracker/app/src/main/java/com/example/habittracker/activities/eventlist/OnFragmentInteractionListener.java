@@ -22,7 +22,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.example.habittracker.activities.fragments;
+package com.example.habittracker.activities.eventlist;
 
 import com.example.habittracker.HabitEvent;
 
@@ -32,8 +32,8 @@ import com.example.habittracker.HabitEvent;
  * MainActivity file.
  * @author Yongquan Zhang
  */
-public interface OnFragmentInteractionListener{
-    void onDeletePressed(HabitEvent editE);
+public interface OnFragmentInteractionListener {
+    void onOkPressed(HabitEvent newEvent, boolean editFlag);
+    void onDeletePressed(HabitEvent newEvent);
     void onResume();
-    void onOkPressed(HabitEvent habitEvent, boolean editFlag);
 }
