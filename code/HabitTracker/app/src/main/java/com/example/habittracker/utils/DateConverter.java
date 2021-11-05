@@ -1,6 +1,7 @@
 package com.example.habittracker.utils;
 
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -57,5 +58,22 @@ public class DateConverter {
             date.add(Integer.parseInt(temp[i]));
         }
         return date;
+    }
+
+    /**
+     * converts arraylist to Date object
+     * @param array
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static Date arrayListToDate(ArrayList<Integer> array){
+
+        Calendar cal = Calendar.getInstance();
+        Object[] objArray = array.toArray();
+        Integer year = Long.valueOf(objArray[0].toString()).intValue();
+        Integer month = Long.valueOf(objArray[1].toString()).intValue();
+        Integer day = Long.valueOf(objArray[2].toString()).intValue();
+        cal.set( year,month-1,day);
+        return cal.getTime();
     }
 }

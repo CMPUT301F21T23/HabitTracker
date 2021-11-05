@@ -17,6 +17,7 @@ import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.Habit;
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
+import com.example.habittracker.User;
 import com.example.habittracker.activities.tracking.GraphUtil;
 import com.example.habittracker.activities.tracking.ProgressUtil;
 import com.example.habittracker.utils.HabitEventListCallback;
@@ -103,9 +104,9 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         Bundle b = this.getIntent().getExtras();
         Habit value = null;
         if(b != null)
-            value =(Habit) b.getSerializable("habit");
+            value = (Habit) b.getSerializable("habit");
         if(value == null) {
-            Log.d("Error", "No habit given to progress activity.");
+            Log.d("Error Progress", "No habit given to progress activity.");
             //close activity
             finish();
         }
@@ -149,6 +150,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         TextView recentProgressText = findViewById(R.id.recent_progress_text_view);
 
         //get the overall score
+//        Log.d("Integer",""+eventList.get(0).getStartDate().get(0).getClass().getName());
         HashMap<String,Integer> scorePlusStats = ProgressUtil.getOverallProgress(habit,eventList,1,100);
         //display score and stats
         overallProgressText.setText("Overall Progress: "+scorePlusStats.get("score")+ "%\nPercent of time you are following ideal.");

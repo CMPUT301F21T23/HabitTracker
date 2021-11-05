@@ -274,6 +274,11 @@ public class DatabaseManager {
      * Deletes a user document along with all of its subcollections.
      * @param userid        {@code String} User ID
      */
+
+    /**
+     * Deletes a user document along with all of its subcollections.
+     * @param userid        {@code String} User ID
+     */
     public void deleteUserDocument(String userid) {
         // delete all habit documents for this user
         usersColRef.document(userid).collection(habitsColName)
@@ -384,15 +389,18 @@ public class DatabaseManager {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     ArrayList<HabitEvent> eventArray = new ArrayList<>();
+
                     for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Date date;
-                        try {
-                            date = new SimpleDateFormat("yyyy-MM-dd").parse((String)doc.getData().get("startDate"));
-                        } catch (Exception e) {
-                            date = new Date();
-                        }
-                        HabitEvent temp = new HabitEvent();
+
+                        Log.d("parent",""+doc.getReference().getParent().getParent().getId());
+                        ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
                         eventArray.add(new HabitEvent(
+                                doc.getReference().getParent().getParent().getId(),
+                                doc.getId(),
+                                (String)doc.getData().get("comment"),
+                                dateArray,
+                                (String)doc.getData().get("comment"),
+                                "image"
                         ));
                     }
                     callback.onCallbackSuccess(eventArray);
