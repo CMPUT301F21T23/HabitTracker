@@ -1,9 +1,15 @@
 package com.example.habittracker.utils;
 
+import android.os.Build;
+import android.util.Log;
+
+import androidx.annotation.RequiresApi;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class DateConverter {
 
@@ -26,5 +32,49 @@ public class DateConverter {
                         month,
                         day
                 )));
+    }
+
+    /**
+     * converts date array list to string
+     * @param date_list
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static String arrayListToString (ArrayList<Integer> date_list) {
+        String date = date_list.stream().map(String::valueOf)
+                .collect(Collectors.joining("-"));
+        return date;
+    }
+
+    /**
+     * convert string to arraylist
+     * @param date_string
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static ArrayList<Integer> stringToArraylist (String date_string) {
+        String [] temp = date_string.split("-");
+        ArrayList<Integer> date = new ArrayList<>();
+        for (int i = 0; i<temp.length;i++) {
+            date.add(Integer.parseInt(temp[i]));
+        }
+        return date;
+    }
+
+    /**
+     * converts arraylist to Date object
+     * @param array
+     * @return
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static Date arrayListToDate(ArrayList<Integer> array){
+
+        Calendar cal = Calendar.getInstance();
+        Object[] objArray = array.toArray();
+        Integer year =  ((Long) objArray[0]).intValue();
+        Integer month =  ((Long) objArray[1]).intValue();
+        Integer day =  ((Long) objArray[2]).intValue();
+        cal.set( year,month-1,day);
+        return cal.getTime();
     }
 }

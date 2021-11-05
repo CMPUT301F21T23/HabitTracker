@@ -10,6 +10,7 @@ import android.util.Log;
 import com.example.habittracker.utils.BooleanCallback;
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserDetailsCallback;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,20 +36,7 @@ public class HabitActivity extends AppCompatActivity {
 
         // TEST DATABASE
         //testDatabase();
-
-        DatabaseManager db = DatabaseManager.get();
-        db.getUserDetails("user1",new UserDetailsCallback() {
-            @Override
-            public void onCallbackSuccess(HashMap<String,Object> userDetails) {
-                //Do what you need to do with your list
-                Log.d("User",""+userDetails);
-            }
-
-            @Override
-            public void onCallbackFailed() {
-                Log.d("Error","Failed to get user");
-            }
-        });
+        SharedInfo.getInstance().setCurrentUser(new User("user1",""));
       
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         Intent intent = new Intent(this, HomeActivity.class);

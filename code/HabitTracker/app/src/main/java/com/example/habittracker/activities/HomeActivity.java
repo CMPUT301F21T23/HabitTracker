@@ -4,15 +4,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
+import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.HabitListCallback;
 
 import java.util.ArrayList;
 
@@ -35,13 +41,26 @@ public class HomeActivity extends AppCompatActivity {
 
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("habit",(Habit) list.getItemAtPosition(position));
-//                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+                DatabaseManager db = DatabaseManager.get();
+                db.getAllHabits("user1",new HabitListCallback() {
+                    @Override
+                    public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                        //Do what you need to do with your list
+                        Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
+                        Bundle bundle = new Bundle();
+                        Log.d("testing",""+habitList.get(1).getTitle());//remove once real habit is implemented
+                        Habit habit = habitList.get(0);//remove once real habit is implemented
+                        bundle.putSerializable("habit", habit);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCallbackFailed() {
+
+                    }
+                });
+            }});
 
         Button event_list_button = findViewById(R.id.event_list_button);
         event_list_button.setOnClickListener(new View.OnClickListener() {
@@ -52,8 +71,4 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
-}
+    }

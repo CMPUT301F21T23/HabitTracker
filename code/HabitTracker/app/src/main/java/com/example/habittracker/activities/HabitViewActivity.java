@@ -15,6 +15,15 @@ import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 
 public class HabitViewActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
+    private Habit habit;
+
+    public Habit getHabit() {
+        return habit;
+    }
+
+    public void setHabit(Habit habit) {
+        this.habit = habit;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +39,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
             Log.d("Error", "No habit given to progress activity.");
             finish();
         }
+        this.habit = value;
 
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         Button editButton = findViewById(R.id.editButton);
@@ -45,7 +55,10 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(),ProgressTrackingActivity.class);
-
+                Bundle bundle = new Bundle();
+                Habit habit = getHabit();
+                bundle.putSerializable("habit", habit);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
