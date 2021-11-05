@@ -49,7 +49,7 @@ import java.util.ArrayList;
  * the list. The idea is from CMPUT 301 Lab 3 instruction.
  * @author Yongquan Zhang
  */
-public class  CustomList extends ArrayAdapter<HabitEvent> {
+public class CustomList extends ArrayAdapter<HabitEvent> {
     private ArrayList<HabitEvent> events;
     private Context context;
 
