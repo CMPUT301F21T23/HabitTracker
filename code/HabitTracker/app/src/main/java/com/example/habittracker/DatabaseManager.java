@@ -3,6 +3,8 @@ package com.example.habittracker;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
@@ -11,15 +13,20 @@ import com.example.habittracker.utils.UserListOperationCallback;
 import com.example.habittracker.utils.SharingListCallback;
 import com.example.habittracker.utils.UserDetailsCallback;
 import com.example.habittracker.utils.UserExistsCallback;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -173,7 +180,7 @@ public class DatabaseManager {
      * @param habitTitle    {@code String} Habit Title
      * @param doc           {@code HashMap<String, Object>} Document
      */
-    void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
+    public void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference colRef = usersColRef
                 .document(userid)
@@ -364,7 +371,6 @@ public class DatabaseManager {
             }
         });
     }
-
     /**
      * This method return an array list of all habit events for a habit using a callback function.
      * @param user
@@ -385,6 +391,7 @@ public class DatabaseManager {
                     ArrayList<HabitEvent> eventArray = new ArrayList<>();
 
                     for (QueryDocumentSnapshot doc : task.getResult()) {
+
                         Log.d("parent",""+doc.getReference().getParent().getParent().getId());
                         ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
                         eventArray.add(new HabitEvent(
@@ -607,5 +614,4 @@ public class DatabaseManager {
             }
         });
     }
-
 }
