@@ -32,7 +32,7 @@ public class HabitEvent implements Serializable {
         this.habitId = "Habit 1";
         this.habitEventDocument = new HashMap<>();
     }
-    
+
     /**
      * Creates a habit event.
      * A habit event is an entry that the user might create when they've done a habit as planned.

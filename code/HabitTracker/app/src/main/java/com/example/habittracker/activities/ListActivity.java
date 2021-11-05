@@ -43,9 +43,9 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("HabitID", list.getItemAtPosition(position).toString());
-                intent.putExtras(bundle);
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("habit",habit);
+//                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
