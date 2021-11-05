@@ -327,11 +327,6 @@ public class DatabaseManager {
      * Deletes a user document along with all of its subcollections.
      * @param userid        {@code String} User ID
      */
-
-    /**
-     * Deletes a user document along with all of its subcollections.
-     * @param userid        {@code String} User ID
-     */
     public void deleteUserDocument(String userid) {
         // delete all habit documents for this user
         usersColRef.document(userid).collection(habitsColName)
@@ -386,8 +381,8 @@ public class DatabaseManager {
 
     /**
      * This uses a callback to allow another class to get the list of habit of a user
-     * @param user
-     * @param callback
+     * @param user      {@code String}  the user logged in
+     * @param callback  {@code HabitListCallback}   an action to perform as a callback
      */
     public void getAllHabits(String user, HabitListCallback callback) {
         // Users -> userid (key) -> Habits
@@ -411,9 +406,10 @@ public class DatabaseManager {
                         Date date = cal.getTime();
                         habitArray.add(new Habit(
                                 doc.getId(),
+                                (String)doc.getData().get("display"),
                                 (String)doc.getData().get("reason"),
                                 date,
-                                daysArray.toArray(new String[daysArray.size()])
+                                daysArray //.toArray(new String[daysArray.size()])
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);
