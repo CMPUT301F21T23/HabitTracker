@@ -4,14 +4,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
+import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.SharedInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -42,13 +47,26 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
 
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("HabitID", list.getItemAtPosition(position).toString());
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
+                DatabaseManager db = DatabaseManager.get();
+                db.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(),new HabitListCallback() {
+                    @Override
+                    public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                        //Do what you need to do with your list
+                        Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
+                        Bundle bundle = new Bundle();
+//                        Log.d("testing",""+habitList.get(3).getTitle());//remove once real habit is implemented
+                        Habit habit = habitList.get(0);//remove once real habit is implemented
+                        bundle.putSerializable("habit", habit);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCallbackFailed() {
+
+                    }
+                });
+            }});
     }
 
     @Override

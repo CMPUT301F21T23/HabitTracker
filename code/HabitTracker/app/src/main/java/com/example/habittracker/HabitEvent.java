@@ -1,5 +1,7 @@
 package com.example.habittracker;
 
+import com.example.habittracker.utils.SharedInfo;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,11 +30,13 @@ public class HabitEvent implements Serializable {
      * userId and habitId are set to a default value because they are mandatory.
      */
     public HabitEvent () {
-        this.userId = "John_test_user";
+        // By default
+        this.userId = SharedInfo.getInstance().getCurrentUser().getUsername();
+        // By default
         this.habitId = "Habit 1";
         this.habitEventDocument = new HashMap<>();
     }
-    
+
     /**
      * Creates a habit event.
      * A habit event is an entry that the user might create when they've done a habit as planned.
@@ -44,7 +48,7 @@ public class HabitEvent implements Serializable {
      */
     public HabitEvent (String habit, String eventId ,String comment, ArrayList<Integer> startDate, String location, String image) {
 
-        this.userId = "John_test_user";
+        this.userId = SharedInfo.getInstance().getCurrentUser().getUsername();
         this.eventId = eventId;
         this.habitId = habit;
         this.comment = comment;
@@ -150,5 +154,22 @@ public class HabitEvent implements Serializable {
      */
     public String getEventId() {
         return this.eventId;
+    }
+
+    /**
+     * Allows editing/setting of the start date of the habit event (in Date format)
+     * @param date {Date} the habit event start date
+     */
+    public void setCalendar(Date date) {
+        this.date_calendar = date;
+        this.habitEventDocument.put("date", date);
+    }
+
+    /**
+     * Gets the the start date of the habit event (in Date format)
+     * @return date_calendar
+     */
+    public Date getCalendar() {
+        return this.date_calendar;
     }
 }
