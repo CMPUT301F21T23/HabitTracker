@@ -12,10 +12,6 @@ import android.widget.Toast;
 import java.sql.Struct;
 
 /**
- * @author aparna4
- */
-
-/**
  * Location activity class helps display user's current location
  */
 public class LocationActivity extends AppCompatActivity {

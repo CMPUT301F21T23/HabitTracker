@@ -23,12 +23,6 @@
  */
 package com.example.habittracker.activities.fragments;
 
-
-import static com.example.habittracker.utils.DateConverter.arrayListToString;
-import static com.example.habittracker.utils.DateConverter.stringToArraylist;
-import com.example.habittracker.utils.SharedInfo;
-
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -159,19 +153,6 @@ public class AddEventFragment extends DialogFragment {
         EditText edittext = (EditText) view.findViewById(R.id.date_editText);
 
         DatePickerDialog.OnDateSetListener dateD = new DatePickerDialog.OnDateSetListener() {
-
-        // set up snapshot listener
-        String usersColName = "Users";
-        String habitsColName = "Habits";
-        String habitEventsColName = "HabitEvents";
-        String DB_TAG = "DatabaseManager";
-
-        ArrayList<String> habit_list = new ArrayList<>();
-
-        DatabaseManager dm = DatabaseManager.get();
-        CollectionReference colRef;
-        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
-
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
