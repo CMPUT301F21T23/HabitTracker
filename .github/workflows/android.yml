@@ -7,7 +7,7 @@ on:
     branches: [ dev ]
 defaults:
   run:
-    working-directory: dart_project
+    working-directory: code/HabitTracker
 jobs:
   build:
 
