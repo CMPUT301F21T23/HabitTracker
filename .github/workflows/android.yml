@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: move to project folder
+      run: cd ./code/HabitTracker
     - uses: actions/checkout@v2
     - name: set up JDK 11
       uses: actions/setup-java@v2
@@ -21,6 +23,6 @@ jobs:
         cache: gradle
 
     - name: Grant execute permission for gradlew
-      run: chmod +x ./code/HabitTracker/gradlew
+      run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./code/HabitTracker/gradlew build
+      run: ./gradlew build
