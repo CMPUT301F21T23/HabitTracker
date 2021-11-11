@@ -1,17 +1,20 @@
 package com.example.habittracker.utils;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import android.os.Build;
-import android.util.Log;
-
 import androidx.annotation.RequiresApi;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
+/**
+ * This class is responsible for several date-related utilities. It allows for conversion between
+ * different date formats (used on convenience)
+ */
 public class DateConverter {
 
     /**
@@ -34,7 +37,71 @@ public class DateConverter {
                         day
                 )));
     }
-  
+
+    /**
+     * Converts a given arraylist to a Date
+     * @param dateArrayList {ArrayList<Long>}   given in the following format: {year, month, day}
+     * @return  date, the converted Date
+     */
+    public static Date arrayListToDate (ArrayList<Long> dateArrayList) {
+        Date date = null;
+
+        if (dateArrayList != null) {
+            long year = dateArrayList.get(0);
+            long month = dateArrayList.get(1);
+            long day = dateArrayList.get(2);
+            String dateAsString = String.format(Locale.US, "%d/%d/%d", month, day, year);
+
+            try {
+                date = new SimpleDateFormat("MM/dd/yyyy", Locale.US).parse(dateAsString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return (date);
+    }
+
+    /**
+     * Gets the current day of the week in an easily comparable format
+     * @return weekDay, the current day of the week
+     */
+    public static String getCurrentWeekDay() {
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        String weekDay = "";
+
+        switch (day) {
+            case Calendar.SUNDAY:
+                weekDay = "Sun";
+                break;
+            case Calendar.MONDAY:
+                weekDay = "Mon";
+                break;
+            case Calendar.TUESDAY:
+                weekDay = "Tue";
+                break;
+            case Calendar.WEDNESDAY:
+                weekDay = "Wed";
+                break;
+            case Calendar.THURSDAY:
+                weekDay = "Thu";
+                break;
+            case Calendar.FRIDAY:
+                weekDay = "Fri";
+                break;
+            case Calendar.SATURDAY:
+                weekDay = "Sat";
+                break;
+        }
+
+        return (weekDay);
+    }
+
+     /**
+     * converts date array list to string
+     * @param date_list
+     * @return
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static String arrayListToString (ArrayList<Integer> date_list) {
 
@@ -66,7 +133,7 @@ public class DateConverter {
      * @return
      */
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public static Date arrayListToDate(ArrayList<Integer> array){
+    public static Date intArrayListToDate(ArrayList<Integer> array){ //
 
         Calendar cal = Calendar.getInstance();
         Object[] objArray = array.toArray();

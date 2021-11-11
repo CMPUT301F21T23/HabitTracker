@@ -6,50 +6,49 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.habittracker.DatabaseManager;
-import com.example.habittracker.HabitActivity;
-import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.User;
-import com.example.habittracker.utils.BooleanCallback;
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserExistsCallback;
-import com.google.firebase.firestore.DocumentReference;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class LoginActivity extends AppCompatActivity {
-    // Variables
-    ListView profileList;
-    ArrayAdapter<String> profileListAdapter;
-    ArrayList<String> profileDataList;
+/**
+ * This login activity is the first screen you are greeted with when opening the app, and
+ * the user must log in or register.
+ * After logging out from within the app, the user is brought back here.
+ */
 
-    // Login page stuff
+public class LoginActivity extends AppCompatActivity {
     EditText usernameField;
     EditText passwordField;
     boolean loggedIn = false;
 
-    SecretKeyFactory keyFactory = null;
-
     // Hashing code taken from https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/#PBKDF2WithHmacSHA1
+    // Functions generateStrongPasswordHash, getSalt, toHex, validatePassword, fromHex are copied from the link.
     // Never roll your own crypto!
 
-    private static String generateStrongPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    /**
+     * From a password, derive a string containing a hash, a random salt, and the number of iterations used to derive the hash
+     * @param password
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    public static String generateStrongPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // Keep the iterations low enough so that the delay is negligible. 10000 iterations is about a second of hashing.
         int iterations = 1000;
         char[] chars = password.toCharArray();
@@ -61,6 +60,11 @@ public class LoginActivity extends AppCompatActivity {
         return iterations + ":" + toHex(salt) + ":" + toHex(hash);
     }
 
+    /**
+     * Generate a random salt
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     private static byte[] getSalt() throws NoSuchAlgorithmException {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
@@ -68,6 +72,12 @@ public class LoginActivity extends AppCompatActivity {
         return salt;
     }
 
+    /**
+     * Convert a byte array to a hexadecimal string
+     * @param array
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     private static String toHex(byte[] array) throws NoSuchAlgorithmException {
         BigInteger bi = new BigInteger(1, array);
         String hex = bi.toString(16);
@@ -80,7 +90,15 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    /**
+     * Given a password and a hash of the password, verify that the password hashes into the hash
+     * @param originalPassword
+     * @param storedPassword
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    public static boolean validatePassword(String originalPassword, String storedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
         String[] parts = storedPassword.split(":");
         int iterations = Integer.parseInt(parts[0]);
         byte[] salt = fromHex(parts[1]);
@@ -98,6 +116,12 @@ public class LoginActivity extends AppCompatActivity {
         return diff == 0;
     }
 
+    /**
+     * Convert a hexadecimal string to a byte array
+     * @param hex
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     private static byte[] fromHex(String hex) throws NoSuchAlgorithmException {
         byte[] bytes = new byte[hex.length() / 2];
         for(int i = 0; i<bytes.length ;i++)
@@ -107,7 +131,11 @@ public class LoginActivity extends AppCompatActivity {
         return bytes;
     }
 
-    // Use the DatabaseManager class to create a document
+    /**
+     * Use the DatabaseManager class to create a document
+     * @param username
+     * @param hashedPassword
+     */
     void dbCreateUser(String username, String hashedPassword) {
         HashMap<String, Object> userDocument = new HashMap<>();
 
@@ -127,12 +155,6 @@ public class LoginActivity extends AppCompatActivity {
         DatabaseManager.get().addUsersDocument(userid, userDocument);
     }
 
-    // Find the user with id "username" and return the hashed password from that
-    String dbGetUserPasswordHash(String username) {
-        //DocumentReference doc = DatabaseManager.get().getUsersColRef().document("Users/a").get().the;
-        return "yo";
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,11 +163,14 @@ public class LoginActivity extends AppCompatActivity {
 
         usernameField = findViewById(R.id.editTextUsername);
         passwordField = findViewById(R.id.editTextPassword);
-
-        //NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
-
     }
 
+    /**
+     * Login button pressed
+     * @param view
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
     public void loginPressed(View view) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String username = usernameField.getText().toString();
 
@@ -208,6 +233,12 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Register button pressed
+     * @param view
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
     public void registerPressed(View view) throws InvalidKeySpecException, NoSuchAlgorithmException {
         //DatabaseManager.get().getUsersColName()
 
@@ -262,17 +293,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This cannot be called from within the callback, so it is brought out here.
+     */
     public void switchToHomeActivity() {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
     }
-/*
-    public void logoutPressed(View view) {
-        if (loggedIn) {
-            loggedIn = false;
-            Toast.makeText(LoginActivity.this, "Logged out!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(LoginActivity.this, "You cannot log out if you aren't logged in to begin with.", Toast.LENGTH_SHORT).show();
-        }
-    }*/
 }

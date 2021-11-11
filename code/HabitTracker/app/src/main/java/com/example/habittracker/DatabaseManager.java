@@ -92,6 +92,14 @@ public class DatabaseManager {
     }
 
     /**
+     * Get a reference to the Habit sub-collection of a given user
+     * @return      {@code CollectionReference} Users collection reference
+     */
+    public CollectionReference getHabitsColRef(String userid) {
+        return (usersColRef.document(userid).collection(habitsColName));
+    }
+
+    /**
      * Get the Users collection name
      * @return      {@code String} Users collection name
      */
@@ -175,6 +183,34 @@ public class DatabaseManager {
     }
 
     /**
+     * Delete a habit for a user
+     * @param userid        {@code String} User ID
+     * @param habitTitle    {@code String} The title of the habit to be deleted
+     */
+    public void deleteHabitDocument(String userid, String habitTitle) {
+        DocumentReference docRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle);
+
+        docRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("Habit successfully deleted for Habit with title %s",
+                                habitTitle));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("Habit failed to be deleted for Habit with title %s",
+                                habitTitle));
+                    }
+                });
+    }
+
+    /**
      * Adds a habit event for a given habit.
      * @param userid        {@code String} User ID
      * @param habitTitle    {@code String} Habit Title
@@ -206,11 +242,27 @@ public class DatabaseManager {
     }
 
     /**
-     * delete a habit event for a given habit
-     * @param userid        {@code String} User ID
-     * @param habitTitle    {@code String} Habit Title
-     * @param eventID       {@code String} Event ID
+     * Updates a habit document
+     * @param prevTitle {@code String}                  The original title of the habit
+     * @param title     {@code String}                  The new title of the habit
+     * @param doc       {@code HashMap<String,Object>}  The newly updated document
      */
+    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
+
+        DocumentReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(prevTitle);
+
+        colRef.update(doc);
+    }
+
+     /**
+      *  Delete a habit event for a given habit
+      * @param userid        {@code String} User ID
+      * @param habitTitle    {@code String} Habit Title
+      * @param eventID       {@code String} Event ID
+      */
     public void deleteHabitEventDocument(String userid, String habitTitle, String eventID) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference colRef = usersColRef
@@ -268,12 +320,8 @@ public class DatabaseManager {
                                 habitTitle));
                     }
                 });
-    }
 
-    /**
-     * Deletes a user document along with all of its subcollections.
-     * @param userid        {@code String} User ID
-     */
+    }
 
     /**
      * Deletes a user document along with all of its subcollections.
@@ -333,8 +381,8 @@ public class DatabaseManager {
 
     /**
      * This uses a callback to allow another class to get the list of habit of a user
-     * @param user
-     * @param callback
+     * @param user      {@code String}  the user logged in
+     * @param callback  {@code HabitListCallback}   an action to perform as a callback
      */
     public void getAllHabits(String user, HabitListCallback callback) {
         // Users -> userid (key) -> Habits
@@ -358,9 +406,10 @@ public class DatabaseManager {
                         Date date = cal.getTime();
                         habitArray.add(new Habit(
                                 doc.getId(),
+                                (String)doc.getData().get("display"),
                                 (String)doc.getData().get("reason"),
                                 date,
-                                daysArray.toArray(new String[daysArray.size()])
+                                daysArray //.toArray(new String[daysArray.size()])
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);

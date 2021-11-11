@@ -5,8 +5,10 @@ import android.content.Context;
 import android.view.View;
 import android.widget.EditText;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -29,6 +31,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         this.edittext = (EditText) view.findViewById(et_id);
         myCalendar = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener theDP = this;
+        updateLabel(new Date());
 
         edittext.setOnClickListener(new View.OnClickListener() {
             /**
@@ -58,16 +61,31 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         myCalendar.set(Calendar.YEAR, year);
         myCalendar.set(Calendar.MONTH, month);
         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        updateLabel();
+        updateLabel(myCalendar.getTime());
     }
 
     /**
-     * convert date object to a string with format 'YYYY-MM-dd'
+     * Returns the Date the datePicker was set to.
+     * @return setDate, the Date
+     *         null,    if no date was selected
      */
-    private void updateLabel() {
+    public Date getSetDate() {
         String myFormat = "yyyy-MM-dd";
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-        edittext.setText(sdf.format(myCalendar.getTime()));
+
+        Date setDate = null;
+        try {
+            setDate = sdf.parse(edittext.getText().toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return ( setDate );
+    }
+
+    private void updateLabel(Date dateLabel) {
+        String myFormat = "yyyy-MM-dd";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        edittext.setText(sdf.format(dateLabel));
     }
 
     /**

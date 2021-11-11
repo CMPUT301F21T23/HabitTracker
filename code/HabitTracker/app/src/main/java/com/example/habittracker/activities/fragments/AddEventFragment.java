@@ -196,6 +196,7 @@ public class AddEventFragment extends DialogFragment {
 
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
+//        dm.getAllHabits("John_test_user", new HabitListCallback() {
         dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
             @Override
             public void onCallbackSuccess(ArrayList<Habit> habitList) {

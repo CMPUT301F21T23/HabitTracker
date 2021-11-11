@@ -1,52 +1,48 @@
 package com.example.habittracker.activities.fragments;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.icu.util.Calendar;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.example.habittracker.Habit;
 import com.example.habittracker.R;
+import com.example.habittracker.utils.CustomDatePicker;
+
+import java.util.ArrayList;
 
 /**
  * HabitInputFragment prompts the user to enter details about a Habit.
  */
-public class HabitInputFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class HabitInputFragment extends DialogFragment {
 
     private EditText inputTitle;
     private EditText inputReason;
-    private EditText inputDate;
     HabitInputDialogListener listener;
 
-    // this will be called when a date is selected
-    @Override
-    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-        Log.i("Year Selected", String.valueOf(year));
-        Log.i("Month Selected", String.valueOf(month));
-        Log.i("Day Selected", String.valueOf(dayOfMonth));
-    }
-
+    /**
+     * This interface, HabitInputDialogListener,
+     * should be implemented by anybody trying to listen into a habit input fragment
+     */
     public interface HabitInputDialogListener {
-        void onOkPressed();
+        void onOkPressed(Habit habit, String prevTitle);
     }
 
+    /**
+     * Performs an action (initi a listener) on attach
+     * @param context {@code Context} the pplication context
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         // this method automatically gets called when a fragment attaches to an activity
@@ -58,18 +54,11 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void showDatePickerDialog() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                getActivity(),
-                (DatePickerDialog.OnDateSetListener) getParentFragment(),
-                Calendar.getInstance().get(Calendar.YEAR),          // year to show
-                Calendar.getInstance().get(Calendar.MONTH),         // month to show
-                Calendar.getInstance().get(Calendar.DAY_OF_MONTH)   // day to show
-        );
-        datePickerDialog.show();
-    }
-
+    /**
+     * Created dialog options in popup dialog
+     * @param savedInstanceState {@code Bundle} the bundle containing information
+     * @return alertDialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -77,16 +66,9 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_habit_input, null);
         inputTitle = view.findViewById(R.id.title);
         inputReason = view.findViewById(R.id.reason);
-        inputDate = view.findViewById(R.id.dateToStart);
 
-        // show the date picker dialog when the user clicks the date to start field
-        inputDate.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog();
-            }
-        });
+        // adds a responsive DatePicker
+        CustomDatePicker datePicker = new CustomDatePicker(getActivity(), view, R.id.dateToStart);
 
         // build the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -99,15 +81,69 @@ public class HabitInputFragment extends DialogFragment implements DatePickerDial
 
         // process the data entered through the dialog
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            /**
+             * Displays user interface to enter all fields to make a Habit.
+             * @param dialogInterface {@code DialogInterface} the dialog interface
+             */
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener(new View.OnClickListener() {
+
+                    /**
+                     * Returns an arraylist containing the days of the week that have been checked
+                     * @return the arraylist
+                     */
+                    private ArrayList <String> getWeekDaysChecked() {
+                        CheckBox mondayCheck = view.findViewById(R.id.monday);
+                        CheckBox tuesdayCheck = view.findViewById(R.id.tuesday);
+                        CheckBox wednesdayCheck = view.findViewById(R.id.wednesday);
+                        CheckBox thursdayCheck = view.findViewById(R.id.thursday);
+                        CheckBox fridayCheck = view.findViewById(R.id.friday);
+                        CheckBox saturdayCheck = view.findViewById(R.id.saturday);
+                        CheckBox sundayCheck = view.findViewById(R.id.sunday);
+
+                        ArrayList <String> weekDays = new ArrayList<>();
+                        CheckBox [] boxes = {
+                                mondayCheck,
+                                tuesdayCheck,
+                                wednesdayCheck,
+                                thursdayCheck,
+                                fridayCheck,
+                                saturdayCheck,
+                                sundayCheck
+                        };
+
+                        for (CheckBox box : boxes) {
+                            if (box.isChecked()) {
+                                weekDays.add(box.getText().toString());
+                            }
+                        }
+                        return (weekDays);
+                    }
+
+                    /**
+                     * Action performed when the habit is done modifying.
+                     * @param view
+                     */
                     @Override
                     public void onClick(View view) {
                         String title = inputTitle.getText().toString();
                         String reason = inputReason.getText().toString();
-                        listener.onOkPressed();
+
+                        ArrayList<String> weekDays = getWeekDaysChecked();
+
+                        Bundle bundle = getArguments();
+                        String oldTitle = null;
+                        // editing case
+                        if (bundle!= null) {
+                            oldTitle = bundle.getString("old_habit_title");
+                        }
+                        Habit habit = new Habit(title, title, reason, datePicker.getSetDate(), weekDays);
+                        // todo: will have to make UI to make it public/private
+
+                        listener.onOkPressed(habit, oldTitle);
                         alertDialog.dismiss();
                     }
                 });

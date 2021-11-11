@@ -1,19 +1,18 @@
 package com.example.habittracker;
 
-import android.provider.ContactsContract;
-
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.habittracker.activities.HabitViewActivity;
+import com.example.habittracker.activities.HomeActivity;
 import com.example.habittracker.activities.ListActivity;
-import com.example.habittracker.activities.LoginActivity;
+import com.example.habittracker.activities.ProgressTrackingActivity;
 import com.example.habittracker.activities.SharingActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
 
-import com.example.habittracker.activities.HomeActivity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +21,9 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class NavigationBarTests {
+public class ProgressActivityTest {
+
+
     private Solo solo;
     @Rule
     public ActivityTestRule<ProfileActivity> rule =
@@ -64,7 +65,14 @@ public class NavigationBarTests {
         mockDoc.put("pendingFollowerReqs", Arrays.asList("sadman", "stalkerman"));
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
                 .set(mockDoc);
-
+        HashMap<String, Object> habitDoc = new HashMap<>();
+        habitDoc.put("dateStarted", Arrays.asList(2021,11,1));
+        habitDoc.put("display", "habit");
+        habitDoc.put("reason", "");
+        habitDoc.put("progress", "");
+        habitDoc.put("whatDays", Arrays.asList("Mon", "Wed"));
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
+                .set(habitDoc);
     }
 
     /**
@@ -72,24 +80,25 @@ public class NavigationBarTests {
      */
     public void deleteMockUser() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
+                .delete();
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
                 .delete();
+
     }
 
     /**
      * test each button on the navigation bar
      */
     @Test
-    public void testNavBar(){
+    public void testProgress(){
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
-        solo.clickOnView(solo.getView(R.id.home));
-        solo.assertCurrentActivity("Wrong Activity", HomeActivity.class);
         solo.clickOnView(solo.getView(R.id.list));
         solo.assertCurrentActivity("Wrong Activity", ListActivity.class);
-        solo.clickOnView(solo.getView(R.id.profile));
-        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
-        solo.clickOnView(solo.getView(R.id.sharing));
-        solo.assertCurrentActivity("Wrong Activity", SharingActivity.class);
+        solo.waitForText("habit");
+        solo.clickOnText("habit");
+        solo.assertCurrentActivity("Wrong Activity", HabitViewActivity.class);
+        solo.clickOnView(solo.getView(R.id.see_progress_button));
+        solo.assertCurrentActivity("Wrong Activity", ProgressTrackingActivity.class);
     }
-
 }
