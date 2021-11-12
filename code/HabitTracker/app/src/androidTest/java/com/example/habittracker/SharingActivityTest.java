@@ -6,22 +6,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
-import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.habittracker.activities.SharingActivity;
-import com.example.habittracker.activities.eventlist.MapsActivity;
-import com.example.habittracker.activities.fragments.SharingInputFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.example.habittracker.activities.eventlist.LocationActivity;
-
-import com.example.habittracker.activities.tracking.*;
-import com.example.habittracker.activities.profile.ProfileFollowersActivity;
-import com.example.habittracker.activities.profile.ProfileFollowingActivity;
-import com.example.habittracker.utils.SharedInfo;
+import com.example.habittracker.activities.sharing.SharingActivity;
 
 import com.robotium.solo.Solo;
 

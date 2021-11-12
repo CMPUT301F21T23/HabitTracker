@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 
 import com.example.habittracker.utils.CheckPasswordCallback;
+import com.example.habittracker.utils.HabitCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.UserListOperationCallback;
@@ -662,5 +663,82 @@ public class DatabaseManager {
                 }
             }
         });
+    }
+
+    public void getAllPublicHabits(String userid, HabitCallback callback) {
+        // get the Habits collection for the given user
+        CollectionReference colRef = usersColRef.document(userid).collection(habitsColName);
+        // get all Habits that are public
+        colRef.whereEqualTo("isPublic", true)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                // the query gives at least one document
+                                // iterate over all the documents given by the query
+                                for (DocumentSnapshot doc: querySnapshot.getDocuments()) {
+                                    ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
+                                    ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
+                                    Long overallProgress = (Long) doc.getData().get("overallProgress");
+                                    Calendar cal = Calendar.getInstance();
+                                    if(dateArray == null || daysArray == null){
+                                        continue;
+                                    }
+                                    cal.set(dateArray.get(0).intValue(),dateArray.get(1).intValue()-1,dateArray.get(2).intValue());
+                                    Date date = cal.getTime();
+
+                                    // create a Habit object
+                                    Habit habit = new Habit(
+                                            doc.getId(),
+                                            (String) doc.getData().get("display"),
+                                            (String) doc.getData().get("reason"),
+                                            date,
+                                            daysArray
+                                    );
+
+                                    // TODO: the following two setter methods should not be used
+                                    // TODO: Habit constructor should take care of these
+                                    // set the owner of this Habit
+                                    habit.setUser(new User(userid));
+                                    // set the overall progress of the Habit
+                                    habit.setOverallProgress(overallProgress.intValue());
+
+                                    callback.onCallbackSuccess(habit);
+                                }
+                            }
+                        } else {
+                            callback.onCallbackFailure(task.getException().toString());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Gets alls the public habits of users that are being followed by the current user/
+     * @param userid        {@code String} The current user's userid
+     * @param callback      {@code HabitCallback} Callback interface that is called when a Habit
+     *                                           document retrieved and Habit object is created
+     */
+    public void getFollowingHabits(String userid, HabitCallback callback) {
+        // get the list of users that this user is following
+        getUserListItems(userid, "following",
+                new SharingListCallback() {
+                    @Override
+                    public void onCallbackSuccess(ArrayList<String> dataList) {
+                        // iterate over the following list
+                        for (String followingUser: dataList) {
+                            // get all the public habits for the user
+                            getAllPublicHabits(followingUser, callback);
+                        }
+                    }
+
+                    @Override
+                    public void onCallbackFailure(String reason) {
+                        callback.onCallbackFailure(reason);
+                    }
+                });
     }
 }

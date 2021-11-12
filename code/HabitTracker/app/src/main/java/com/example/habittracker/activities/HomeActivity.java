@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
 
-        list = findViewById(R.id.today_habits_list_view);
+        list = findViewById(R.id.sharing_list_view);
 
         this.habitAdapter = new CustomHabitList(this, habitList);
         this.list.setAdapter(habitAdapter);
@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        Button event_list_button = findViewById(R.id.event_list_button);
+        Button event_list_button = findViewById(R.id.follow_button);
         event_list_button.setOnClickListener(new View.OnClickListener() {
 
             /**

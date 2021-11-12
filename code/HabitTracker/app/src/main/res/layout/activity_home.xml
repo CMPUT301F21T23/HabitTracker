@@ -8,7 +8,7 @@
     tools:context=".HabitActivity">
 
     <TextView
-        android:id="@+id/text_home"
+        android:id="@+id/text_sharing"
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:layout_marginStart="8dp"
@@ -22,22 +22,22 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/today_habits_list_view"
+        android:id="@+id/sharing_list_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="9dp"
-        app:layout_constraintBottom_toTopOf="@+id/event_list_button"
+        app:layout_constraintBottom_toTopOf="@+id/follow_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_home"
+        app:layout_constraintTop_toBottomOf="@+id/text_sharing"
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/event_list_button"
+        android:id="@+id/follow_button"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
@@ -47,7 +47,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/today_habits_list_view" />
+        app:layout_constraintTop_toBottomOf="@+id/sharing_list_view" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

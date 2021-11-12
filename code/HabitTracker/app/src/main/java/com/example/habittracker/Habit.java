@@ -19,8 +19,9 @@ public class Habit implements Serializable {
     private String titleDisplay;
     private String reason;
     private Date startDate;
-    private int progress; // provisional until we determine how to implement progress
+    private Integer overallProgress = 0;
     private ArrayList<String> weekDays;
+    private User user;
 
     private boolean isPublic = false;
 
@@ -43,7 +44,7 @@ public class Habit implements Serializable {
         this.titleDisplay = titleDisplay;
         this.reason = reason;
         this.startDate = startDate;
-        this.progress = 0;
+        this.overallProgress = 0;
         this.isPublic = isPublic;
 
         this.weekDays = weekDays;
@@ -111,6 +112,38 @@ public class Habit implements Serializable {
     }
 
     /**
+     * Gets the overall progress for a Habit.
+     * @return          {@code int} Overall progress
+     */
+    public Integer getOverallProgress() {
+        return overallProgress;
+    }
+
+    /**
+     * Sets the overall progress for a Habit.
+     * @param overallProgress   {@code int} Overall progress
+     */
+    public void setOverallProgress(Integer overallProgress) {
+        this.overallProgress = overallProgress;
+    }
+
+    /**
+     * Gets the User that owns this Habit.
+     * @return      {@code User} User object
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the User that owns this Habit.
+     * @param user  {@code User} User object
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
      * Add habit to database.
      */
     public void addToDB() {
@@ -136,8 +169,8 @@ public class Habit implements Serializable {
         //  prolly database manager. check w Zarif.
 
         // the attribute names as specified in the schema and the values that correspond
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
-        Object [] values = { reason, dateArrayList, weekDays, progress, titleDisplay};
+        String [] attributes = {"reason", "dateStarted", "whatDays", "progressBar", "display"};
+        Object [] values = { reason, dateArrayList, weekDays, overallProgress, titleDisplay};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {
