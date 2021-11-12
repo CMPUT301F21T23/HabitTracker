@@ -21,7 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class SharingActivity extends AppCompatActivity implements SharingInputFragment.SharingInputDialogListener {
+public class SharingActivity extends AppCompatActivity {
 
     public ListView sharingListView;
     private ArrayAdapter<Habit> sharingArrayAdapter;
@@ -37,11 +37,11 @@ public class SharingActivity extends AppCompatActivity implements SharingInputFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sharing);
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
-        Button add_button = findViewById(R.id.follow_button);
-        add_button.setOnClickListener(new View.OnClickListener() {
+        Button followButton = findViewById(R.id.follow_button);
+        followButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new SharingInputFragment().show(getSupportFragmentManager(), "ADD MEDICINE");
+                new SharingInputFragment().show(getSupportFragmentManager(), "FOLLOW");
             }
         });
         // get the View objects
@@ -75,10 +75,5 @@ public class SharingActivity extends AppCompatActivity implements SharingInputFr
                     }
                 }
         );
-    }
-
-    @Override
-    public void onOkPressed() {
-
     }
 }

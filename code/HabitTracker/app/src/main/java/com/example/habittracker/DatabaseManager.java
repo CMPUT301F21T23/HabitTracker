@@ -10,6 +10,7 @@ import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.StringCallback;
 import com.example.habittracker.utils.UserListOperationCallback;
 import com.example.habittracker.utils.SharingListCallback;
 import com.example.habittracker.utils.UserDetailsCallback;
@@ -591,7 +592,7 @@ public class DatabaseManager {
      * Removes an item from any of the ArrayList fields of the User document.
      * This can be used to decline a follow request or remove a follower or unfollow another user.
      * @param userid        {@code String} The current user's id
-     * @param requestid     {@code String} The user id of the person who sent the follow request
+     * @param requestid     {@code String} The item to be removed
      * @param field         {@code String}  Either 'followers' or 'following' or 'pendingFollowReqs'
      *                                      or 'pendingFollowerReqs'
      * @param callback      {@code UserListOperationCallback} Callback object
@@ -599,6 +600,31 @@ public class DatabaseManager {
     public void removeUserListItem(String userid, String requestid, String field, UserListOperationCallback callback) {
         DocumentReference docRef = usersColRef.document(userid);
         docRef.update(field, FieldValue.arrayRemove(requestid))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        callback.onCallbackSuccess(requestid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallbackFailure(e.toString());
+                    }
+                });
+    }
+
+    /**
+     * Adds an item to any of the ArrayList fields of the User document.
+     * @param userid        {@code String} The current user's id
+     * @param requestid     {@code String} The item to be added
+     * @param field         {@code String} Either 'followers' or 'following' or 'pendingFollowReqs'
+     *      *                              or 'pendingFollowerReqs'
+     * @param callback      {@code UserListOperationCallback} Callback object
+     */
+    public void addUserListItem(String userid, String requestid, String field, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.update(field, FieldValue.arrayUnion(requestid))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -636,6 +662,85 @@ public class DatabaseManager {
                         callback.onCallbackFailure(e.toString());
                     }
                 });
+    }
+
+    /**
+     * Sends a request to follow the public habits of a user
+     * @param currentUserid     {@code String} Current user's id
+     * @param requestid         {@code String} Target user's id
+     * @param callback          {@code StringCallback} Callback object
+     */
+    public void sendFollowRequest(String currentUserid, String requestid, StringCallback callback) {
+        // get the following list of the current user and check if the requestid is already there
+        getUserListItems(currentUserid, "following", new SharingListCallback() {
+            @Override
+            public void onCallbackSuccess(ArrayList<String> dataList) {
+                // search dataList for requestid
+                if (dataList.contains(requestid)) {
+                    callback.onCallbackFailure("You are already following this user!");
+                } else {
+                    // get the pendingFollowReqs list for the current user and check if a follow
+                    // request has already been sent
+                    getUserListItems(currentUserid, "pendingFollowReqs", new SharingListCallback() {
+                        @Override
+                        public void onCallbackSuccess(ArrayList<String> dataList) {
+                            // search dataList for requestid
+                            if (dataList.contains(requestid)) {
+                                callback.onCallbackFailure("Follow request pending!");
+                            } else {
+                                // check if the user with requestid exists
+                                // if the user exists send the follow request
+                                userExists(requestid, new UserExistsCallback() {
+                                    @Override
+                                    public void onCallbackSuccess(String username) {
+                                        // the user exists
+                                        // add target user to the pendingFollowReqs of the current user
+                                        addUserListItem(currentUserid, requestid, "pendingFollowReqs",
+                                                new UserListOperationCallback() {
+                                                    @Override
+                                                    public void onCallbackSuccess(String userid) {
+                                                        // add the current user to the pendingFollowerReqs of the target user
+                                                        addUserListItem(requestid, currentUserid, "pendingFollowerReqs",
+                                                                new UserListOperationCallback() {
+                                                                    @Override
+                                                                    public void onCallbackSuccess(String userid) {
+                                                                        String msg = "Follow request sent!";
+                                                                        callback.onCallbackSuccess(msg);
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCallbackFailure(String reason) {
+                                                                        callback.onCallbackFailure(reason);
+                                                                    }
+                                                                });
+                                                    }
+
+                                                    @Override
+                                                    public void onCallbackFailure(String reason) {
+                                                        callback.onCallbackFailure(reason);
+                                                    }
+                                                });
+                                    }
+
+                                    @Override
+                                    public void onCallbackFailed() {
+                                        callback.onCallbackFailure(String.format("Userid %s does not exist", requestid));
+                                    }
+                                });
+                            }
+                        }
+                        @Override
+                        public void onCallbackFailure(String reason) {
+                            callback.onCallbackFailure(reason);
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCallbackFailure(String reason) {
+                callback.onCallbackFailure(reason);
+            }
+        });
     }
 
     /**
