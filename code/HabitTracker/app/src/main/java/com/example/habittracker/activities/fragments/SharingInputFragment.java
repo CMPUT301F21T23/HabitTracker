@@ -34,6 +34,11 @@ import com.example.habittracker.utils.StringCallback;
  */
 public class SharingInputFragment extends DialogFragment {
 
+    /**
+     * Creates a DialogFragment that allows the user to follow the public habits of another user.
+     * @param savedInstanceState
+     * @return
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
