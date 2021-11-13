@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Intent;
@@ -16,9 +18,13 @@ import com.example.habittracker.R;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.habittracker.activities.eventlist.LocationActivity;
+import com.example.habittracker.activities.fragments.AddEventFragment;
+import com.example.habittracker.activities.fragments.OnFragmentInteractionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,6 +54,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int REQUEST_LOCATION_PERMISSION = 0;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+
 
     String myAddress = "No identified address";
     Double myLatitude = 0.0;
@@ -118,6 +125,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 Toast.makeText(MapsActivity.this, myAddress, Toast.LENGTH_LONG).show();
+                TextView tView = findViewById(R.id.locationDisplay);
+                tView.setText(myAddress);
+
+
                 myLatitude = latLng.latitude;
                 myLongitude = latLng.longitude;
                 map.addMarker(new MarkerOptions().position(latLng)
@@ -188,14 +199,52 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * switches back to Location Activity with captured location
      */
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent myIntent = new Intent(MapsActivity.this, LocationActivity.class);
+    public void onClick(View v) {
+//        super.onBackPressed();
+        Intent myIntent = new Intent(this, LocationActivity.class);
 
         if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
             Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
         }
+        myIntent.putExtra("map_latitude", myLatitude.toString());
+        myIntent.putExtra("map_longitude", myLongitude.toString());
+        myIntent.putExtra("map_address", myAddress);
+        startActivity(myIntent);
+    }
 
+//    public void onClick(View v) {
+////        super.onBackPressed();
+//
+//
+//        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
+//            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
+//        }
+//        myIntent.putExtra("map_latitude", myLatitude.toString());
+//        myIntent.putExtra("map_longitude", myLongitude.toString());
+//        myIntent.putExtra("map_address", myAddress);
+//        startActivity(myIntent);
+//    }
+
+//    public void onClick(View v){
+//        AddEventFragment myFragment = new AddEventFragment();
+//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//
+//        Bundle data = new Bundle();
+//        data.putString("map_address", myAddress);
+//        myFragment.setArguments(data);
+//        fragmentTransaction.replace(R.id.comment_body, myFragment).commitNow();
+//
+//    }
+//
+
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent myIntent = new Intent(this, LocationActivity.class);
+
+        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
+            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
+        }
         myIntent.putExtra("map_latitude", myLatitude.toString());
         myIntent.putExtra("map_longitude", myLongitude.toString());
         myIntent.putExtra("map_address", myAddress);

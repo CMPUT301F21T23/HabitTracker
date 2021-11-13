@@ -72,10 +72,12 @@ import java.util.Locale;
 public class AddEventFragment extends DialogFragment {
 
     private EditText editText1;
+    private EditText showAddress;
     private EditText date;
     private Spinner s;
     private int spinnerIdx;
     private String num;
+    private String address;
     private OnFragmentInteractionListener listener;
     private boolean editFlag = false;
     FusedLocationProviderClient mFusedLocationClient;
@@ -106,6 +108,7 @@ public class AddEventFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_add_event, null);
         editText1 = view.findViewById(R.id.comment_body);
+
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
