@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import com.example.habittracker.activities.eventlist.LocationActivity;
 import com.example.habittracker.activities.fragments.AddEventFragment;
+import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.activities.fragments.OnFragmentInteractionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -199,19 +201,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * switches back to Location Activity with captured location
      */
-    public void onClick(View v) {
-//        super.onBackPressed();
-        Intent myIntent = new Intent(this, LocationActivity.class);
+//    public void onClick(View v) {
+////        super.onBackPressed();
+//        Intent myIntent = new Intent(this, LocationActivity.class);
+//
+//        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
+//            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
+//        }
+//        myIntent.putExtra("map_latitude", myLatitude.toString());
+//        myIntent.putExtra("map_longitude", myLongitude.toString());
+//        myIntent.putExtra("map_address", myAddress);
+//        startActivity(myIntent);
+//    }
 
-        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
-            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
-        }
-        myIntent.putExtra("map_latitude", myLatitude.toString());
-        myIntent.putExtra("map_longitude", myLongitude.toString());
-        myIntent.putExtra("map_address", myAddress);
-        startActivity(myIntent);
+//    public void onClick(View view) {
+//        Intent myIntent = new Intent(this, LocationActivity.class);
+//
+//        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
+//            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
+//        }
+//        myIntent.putExtra("map_latitude", myLatitude.toString());
+//        myIntent.putExtra("map_longitude", myLongitude.toString());
+//        myIntent.putExtra("map_address", myAddress);
+//        finish();
+//    }
+
+    public void onClick(View view) {
+        finish();
     }
 
+    public void onBackPressed(){
+        super.onBackPressed();
+        finish();
+    }
 //    public void onClick(View v) {
 ////        super.onBackPressed();
 //
@@ -238,16 +260,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
 
 
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent myIntent = new Intent(this, LocationActivity.class);
 
-        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
-            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
-        }
-        myIntent.putExtra("map_latitude", myLatitude.toString());
-        myIntent.putExtra("map_longitude", myLongitude.toString());
-        myIntent.putExtra("map_address", myAddress);
-        startActivity(myIntent);
-    }
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Intent myIntent = new Intent(this, LocationActivity.class);
+//
+//        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
+//            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
+//        }
+//        myIntent.putExtra("map_latitude", myLatitude.toString());
+//        myIntent.putExtra("map_longitude", myLongitude.toString());
+//        myIntent.putExtra("map_address", myAddress);
+//        startActivity(myIntent);
+//
+//    }
 }

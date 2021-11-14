@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import com.example.habittracker.activities.eventlist.LocationActivity;
+import com.example.habittracker.activities.eventlist.MapsActivity;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -97,6 +98,8 @@ public class AddEventFragment extends DialogFragment {
         }
     }
 
+
+
     /**
      * Override the onCreateDialog method of DialogFragment. Set up a list of EditText for event
      * information and a spinner for doseUnit.
@@ -109,17 +112,18 @@ public class AddEventFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_add_event, null);
         editText1 = view.findViewById(R.id.comment_body);
 
-
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
         Button get_location = view.findViewById(R.id.getPermission);
         get_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), LocationActivity.class);
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
                 startActivity(intent);
             }
         });
+
+
 
         /* Set up the spinner. */
         s = view.findViewById(R.id.event_spinner); // The spinner is used for dose unit

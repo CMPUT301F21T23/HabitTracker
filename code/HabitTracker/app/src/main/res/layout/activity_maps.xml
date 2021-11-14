@@ -11,9 +11,11 @@
     <TextView
         android:id="@+id/locationDisplay"
         android:layout_width="match_parent"
-        android:layout_height="40sp"
+        android:layout_height="25sp"
         android:gravity="center"
-        android:text=""
+        android:layout_marginTop="12sp"
+        android:elegantTextHeight="true"
+        android:text="Long click on map to select location"
         android:textSize="15sp" />
 
     <Button
