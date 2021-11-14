@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,6 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HabitTracker">
+        <!--app should be able to get installed on phones which
+        does not install Google Map,
+        in that case, disable the map feature.-->
+        <uses-library android:name="com.google.android.maps" android:required="false"/>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
