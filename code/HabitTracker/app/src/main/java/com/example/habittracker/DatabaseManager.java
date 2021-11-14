@@ -183,6 +183,36 @@ public class DatabaseManager {
     }
 
     /**
+     * Updates a habit document
+     * @param prevTitle {@code String}                  The original title of the habit
+     * @param title     {@code String}                  The new title of the habit
+     * @param doc       {@code HashMap<String,Object>}  The newly updated document
+     */
+    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
+
+        DocumentReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(prevTitle);
+
+        colRef.update(doc)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("HabitEvent successfully created for Habit with title %s",
+                                title));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("HabitEvent failed to be created for Habit with title %s",
+                                title));
+                    }
+                });
+    }
+
+    /**
      * Delete a habit for a user
      * @param userid        {@code String} User ID
      * @param habitTitle    {@code String} The title of the habit to be deleted
@@ -239,22 +269,6 @@ public class DatabaseManager {
                                 habitTitle));
                     }
                 });
-    }
-
-    /**
-     * Updates a habit document
-     * @param prevTitle {@code String}                  The original title of the habit
-     * @param title     {@code String}                  The new title of the habit
-     * @param doc       {@code HashMap<String,Object>}  The newly updated document
-     */
-    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
-
-        DocumentReference colRef = usersColRef
-                .document(userid)
-                .collection(habitsColName)
-                .document(prevTitle);
-
-        colRef.update(doc);
     }
 
      /**
@@ -409,7 +423,7 @@ public class DatabaseManager {
                                 (String)doc.getData().get("display"),
                                 (String)doc.getData().get("reason"),
                                 date,
-                                daysArray //.toArray(new String[daysArray.size()])
+                                daysArray
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);

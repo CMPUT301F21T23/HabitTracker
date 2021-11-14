@@ -118,7 +118,6 @@ public class Habit implements Serializable {
         DatabaseManager
                 .get()
                 .addHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(), title, doc);
-        //TODO: Remember to get user when you are done testing
     }
 
     /**
