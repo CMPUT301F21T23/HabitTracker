@@ -31,7 +31,6 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         this.edittext = (EditText) view.findViewById(et_id);
         myCalendar = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener theDP = this;
-        updateLabel(new Date());
 
         edittext.setOnClickListener(new View.OnClickListener() {
             /**

@@ -256,30 +256,6 @@ public class DatabaseManager {
                 });
     }
 
-//    public void deleteAtPath(String path) {
-//        HashMap<String, Object> data = new HashMap<>();
-//        data.put("path", path);
-//
-//        HttpsCallableReference deleteFn =
-//                FirebaseFunctions.getInstance().getHttpsCallable("recursiveDelete");
-//        deleteFn.call(data)
-//
-//                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
-//                    @Override
-//                    public void onSuccess(HttpsCallableResult httpsCallableResult) {
-//                        // Delete Success
-//                        // ...
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        // Delete failed
-//                        // ...
-//                    }
-//                });
-//    }
-
     /**
      * Adds a habit event for a given habit.
      * @param userid        {@code String} User ID
@@ -342,8 +318,6 @@ public class DatabaseManager {
                     }
                 });
     }
-
-
 
     /**
      * edit a habit event for a given habit

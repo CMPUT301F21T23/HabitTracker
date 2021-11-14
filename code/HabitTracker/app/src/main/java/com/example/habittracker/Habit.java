@@ -1,6 +1,8 @@
 package com.example.habittracker;
 
 
+import android.util.Log;
+
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.SharedInfo;
 
@@ -129,7 +131,6 @@ public class Habit implements Serializable {
 
         // make necessary conversion to convert to document
         ArrayList<Integer> dateArrayList = DateConverter.dateToArrayList(startDate);
-
         // TODO: have to add isPublic attribute to the schema. Check with Zarif for naming
         // TODO: the list of attributes for habit should be somewhere commonly accessible.
         //  prolly database manager. check w Zarif.
