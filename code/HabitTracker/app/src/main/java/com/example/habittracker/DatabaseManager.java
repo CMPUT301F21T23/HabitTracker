@@ -29,6 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableReference;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -212,17 +214,31 @@ public class DatabaseManager {
                 });
     }
 
+
     /**
      * Delete a habit for a user
      * @param userid        {@code String} User ID
      * @param habitTitle    {@code String} The title of the habit to be deleted
      */
     public void deleteHabitDocument(String userid, String habitTitle) {
+        // delete habit event sub-collection associated with this habit
+        DocumentReference subCollRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitEventsColName);
+
+        String path = subCollRef.getPath();
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("path", path);
+        HttpsCallableReference deleteFn =
+                FirebaseFunctions.getInstance().getHttpsCallable("recursiveDelete");
+        deleteFn.call(data);
+
+        // delete the actual habit
         DocumentReference docRef = usersColRef
                 .document(userid)
                 .collection(habitsColName)
                 .document(habitTitle);
-
         docRef.delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -239,6 +255,30 @@ public class DatabaseManager {
                     }
                 });
     }
+
+//    public void deleteAtPath(String path) {
+//        HashMap<String, Object> data = new HashMap<>();
+//        data.put("path", path);
+//
+//        HttpsCallableReference deleteFn =
+//                FirebaseFunctions.getInstance().getHttpsCallable("recursiveDelete");
+//        deleteFn.call(data)
+//
+//                .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
+//                    @Override
+//                    public void onSuccess(HttpsCallableResult httpsCallableResult) {
+//                        // Delete Success
+//                        // ...
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        // Delete failed
+//                        // ...
+//                    }
+//                });
+//    }
 
     /**
      * Adds a habit event for a given habit.
@@ -302,6 +342,8 @@ public class DatabaseManager {
                     }
                 });
     }
+
+
 
     /**
      * edit a habit event for a given habit
@@ -434,6 +476,7 @@ public class DatabaseManager {
             }
         });
     }
+
     /**
      * This method return an array list of all habit events for a habit using a callback function.
      * @param user
