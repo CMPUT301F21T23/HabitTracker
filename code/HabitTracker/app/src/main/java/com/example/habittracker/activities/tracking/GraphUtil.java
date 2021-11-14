@@ -42,7 +42,7 @@ public class GraphUtil {
          addSeriesToGraph(graph,series);
          addSeriesToGraph(graph,seriesIdeal);
          if(autoAxisScale){
-             setXAxisScale(graph,series.getLowestValueX(),series.getHighestValueX());
+             //setXAxisScale(graph,series.getLowestValueX(),series.getHighestValueX());
              setYAxisScale(graph,Math.min(0,series.getLowestValueY()),Math.max(idealPerDay,series.getHighestValueY()));
          }
     }
@@ -177,8 +177,12 @@ public class GraphUtil {
      */
     static public void setDateAsXAxis(GraphView graph, Context context, int numberOfLabels){
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(context));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
-        graph.getGridLabelRenderer().setHumanRounding(false);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+        graph.getViewport().setMaxX(Calendar.getInstance().getTime().getTime());
+        Calendar month = Calendar.getInstance();
+        month.add(Calendar.MONTH,-1);
+        graph.getViewport().setMinX(month.getTime().getTime());
+        graph.getViewport().setXAxisBoundsManual(true);
     }
 
     /**

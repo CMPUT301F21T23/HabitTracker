@@ -44,7 +44,7 @@ import java.util.Arrays;
  * @author Yongquan Zhang
  */
 public class EventListActivity extends AppCompatActivity implements OnFragmentInteractionListener {
-    private ListView eventList;
+    public ListView eventList;
     private ArrayAdapter<HabitEvent> eventAdapter;
     private ArrayList<HabitEvent> eventDataList;
     private String delete_event=null;

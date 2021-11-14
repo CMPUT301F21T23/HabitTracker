@@ -1,9 +1,9 @@
 package com.example.habittracker;
 
 import com.example.habittracker.Habit;
-import com.example.habittracker.HabitEvent;
 import com.example.habittracker.activities.tracking.ProgressUtil;
 import com.example.habittracker.utils.DateConverter;
+import com.example.habittracker.utils.SharedInfo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,10 +22,19 @@ public class ProgressTests {
      * @return
      */
     private Habit mockHabit(){
-        String[] weekdays = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
+        SharedInfo.getInstance().setCurrentUser(new User(""));
+        ArrayList<String> weekdays = new ArrayList<>();
+        weekdays.add("Mon");
+        weekdays.add("Tue");
+        weekdays.add("Wed");
+        weekdays.add("Thu");
+        weekdays.add("Fri");
+        weekdays.add("Sat");
+        weekdays.add("Sun");
+
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE,-2);
-        Habit habit = new Habit("Habit","Reason", cal.getTime(), weekdays);
+        Habit habit = new Habit("Habit","displayHabit","Reason", cal.getTime(), weekdays);
         return habit;
     }
 

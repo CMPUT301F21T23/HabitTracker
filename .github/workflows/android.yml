@@ -2,10 +2,12 @@ name: Android CI
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main , dev ]
   pull_request:
-    branches: [ dev ]
-
+    branches: [ main , dev ]
+defaults:
+  run:
+    working-directory: code/HabitTracker
 jobs:
   build:
 

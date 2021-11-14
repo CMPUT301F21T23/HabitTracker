@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * Shows a list of the user's followers
  */
 public class ProfileFollowersActivity extends AppCompatActivity {
-    private ListView followersListView;
+    public ListView followersListView;
     private ArrayAdapter<User> followersArrayAdapter;
     private ArrayList<User> followersList;
     private String TAG = "ProfileFollowersActivity";
