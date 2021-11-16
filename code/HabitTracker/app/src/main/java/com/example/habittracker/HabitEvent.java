@@ -58,6 +58,11 @@ public class HabitEvent implements Serializable {
         this.location = location;
         this.imageUrl = image;
         this.habitEventDocument = new HashMap<>();
+        this.setEventId(eventId);
+        this.setHabit(habit);
+        this.setComment(comment);
+        this.setStartDate(startDate);
+        this.setLocation(location);
 
         // location and image storage are still TBD, I've declared them as strings for now.
     }

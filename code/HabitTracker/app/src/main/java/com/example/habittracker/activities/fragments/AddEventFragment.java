@@ -223,6 +223,7 @@ public class AddEventFragment extends DialogFragment {
             ArrayList<Integer> temp_date = selectedEvent.getStartDate();
 
             date.setText(arrayListToString(temp_date));
+            Log.d("date", date.getText().toString());
             editText1.setText(String.valueOf(selectedEvent.getComment()));
             spinnerIdx = spinnerAdapter.getPosition(selectedEvent.getHabit());
             s.setSelection(spinnerIdx);
@@ -230,8 +231,6 @@ public class AddEventFragment extends DialogFragment {
             event_image.setImageResource(R.drawable.riding);
         }
         CustomDatePicker dp = new CustomDatePicker(getContext(), view, R.id.date_editText);
-        Calendar ccc = dp.getDate();
-        Date date_calendar = ccc.getTime();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         Bundle b = getArguments();
@@ -258,23 +257,14 @@ public class AddEventFragment extends DialogFragment {
                     .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             HabitEvent editM = (HabitEvent) getArguments().getSerializable("event");
-                            if(editM.getHabit()!=attachedHabit) {
-                                editM.deleteDB();
-                                editM.setStartDate(stringToArraylist(date.getText().toString()));
-                                editM.setLocation(location1.getText().toString());
-                                editM.setHabit(attachedHabit);
-                                editM.setComment(editText1.getText().toString());
+
+                            editM.setStartDate(stringToArraylist(date.getText().toString()));
+                            editM.setLocation(location1.getText().toString());
+                            editM.setHabit(attachedHabit);
+                            editM.setComment(editText1.getText().toString());
 //                                editM.setCalendar(date_calendar);
-                                editFlag = false;
-                            }
-                            else {
-                                editM.setStartDate(stringToArraylist(date.getText().toString()));
-                                editM.setLocation(location1.getText().toString());
-                                editM.setHabit(attachedHabit);
-                                editM.setComment(editText1.getText().toString());
-//                                editM.setCalendar(date_calendar);
-                                editFlag = true;
-                            }
+                            editFlag = true;
+
                             listener.onOkPressed(editM, editFlag);
                         }
                     }).create();
