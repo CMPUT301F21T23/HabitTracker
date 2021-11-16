@@ -448,7 +448,7 @@ public class DatabaseManager {
                                 doc.getId(),
                                 (String)doc.getData().get("comment"),
                                 dateArray,
-                                (String)doc.getData().get("comment"),
+                                (String)doc.getData().get("location"),
                                 "image"
                         ));
                     }

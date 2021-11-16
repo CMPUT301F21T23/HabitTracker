@@ -18,6 +18,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="" />
 
+        <activity android:name=".activities.eventlist.EventDetailActivity"
+            android:parentActivityName=".activities.eventlist.EventListActivity">
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.eventlist.EventListActivity" />
+        </activity>
+
         <activity
             android:name=".activities.eventlist.MapsActivity"
             android:exported="true"
