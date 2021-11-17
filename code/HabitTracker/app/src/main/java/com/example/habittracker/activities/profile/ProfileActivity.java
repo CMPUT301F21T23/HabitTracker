@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.NavBarManager;
@@ -24,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
     ListView profileList;
     ArrayAdapter<String> profileListAdapter;
     ArrayList<String> profileDataList;
+    TextView usernameDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,10 @@ public class ProfileActivity extends AppCompatActivity {
         profileListAdapter = new ArrayAdapter<>(this, R.layout.content, profileDataList);
         profileList.setAdapter(profileListAdapter);
 */
+        // Set the username text to the current user's name
+        usernameDisplay = findViewById(R.id.sharing_input_text_view);
+        usernameDisplay.setText(SharedInfo.getInstance().getCurrentUser().getUsername());
+
         Button followers_button = findViewById(R.id.followersButton);
         followers_button.setOnClickListener(new View.OnClickListener() {
             @Override

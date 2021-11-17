@@ -1,5 +1,6 @@
 package com.example.habittracker.utils;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.view.View;
@@ -17,6 +18,7 @@ import java.util.Locale;
 public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
     final Calendar myCalendar;
     private EditText edittext;
+    private Activity activity;
     private Context context;
     private View view;
 
@@ -31,7 +33,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         this.edittext = (EditText) view.findViewById(et_id);
         myCalendar = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener theDP = this;
-        updateLabel(new Date());
+//        updateLabel(new Date());
 
         edittext.setOnClickListener(new View.OnClickListener() {
             /**
@@ -43,6 +45,29 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(context, theDP, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    public CustomDatePicker(Activity act, View view, int et_id) {
+        this.activity = act;
+        this.edittext = (EditText) view.findViewById(et_id);
+        myCalendar = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener theDP = this;
+//        updateLabel(new Date());
+
+        edittext.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Override the onClick method. Set up the DatePickerDialog.
+             * Once the user click the date EditText, the date picker would
+             * pop up.
+             * @param v
+             */
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(act, theDP, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -61,6 +86,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
         myCalendar.set(Calendar.YEAR, year);
         myCalendar.set(Calendar.MONTH, month);
         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+//        updateLabel();
         updateLabel(myCalendar.getTime());
     }
 
