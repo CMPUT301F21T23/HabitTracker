@@ -31,6 +31,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,11 +39,14 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -51,6 +55,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,8 +75,16 @@ import com.example.habittracker.utils.HabitListCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+import android.content.ContentResolver;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -101,6 +114,11 @@ public class AddEventFragment extends DialogFragment {
     private OnFragmentInteractionListener listener;
     private boolean editFlag = false;
     FusedLocationProviderClient mFusedLocationClient;
+    private static final int PICK_IMAGE_REQUEST = 1;
+    public static final int RESULT_OK = -1; // From android.app.Activity http://developer.android.com/reference/android/app/Activity.html#RESULT_OK
+    private Uri mImageUri;
+    private StorageTask mUploadTask;
+    private Context currentContext;
 
     /**
      * Override the onAttach method of DialogFragment.
@@ -108,6 +126,7 @@ public class AddEventFragment extends DialogFragment {
      */
     @Override
     public void onAttach(Context context) {
+        currentContext = context;
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             listener = (OnFragmentInteractionListener) context;
@@ -145,6 +164,17 @@ public class AddEventFragment extends DialogFragment {
 //                }
                 Intent intent = new Intent(getActivity(), LocationActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        Button selectPhoto = view.findViewById(R.id.addPhoto);
+        selectPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(getActivity(), LocationActivity.class);
+                //startActivity(intent);
+                System.out.println("Choosing an image");
+                openFileChooser();
             }
         });
 
@@ -227,7 +257,15 @@ public class AddEventFragment extends DialogFragment {
             spinnerIdx = spinnerAdapter.getPosition(selectedEvent.getHabit());
             s.setSelection(spinnerIdx);
             location1.setText(selectedEvent.getLocation());
-            event_image.setImageResource(R.drawable.riding);
+            //event_image.setImageResource(R.drawable.riding);
+
+            Picasso.with(getContext())
+                    .load(selectedEvent.getImageUrl())
+                    .placeholder(R.mipmap.ic_launcher)
+                    .fit()
+                    .centerCrop()
+                    // .centerInside()
+                    .into(event_image);
         }
         CustomDatePicker dp = new CustomDatePicker(getContext(), view, R.id.date_editText);
         Calendar ccc = dp.getDate();
@@ -246,7 +284,7 @@ public class AddEventFragment extends DialogFragment {
                     .setView(view)
                     .setTitle("Edit event/Delete event")
                     .setNegativeButton("Cancel", null)
-                    /* Neutral button is for delete operaion */
+                    /* Neutral button is for delete operation */
                     .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             HabitEvent editE = (HabitEvent) getArguments().getSerializable("event");
@@ -259,6 +297,8 @@ public class AddEventFragment extends DialogFragment {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             HabitEvent editM = (HabitEvent) getArguments().getSerializable("event");
                             if(editM.getHabit()!=attachedHabit) {
+                                // If the habit this habit event is attached to changes
+                                // Update: The TA said habit events should always be under the same habit, so this functionality is unnecessary but we can leave it
                                 editM.deleteDB();
                                 editM.setStartDate(stringToArraylist(date.getText().toString()));
                                 editM.setLocation(location1.getText().toString());
@@ -268,6 +308,7 @@ public class AddEventFragment extends DialogFragment {
                                 editFlag = false;
                             }
                             else {
+                                // No need to move habit event to under a different habit. Just edit it in place.
                                 editM.setStartDate(stringToArraylist(date.getText().toString()));
                                 editM.setLocation(location1.getText().toString());
                                 editM.setHabit(attachedHabit);
@@ -275,7 +316,9 @@ public class AddEventFragment extends DialogFragment {
 //                                editM.setCalendar(date_calendar);
                                 editFlag = true;
                             }
-                            listener.onOkPressed(editM, editFlag);
+
+                            // Upload the image
+                            uploadImage(editM);
                         }
                     }).create();
         }
@@ -308,7 +351,8 @@ public class AddEventFragment extends DialogFragment {
                             tempHabitEvent.setComment(tempComments);
                             tempHabitEvent.setHabit(tempHabit);
 
-                            listener.onOkPressed(tempHabitEvent, editFlag);
+                            // Upload the image
+                            uploadImage(tempHabitEvent);
                         }
                     }).create();
         }
@@ -376,4 +420,108 @@ public class AddEventFragment extends DialogFragment {
             }
         });
     }
+
+    private void openFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        //startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        //registerForActivityResult();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null) {
+            mImageUri = data.getData();
+            // Can use mImageView.setImageURI(mImageUri); to display image natively
+            System.err.println("Image URL onActivityResult coming up: " + mImageUri.toString());
+            Picasso.with(getContext()).load(mImageUri).into(event_image);
+            //mImageView.setImageURI(mImageUri);
+        }
+    }
+
+    private void uploadImage(HabitEvent habitEvent) {
+        System.out.println("In uploadImage()!!!!!!!");
+        String imageUrl = "";
+        if (mImageUri != null) {
+            //DatabaseManager.get().getUsersColRef().
+            StorageReference mStorageRef = DatabaseManager.get().getStorageRef();
+            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + ".png"); //getFileExtension(mImageUri));
+
+            mUploadTask = fileReference.putFile(mImageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // mProgressBar.setProgress(0); This will set the progress to zero before the user even sees it at 100%, so we need to delay it to give the user visual feedback
+                            // Delay this by 0.5 seconds
+                            /*
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mProgressBar.setProgress(0);
+                                }
+                            }, 500);*/
+
+                            Toast.makeText(currentContext, "Upload Successful", Toast.LENGTH_LONG).show();
+                            //Upload upload = new Upload(mEditTextFileName.getText().toString().trim(), taskSnapshot.getDownloadUrl().toString());
+
+                            Task<Uri> firebaseUri = taskSnapshot.getStorage().getDownloadUrl();
+
+                            // Following code taken from: https://stackoverflow.com/questions/50467814/tasksnapshot-getdownloadurl-is-deprecated
+                            String url;
+                            firebaseUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    String url = uri.toString();
+                                    System.out.println("Image URL for upload: " + url);
+
+                                    //Upload upload = new Upload(mEditTextFileName.getText().toString().trim(), url);
+
+                                    //taskSnapshot.getStorage().getDownloadUrl()
+
+                                    //String uploadId = mDatabaseRef.push().getKey();
+                                    //mDatabaseRef.child(uploadId).setValue(upload);
+                                    // Add the image URL to the Firestore database under the habit event
+                                    habitEvent.setImageUrl(url);
+                                    listener.onOkPressed(habitEvent, editFlag);
+                                    //String userId = SharedInfo.getInstance().getCurrentUser().getUsername();
+                                    //String habitTitle = "Get my crap done";
+                                    //HashMap<String, Object> habitEventDocument = new HashMap<>();
+                                    //habitEventDocument.put("imageUrl", "www.totallyanimage.com");
+                                    //DatabaseManager.get().updateHabitEventDocument(userId, habitTitle, "dlkaFDBHSsOhf2n5cI0q", habitEventDocument);
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(currentContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                            double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                            //mProgressBar.setProgress((int) progress);
+                        }
+                    });
+        } else {
+            // The user created a habit event without selecting a photo to go along with it. Lame.
+            //Toast.makeText(currentContext, "No file selected", Toast.LENGTH_SHORT).show();
+            listener.onOkPressed(habitEvent, editFlag);
+        }
+        //return imageUrl;
+    }
+/*
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }*/
 }

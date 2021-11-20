@@ -34,7 +34,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
     private Habit habit;
 
     /**
-     * Populates the screen with data reagrding the specified habit. Some fields are optional.
+     * Populates the screen with data regarding the specified habit. Some fields are optional.
      * It may (or may not) include date, reason, link to progress, days of the week to perform habit
      * @param savedInstanceState {Bundle} needed to initiate activity
      */

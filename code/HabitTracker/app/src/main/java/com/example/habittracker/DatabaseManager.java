@@ -29,6 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -47,6 +49,7 @@ public class DatabaseManager {
     // holds database connection
     private FirebaseFirestore db;
     private final CollectionReference usersColRef;
+    private StorageReference mStorageRef;
 
     // initialize the names of the collections only once to ensure consistency
     private String usersColName = "Users";
@@ -59,6 +62,7 @@ public class DatabaseManager {
         // get the Cloud Firestore instance
         db = FirebaseFirestore.getInstance();
         usersColRef = db.collection(usersColName);
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
     }
 
     // enforce singleton pattern
@@ -81,6 +85,14 @@ public class DatabaseManager {
      */
     public FirebaseFirestore getInstance() {
         return db;
+    }
+
+    /**
+     * Get the Firebase storage instance
+     * @return StorageReference
+     */
+    public StorageReference getStorageRef() {
+        return mStorageRef;
     }
 
     /**

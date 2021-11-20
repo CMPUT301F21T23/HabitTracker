@@ -169,7 +169,8 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                                 temp.setComment(comments);
                                 temp.setEventId(eventID);
                                 temp.setHabit(habitID);
-                                if(!(habitID=="")) {
+                                temp.setImageUrl((String) doc.getData().get("imageUrl"));
+                                if (!habitID.equals("")) {
                                     eventDataList.add(temp);
                                 }
 

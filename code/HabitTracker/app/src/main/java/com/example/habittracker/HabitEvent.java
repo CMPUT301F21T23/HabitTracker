@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 /**
- * The HabitEvent class is ued to as an intermediate storage between
+ * The HabitEvent class is used to as an intermediate storage between
  * HabitEvent list and firestore database
  * @author Yongquan Zhang
  */
@@ -46,9 +46,9 @@ public class HabitEvent implements Serializable {
      * @param comment   {String}    Optional, comment on the habit event
      * @param startDate {Date}      The date during which the habit event was "done"
      * @param location  {String}    The location where the habit was accomplished
-     * @param image     {String}    Path to the image of the accomplishment.
+     * @param imageUrl     {String}    Path to the image of the accomplishment.
      */
-    public HabitEvent (String habit, String eventId ,String comment, ArrayList<Integer> startDate, String location, String image) {
+    public HabitEvent (String habit, String eventId ,String comment, ArrayList<Integer> startDate, String location, String imageUrl) {
 
         this.userId = SharedInfo.getInstance().getCurrentUser().getUsername();
         this.eventId = eventId;
@@ -56,11 +56,22 @@ public class HabitEvent implements Serializable {
         this.comment = comment;
         this.startDate = startDate;
         this.location = location;
-        this.imageUrl = image;
+        this.imageUrl = imageUrl;
         this.habitEventDocument = new HashMap<>();
 
         // location and image storage are still TBD, I've declared them as strings for now.
     }
+
+    public void setImageUrl(String imageUrl) {
+        habitEventDocument.put("imageUrl", imageUrl);
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageUrl() {
+        return this.imageUrl;
+        //return "https://firebasestorage.googleapis.com/v0/b/habittracker-9232f.appspot.com/o/uploads%2F1636920826943.png?alt=media&token=9046a941-44df-437d-895d-73ffef423ef7";
+    }
+
     /**
      * Gets the comment on the habit event
      * @return comment

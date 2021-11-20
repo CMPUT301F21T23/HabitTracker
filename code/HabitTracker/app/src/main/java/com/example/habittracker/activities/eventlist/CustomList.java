@@ -41,6 +41,10 @@ import androidx.annotation.RequiresApi;
 
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -53,6 +57,9 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
     private ArrayList<HabitEvent> events;
     private Context context;
 
+    private FirebaseStorage mStorage;
+    private DatabaseReference mDatabaseRef;
+
     /**
      * The constructor of CustomList
      * @param context       {@code Context} required context
@@ -62,6 +69,9 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         super(context,0, events);
         this.events = events;
         this.context = context;
+
+        mStorage = FirebaseStorage.getInstance();
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
     }
 
     /**
@@ -79,7 +89,7 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
         }
-        HabitEvent tempEvent =events.get(position);
+        HabitEvent tempEvent = events.get(position);
         TextView Title = (TextView) view.findViewById(R.id.contentView);;
         TextView startDate = (TextView) view.findViewById(R.id.dateView);;
         Title.setText(tempEvent.getHabit());
@@ -87,7 +97,16 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         startDate.setText(arrayListToString(tempEvent.getStartDate()));
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
-        event_image.setImageResource(R.drawable.riding);
+//        event_image.setImageResource(R.drawable.riding);
+        System.out.println("blahh" + tempEvent.getImageUrl());
+        Picasso.with(getContext())
+                .load(tempEvent.getImageUrl())
+                .placeholder(R.mipmap.ic_launcher)
+                .fit()
+                .centerCrop()
+                // .centerInside()
+                .into(event_image);
+
         return view;
     }
 }

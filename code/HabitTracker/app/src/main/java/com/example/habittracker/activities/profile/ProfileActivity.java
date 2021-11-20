@@ -45,7 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
 */
         // Set the username text to the current user's name
         usernameDisplay = findViewById(R.id.sharing_input_text_view);
-        usernameDisplay.setText(SharedInfo.getInstance().getCurrentUser().getUsername());
+        usernameDisplay.setText("Username: " + SharedInfo.getInstance().getCurrentUser().getUsername());
 
         Button followers_button = findViewById(R.id.followersButton);
         followers_button.setOnClickListener(new View.OnClickListener() {
