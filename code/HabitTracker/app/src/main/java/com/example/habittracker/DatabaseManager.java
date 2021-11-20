@@ -3,6 +3,8 @@ package com.example.habittracker;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
@@ -11,15 +13,20 @@ import com.example.habittracker.utils.UserListOperationCallback;
 import com.example.habittracker.utils.SharingListCallback;
 import com.example.habittracker.utils.UserDetailsCallback;
 import com.example.habittracker.utils.UserExistsCallback;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -82,6 +89,14 @@ public class DatabaseManager {
      */
     public CollectionReference getUsersColRef() {
         return usersColRef;
+    }
+
+    /**
+     * Get a reference to the Habit sub-collection of a given user
+     * @return      {@code CollectionReference} Users collection reference
+     */
+    public CollectionReference getHabitsColRef(String userid) {
+        return (usersColRef.document(userid).collection(habitsColName));
     }
 
     /**
@@ -168,12 +183,40 @@ public class DatabaseManager {
     }
 
     /**
+     * Delete a habit for a user
+     * @param userid        {@code String} User ID
+     * @param habitTitle    {@code String} The title of the habit to be deleted
+     */
+    public void deleteHabitDocument(String userid, String habitTitle) {
+        DocumentReference docRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle);
+
+        docRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("Habit successfully deleted for Habit with title %s",
+                                habitTitle));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("Habit failed to be deleted for Habit with title %s",
+                                habitTitle));
+                    }
+                });
+    }
+
+    /**
      * Adds a habit event for a given habit.
      * @param userid        {@code String} User ID
      * @param habitTitle    {@code String} Habit Title
      * @param doc           {@code HashMap<String, Object>} Document
      */
-    void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
+    public void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference colRef = usersColRef
                 .document(userid)
@@ -199,11 +242,27 @@ public class DatabaseManager {
     }
 
     /**
-     * delete a habit event for a given habit
-     * @param userid        {@code String} User ID
-     * @param habitTitle    {@code String} Habit Title
-     * @param eventID       {@code String} Event ID
+     * Updates a habit document
+     * @param prevTitle {@code String}                  The original title of the habit
+     * @param title     {@code String}                  The new title of the habit
+     * @param doc       {@code HashMap<String,Object>}  The newly updated document
      */
+    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
+
+        DocumentReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(prevTitle);
+
+        colRef.update(doc);
+    }
+
+     /**
+      *  Delete a habit event for a given habit
+      * @param userid        {@code String} User ID
+      * @param habitTitle    {@code String} Habit Title
+      * @param eventID       {@code String} Event ID
+      */
     public void deleteHabitEventDocument(String userid, String habitTitle, String eventID) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference colRef = usersColRef
@@ -261,12 +320,8 @@ public class DatabaseManager {
                                 habitTitle));
                     }
                 });
-    }
 
-    /**
-     * Deletes a user document along with all of its subcollections.
-     * @param userid        {@code String} User ID
-     */
+    }
 
     /**
      * Deletes a user document along with all of its subcollections.
@@ -326,8 +381,8 @@ public class DatabaseManager {
 
     /**
      * This uses a callback to allow another class to get the list of habit of a user
-     * @param user
-     * @param callback
+     * @param user      {@code String}  the user logged in
+     * @param callback  {@code HabitListCallback}   an action to perform as a callback
      */
     public void getAllHabits(String user, HabitListCallback callback) {
         // Users -> userid (key) -> Habits
@@ -351,9 +406,10 @@ public class DatabaseManager {
                         Date date = cal.getTime();
                         habitArray.add(new Habit(
                                 doc.getId(),
+                                (String)doc.getData().get("display"),
                                 (String)doc.getData().get("reason"),
                                 date,
-                                daysArray.toArray(new String[daysArray.size()])
+                                daysArray //.toArray(new String[daysArray.size()])
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);
@@ -364,7 +420,6 @@ public class DatabaseManager {
             }
         });
     }
-
     /**
      * This method return an array list of all habit events for a habit using a callback function.
      * @param user
@@ -385,6 +440,7 @@ public class DatabaseManager {
                     ArrayList<HabitEvent> eventArray = new ArrayList<>();
 
                     for (QueryDocumentSnapshot doc : task.getResult()) {
+
                         Log.d("parent",""+doc.getReference().getParent().getParent().getId());
                         ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
                         eventArray.add(new HabitEvent(
@@ -392,7 +448,7 @@ public class DatabaseManager {
                                 doc.getId(),
                                 (String)doc.getData().get("comment"),
                                 dateArray,
-                                (String)doc.getData().get("comment"),
+                                (String)doc.getData().get("location"),
                                 "image"
                         ));
                     }
@@ -607,5 +663,4 @@ public class DatabaseManager {
             }
         });
     }
-
 }

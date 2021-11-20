@@ -59,7 +59,7 @@ public class ProgressUtil {
                 Calendar first = Calendar.getInstance();
                 Calendar sec = Calendar.getInstance();
 //                Log.d("Integer",""+habitEvents.getClass().getName());
-                first.setTime(DateConverter.arrayListToDate(habitEvents.get(i).getStartDate()));
+                first.setTime(DateConverter.intArrayListToDate(habitEvents.get(i).getStartDate()));
                 sec.setTime(date);
                 //check if two dates are on same date
                 boolean sameDay = first.get(Calendar.DAY_OF_YEAR) == sec.get(Calendar.DAY_OF_YEAR) && first.get(Calendar.YEAR) == sec.get(Calendar.YEAR);
@@ -106,7 +106,7 @@ public class ProgressUtil {
 
     /**
      * calculates and returns average score from a list of numbers
-     * @param array
+     * @param array {@code ArrayList<Double>} array containing numbers ot average
      * @return
      */
     static private double calcAverage(ArrayList<Double> array){
@@ -119,35 +119,35 @@ public class ProgressUtil {
 
     /**
      * returns Arraylist<int> of a given habit's weekdays
-     * @param habit
-     * @return
+     * @param habit {@code Habit} the habit whose days we are interested in
+     * @return dayInt
      */
     static public ArrayList<Integer> getHabitDays(Habit habit){
-        String[] days = habit.getWeekDays();
+        ArrayList<String> days = habit.getWeekDays();
         ArrayList<Integer> dayInt = new ArrayList<>();
         //loop through each string in list
-        for(int i = 0 ; i < days.length; i++ ){
+        for(String day : days){
             //switch for converting string to proper int value
-            switch(days[i]){
-                case "Monday":
+            switch(day){
+                case "Mon":
                     dayInt.add(1);
                     break;
-                case "Tuesday":
+                case "Tue":
                     dayInt.add(2);
                     break;
-                case "Wednesday":
+                case "Wed":
                     dayInt.add(3);
                     break;
-                case "Thursday":
+                case "Thu":
                     dayInt.add(4);
                     break;
-                case "Friday":
+                case "Fri":
                     dayInt.add(5);
                     break;
-                case "Saturday":
+                case "Sat":
                     dayInt.add(6);
                     break;
-                case "Sunday":
+                case "Sun":
                     dayInt.add(7);
                     break;
             }

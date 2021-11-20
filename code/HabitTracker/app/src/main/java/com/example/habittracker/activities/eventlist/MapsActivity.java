@@ -4,9 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Intent;
@@ -14,19 +11,14 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+
 import com.example.habittracker.R;
 
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.habittracker.activities.eventlist.LocationActivity;
-import com.example.habittracker.activities.fragments.AddEventFragment;
-import com.example.habittracker.activities.fragments.HabitInputFragment;
-import com.example.habittracker.activities.fragments.OnFragmentInteractionListener;
+import com.example.habittracker.activities.ProgressTrackingActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -227,11 +219,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //    }
 
     public void onClick(View view) {
+//        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("location", myAddress);
+//        intent.putExtras(bundle);
+//        startActivity(intent);
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
         finish();
     }
 
     public void onBackPressed(){
         super.onBackPressed();
+//        Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("location", myAddress);
+//        intent.putExtras(bundle);
+//        startActivity(intent);
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
+
         finish();
     }
 //    public void onClick(View v) {

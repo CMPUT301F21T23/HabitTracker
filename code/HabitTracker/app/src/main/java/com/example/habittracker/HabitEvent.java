@@ -1,5 +1,7 @@
 package com.example.habittracker;
 
+import com.example.habittracker.utils.SharedInfo;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,7 +30,11 @@ public class HabitEvent implements Serializable {
      * userId and habitId are set to a default value because they are mandatory.
      */
     public HabitEvent () {
-        this.userId = "John_test_user";
+        // By default
+        this.userId = SharedInfo.getInstance().getCurrentUser().getUsername();
+        // For test
+//        this.userId = "John_test_user";
+        // By default
         this.habitId = "Habit 1";
         this.habitEventDocument = new HashMap<>();
     }
@@ -44,7 +50,7 @@ public class HabitEvent implements Serializable {
      */
     public HabitEvent (String habit, String eventId ,String comment, ArrayList<Integer> startDate, String location, String image) {
 
-        this.userId = "user1";
+        this.userId = SharedInfo.getInstance().getCurrentUser().getUsername();
         this.eventId = eventId;
         this.habitId = habit;
         this.comment = comment;
@@ -52,6 +58,11 @@ public class HabitEvent implements Serializable {
         this.location = location;
         this.imageUrl = image;
         this.habitEventDocument = new HashMap<>();
+        this.setEventId(eventId);
+        this.setHabit(habit);
+        this.setComment(comment);
+        this.setStartDate(startDate);
+        this.setLocation(location);
 
         // location and image storage are still TBD, I've declared them as strings for now.
     }
@@ -62,6 +73,7 @@ public class HabitEvent implements Serializable {
     public String getComment() {
         return this.comment;
     }
+
     /**
      * Gets the starting date for the habit event
      * @return startDate
