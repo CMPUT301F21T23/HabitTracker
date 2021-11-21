@@ -264,7 +264,7 @@
                             android:layout_margin="10dp"
                             android:layout_weight="2"
                             android:layout_height="wrap_content"
-                            android:text="Share Post" />
+                            android:text="Share Habit" />
 
                     </LinearLayout>
 

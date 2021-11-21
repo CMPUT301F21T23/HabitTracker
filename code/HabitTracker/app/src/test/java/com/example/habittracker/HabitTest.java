@@ -13,6 +13,7 @@ public class HabitTest {
 
     Date currentDate;
     ArrayList<String> weekDays = new ArrayList<>();
+    User mockUser = new User("mockUser");
 
     private Habit mockHabit () {
         weekDays.add("Mon");
@@ -22,7 +23,10 @@ public class HabitTest {
                 "Paint",
                 "It makes me happy",
                 currentDate,
-                weekDays);
+                weekDays,
+                true,
+                mockUser
+                );
     }
 
     @Test
@@ -30,12 +34,6 @@ public class HabitTest {
         Habit habit = mockHabit();
         assertEquals(habit.getTitle(), "Paint");
     }
-
-//    @Test
-//    void testGetTitleDisplay() {
-//        Habit habit = mockHabit();
-//        assertEquals(habit.getTitleDisplay(), "Paint");
-//    }
 
     @Test
     void testGetReason() {
@@ -94,6 +92,7 @@ public class HabitTest {
         dateAsList.add(cal.get(Calendar.DAY_OF_MONTH));
         expected.put("dateStarted", dateAsList);
 
+        expected.put("isPublic", true);
         expected.put("whatDays", weekDays);
         expected.put("progress", 0); // provisional
         expected.put("title", "Paint");
