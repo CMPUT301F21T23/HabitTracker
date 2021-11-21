@@ -12,6 +12,7 @@ import android.widget.ListView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.habittracker.activities.ProgressTrackingActivity;
 import com.example.habittracker.activities.fragments.SharingInputFragment;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.activities.profile.ProfileFollowingActivity;
@@ -51,6 +52,9 @@ public class SharingActivityTest {
             SharingActivity.class, true, true, currentUser
     );
 
+    /**
+     * Sets up mock documents in Firestore to test the SharingActivity.
+     */
     @BeforeClass
     public static void setUpClass() {
         createTestDocs();
@@ -62,6 +66,9 @@ public class SharingActivityTest {
         }
     }
 
+    /**
+     * Deletes the mock documents created at the beginning of all the tests from Firestore.
+     */
     @AfterClass
     public static void tearDownClass() {
         deleteTestDocs();
@@ -81,6 +88,10 @@ public class SharingActivityTest {
         Activity activity = rule.getActivity();
     }
 
+    /**
+     * Creates three mock users in Firestore: testUserid1, testUserid2, testUserid3.
+     * Creates a public and private habit for testUserid2.
+     */
     public static void createTestDocs() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference usersColRef = DatabaseManager.get().getUsersColRef();
@@ -147,6 +158,9 @@ public class SharingActivityTest {
         docRef.set(testHabit2Doc);
     }
 
+    /**
+     * Deletes all the test documents created.
+     */
     public static void deleteTestDocs() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // delete testUserid1
@@ -166,11 +180,15 @@ public class SharingActivityTest {
         db.collection(DatabaseManager.get().getUsersColName()).document(testUserid3).delete();
     }
 
+    /**
+     * Tests whether the Sharing screen correctly shows the public habit of the user being followed.
+     * Tests that the private habit of the user being followed is not shown.
+     */
     @Test
     public void checkListItem() {
         solo.assertCurrentActivity("Wrong activity", SharingActivity.class);
         // public habit of testUserid2 should appear on the screen
-//        assertTrue(solo.waitForText(testHabit1, 1, 5000));
+        assertTrue(solo.waitForText(testHabit1, 1, 5000));
 
         // private habit of testUserid2 should not appear on the screen
         assertFalse(solo.searchText(testHabit2));
@@ -189,6 +207,9 @@ public class SharingActivityTest {
         assertEquals(testUserid2, testHabit1Object.getUser().getUsername());
     }
 
+    /**
+     * Tests that pressing the 'Follow' button brings up the SharingInputFragment.
+     */
     @Test
     public void followButton() {
         solo.assertCurrentActivity("Wrong activity", SharingActivity.class);
@@ -198,6 +219,9 @@ public class SharingActivityTest {
         assertTrue(solo.waitForFragmentByTag(SharingInputFragment.TAG));
     }
 
+    /**
+     * Tests the feature of sending another user a follow request.
+     */
     @Test
     public void followUser() {
         solo.assertCurrentActivity("Wrong activity", SharingActivity.class);
@@ -220,6 +244,16 @@ public class SharingActivityTest {
 
         // testUserid3 should be in the pending follow request list
         assertTrue(solo.waitForText(testUserid3, 1, 3000));
+    }
+
+    /**
+     * Tests that clicking on habit on the sharing screen brings up the ProgressTrackingActivity.
+     */
+    @Test
+    public void clickOnHabit() {
+        solo.assertCurrentActivity("Wrong activity", SharingActivity.class);
+        solo.clickOnView(solo.getView(R.id.habitTitle));
+        solo.assertCurrentActivity("Wrong Activity", ProgressTrackingActivity.class);
     }
 
     /**
