@@ -45,8 +45,7 @@ public class Habit implements Serializable {
         this.startDate = startDate;
         this.progress = 0;
         this.isPublic = isPublic;
-        this.owner = SharedInfo.getInstance().getCurrentUser();
-
+        this.owner = owner;
         this.weekDays = weekDays;
     }
 
@@ -59,8 +58,24 @@ public class Habit implements Serializable {
     }
 
     /**
+     * Returns sharing status
+     * @return isPublic
+     */
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    /**
+     * Sets sharing status
+     * @param isPublic {boolean}   true if public, false otherwise
+     */
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
+    /**
      * Returns the owner user
-     * @return title
+     * @return owner
      */
     public User getUser() {
         return (owner);
@@ -143,8 +158,8 @@ public class Habit implements Serializable {
         // TODO: the list of attributes for habit should be somewhere commonly accessible.
 
         // the attribute names as specified in the schema and the values that correspond
-        String [] attributes = {"title", "reason", "dateStarted", "whatDays", "progress"};
-        Object [] values = {title, reason, dateArrayList, weekDays, progress};
+        String [] attributes = {"title", "reason", "dateStarted", "whatDays", "progress", "isPublic"};
+        Object [] values = {title, reason, dateArrayList, weekDays, progress, isPublic};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {

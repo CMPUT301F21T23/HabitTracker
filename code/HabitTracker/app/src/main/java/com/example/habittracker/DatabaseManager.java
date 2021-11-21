@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserListOperationCallback;
 import com.example.habittracker.utils.SharingListCallback;
 import com.example.habittracker.utils.UserDetailsCallback;
@@ -303,6 +304,13 @@ public class DatabaseManager {
                 });
     }
 
+    /**
+     * Modifies attribute of habit event for performing adding and editing operations
+     * @param userid        {String}    the current user
+     * @param habitTitle    {String}    the title of the selected habit
+     * @param he            {HabitEvent}the habit event to modify
+     * @param action        {int}       id of the type of action to perform in callback.
+     */
     public void getAndSetHabitId(String userid, String habitTitle, HabitEvent he, int action) {
         // first query the habit
         usersColRef
@@ -478,13 +486,23 @@ public class DatabaseManager {
                         if(dateArray == null || daysArray == null){
                             continue;
                         }
+                        boolean shared;
+                        try {
+                            shared = (boolean) doc.getData().get("isPublic");
+                        } catch (NullPointerException npe) {
+                            shared = true; // assume it's public when no preference is given
+                        }
+
+
                         cal.set(dateArray.get(0).intValue(),dateArray.get(1).intValue()-1,dateArray.get(2).intValue());
                         Date date = cal.getTime();
                         habitArray.add(new Habit(
                                 (String)doc.getData().get("title"),
                                 (String)doc.getData().get("reason"),
                                 date,
-                                daysArray
+                                daysArray,
+                                shared,
+                                SharedInfo.getInstance().getCurrentUser()
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);
