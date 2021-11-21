@@ -1,6 +1,8 @@
 package com.example.habittracker.activities.eventlist;
 
 
+import static com.example.habittracker.utils.DateConverter.arrayListToString;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -53,6 +56,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
     private ArrayList<HabitEvent> eventDataList;
     private String delete_event=null;
     private Boolean flag = false;
+    private Habit temp_h;
 
     /**
      * Override the OnCreate method. Set up a list of event objects and display them
@@ -71,6 +75,18 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         eventAdapter = new CustomList(this, eventDataList);
         eventList.setAdapter(eventAdapter);
 
+
+        Intent intent = getIntent();
+        temp_h = (Habit) intent.getSerializableExtra("habit");
+
+        Button back = findViewById(R.id.list_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         /* Add floating button fragment. */
         final FloatingActionButton addEventButton = findViewById(R.id.add_event_button);
         addEventButton.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +96,13 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
              */
             @Override
             public void onClick(View v) {
-                new AddEventFragment().show(getSupportFragmentManager(),"ADD_EVENT");
+//                new AddEventFragment().show(getSupportFragmentManager(),"ADD_EVENT");
+                Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", (Serializable) temp_h);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -100,8 +122,10 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                 Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("event", (Serializable) editE);
+                bundle.putSerializable("habit", (Serializable) temp_h);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                finish();
 
             }
 
@@ -167,23 +191,23 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         CollectionReference colRef;
 //        dm.getAllHabits("John_test_user", new HabitListCallback() {
         // Replace with this line when sharedInfo is up
-        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
-            /**
-             * Set callback to get all Habit IDs
-             * @param habitList
-             */
-            @Override
-            public void onCallbackSuccess(ArrayList<Habit> habitList) {
-                for(int i = 0;i<habitList.size();i++) {
-                    System.out.println(habitList.get(i).getTitle());
-                    habit_list.add(habitList.get(i).getTitle());
-                    Log.d("Here", habit_list.get(i));
-                    Log.d("list size", String.valueOf(habitList.size()));
-                }
+//        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
+//            /**
+//             * Set callback to get all Habit IDs
+//             * @param habitList
+//             */
+//            @Override
+//            public void onCallbackSuccess(ArrayList<Habit> habitList) {
+//                for(int i = 0;i<habitList.size();i++) {
+//                    System.out.println(habitList.get(i).getTitle());
+//                    habit_list.add(habitList.get(i).getTitle());
+//                    Log.d("Here", habit_list.get(i));
+//                    Log.d("list size", String.valueOf(habitList.size()));
+//                }
                 eventDataList.clear();
 
-                for (int i = 0;i<habit_list.size();i++) {
-                    dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), habitList.get(i), new HabitEventListCallback() {
+//                for (int i = 0;i<habit_list.size();i++) {
+                dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), temp_h, new HabitEventListCallback() {
                         @Override
                         public void onCallbackSuccess(ArrayList<HabitEvent> eventArrayList) {
                             for (HabitEvent doc : eventArrayList) {
@@ -209,15 +233,6 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                         public void onCallbackFailed() {
 
                         }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onCallbackFailed() {
-
-            }
-        });
+                });
     }
 }

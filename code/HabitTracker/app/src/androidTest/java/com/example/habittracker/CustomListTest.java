@@ -15,6 +15,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.example.habittracker.activities.ListActivity;
 import com.example.habittracker.activities.SharingActivity;
+import com.example.habittracker.activities.eventlist.EventDetailActivity;
 import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.fragments.AddEventFragment;
 import com.example.habittracker.activities.profile.ProfileActivity;
@@ -37,7 +38,7 @@ import java.util.HashMap;
 /**
  * Intent test for EventListActivity.
  */
-public class EventListTest {
+public class CustomListTest {
     private Solo solo;
     @Rule
     public ActivityTestRule<ProfileActivity> rule =
@@ -57,10 +58,10 @@ public class EventListTest {
     }
 
     /**
-     * test EventListActivity
+     * test add new habit event
      */
     @Test
-    public void testEventListActivity() {
+    public void testCustomListContent() {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.list));
         solo.assertCurrentActivity("Wrong Activity", ListActivity.class);
@@ -72,11 +73,14 @@ public class EventListTest {
         solo.clickInList(1);
         solo.clickOnButton("SEE EVENTS");
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
-
-        solo.clickOnView(solo.getView(R.id.add_event_button));
-        solo.clickOnView(solo.getView(R.id.back));
         solo.clickInList(0);
+        solo.clickOnView(solo.getView(R.id.edit));
+        solo.clickOnView(solo.getView(R.id.date_editText));
+        solo.setDatePicker(0, 2021, 10, 1);
+        solo.clickOnView(solo.getView(android.R.id.button1));
+        solo.clickOnView(solo.getView(R.id.confirm));
         solo.clickOnView(solo.getView(R.id.back));
+        assertTrue(solo.waitForText("2021-11-01",1,2000));
     }
 
     /**

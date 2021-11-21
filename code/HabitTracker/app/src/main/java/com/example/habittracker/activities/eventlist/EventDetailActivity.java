@@ -25,10 +25,13 @@ import com.example.habittracker.activities.fragments.OnFragmentInteractionListen
 import com.example.habittracker.utils.CustomDatePicker;
 import com.google.android.gms.location.LocationServices;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class EventDetailActivity extends AppCompatActivity {
     private HabitEvent event;
+    private Habit habit;
     OnFragmentInteractionListener listener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,14 @@ public class EventDetailActivity extends AppCompatActivity {
         Button delete_bt = findViewById(R.id.delete);
         Button cancel_bt = findViewById(R.id.cancel);
         Button confirm_bt = findViewById(R.id.confirm);
+        Button add_bt = findViewById(R.id.add);
+        Button back_bt = findViewById(R.id.back);
+
+
 
         Intent intent = getIntent();
         event = (HabitEvent) intent.getSerializableExtra("event");
+        habit = (Habit) intent.getSerializableExtra("habit");
 
         if(event != null) {
             ArrayList<Integer> temp_date = event.getStartDate();
@@ -62,10 +70,20 @@ public class EventDetailActivity extends AppCompatActivity {
             addLocation.setVisibility(View.INVISIBLE);
             cancel_bt.setVisibility(View.INVISIBLE);
             confirm_bt.setVisibility(View.INVISIBLE);
+            add_bt.setVisibility(View.INVISIBLE);
             habit_title.setEnabled(false);
             editText1.setEnabled(false);
             date.setEnabled(false);
             location1.setEnabled(false);
+        }
+        else {
+            addImage.setVisibility(View.INVISIBLE);
+            addLocation.setVisibility(View.INVISIBLE);
+            cancel_bt.setVisibility(View.INVISIBLE);
+            confirm_bt.setVisibility(View.INVISIBLE);
+            edit_bt.setVisibility(View.INVISIBLE);
+            delete_bt.setVisibility(View.INVISIBLE);
+
         }
         CustomDatePicker dp = new CustomDatePicker(EventDetailActivity.this, findViewById(android.R.id.content).getRootView(), R.id.date_editText);
 
@@ -74,7 +92,11 @@ public class EventDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 event.deleteDB();
                 Intent temp_intent = new Intent(getApplicationContext(), EventListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", (Serializable) habit);
+                temp_intent.putExtras(bundle);
                 startActivity(temp_intent);
+                finish();
             }
         });
 
@@ -124,6 +146,37 @@ public class EventDetailActivity extends AppCompatActivity {
                         delete_bt.setVisibility(View.VISIBLE);
                     }
                 });
+            }
+        });
+
+        back_bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", (Serializable) habit);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        add_bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HabitEvent tempE = new HabitEvent();
+                tempE.setHabit(habit.getTitle());
+                tempE.setStartDate(stringToArraylist(date.getText().toString()));
+                tempE.setLocation(location1.getText().toString());
+                tempE.setComment(editText1.getText().toString());
+                tempE.updateDB();
+
+                Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", (Serializable) habit);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                finish();
             }
         });
 

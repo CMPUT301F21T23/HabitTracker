@@ -32,7 +32,7 @@ import java.util.Date;
 public class ListActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
-    private ListView list = null;
+    public ListView list = null;
     private ArrayAdapter<Habit> habitAdapter;
 
     // constant

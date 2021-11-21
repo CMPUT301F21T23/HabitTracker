@@ -450,6 +450,7 @@ public class DatabaseManager {
                                 dateArray,
                                 (String)doc.getData().get("location"),
                                 "image"
+
                         ));
                     }
                     callback.onCallbackSuccess(eventArray);
