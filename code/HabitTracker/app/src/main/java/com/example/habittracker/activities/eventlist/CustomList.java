@@ -98,7 +98,7 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
 //        event_image.setImageResource(R.drawable.riding);
-        System.out.println("blahh" + tempEvent.getImageUrl());
+        //System.out.println("blah" + tempEvent.getImageUrl());
         Picasso.with(getContext())
                 .load(tempEvent.getImageUrl())
                 .placeholder(R.mipmap.ic_launcher)

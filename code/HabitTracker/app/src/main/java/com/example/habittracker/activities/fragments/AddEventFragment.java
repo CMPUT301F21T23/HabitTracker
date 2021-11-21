@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -43,6 +44,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,6 +88,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import android.content.ContentResolver;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -115,6 +118,7 @@ public class AddEventFragment extends DialogFragment {
     private boolean editFlag = false;
     FusedLocationProviderClient mFusedLocationClient;
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int TAKE_PHOTO_REQUEST = 2;
     public static final int RESULT_OK = -1; // From android.app.Activity http://developer.android.com/reference/android/app/Activity.html#RESULT_OK
     private Uri mImageUri;
     private StorageTask mUploadTask;
@@ -174,7 +178,8 @@ public class AddEventFragment extends DialogFragment {
                 //Intent intent = new Intent(getActivity(), LocationActivity.class);
                 //startActivity(intent);
                 System.out.println("Choosing an image");
-                openFileChooser();
+                //openFileChooser();
+                openCamera();
             }
         });
 
@@ -430,18 +435,48 @@ public class AddEventFragment extends DialogFragment {
         //registerForActivityResult();
     }
 
+    private void openCamera() {
+        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(takePicture, TAKE_PHOTO_REQUEST);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            mImageUri = data.getData();
-            // Can use mImageView.setImageURI(mImageUri); to display image natively
-            System.err.println("Image URL onActivityResult coming up: " + mImageUri.toString());
-            Picasso.with(getContext()).load(mImageUri).into(event_image);
-            //mImageView.setImageURI(mImageUri);
+        switch(requestCode) {
+            case PICK_IMAGE_REQUEST:
+                if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                    mImageUri = data.getData();
+                    // Can use mImageView.setImageURI(mImageUri); to display image natively
+                    System.err.println("Image URL onActivityResult for image chooser coming up: " + mImageUri.toString());
+                    Picasso.with(getContext()).load(mImageUri).into(event_image);
+                    //mImageView.setImageURI(mImageUri);
+                }
+                break;
+            case TAKE_PHOTO_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    mImageUri = data.getData();
+                    if (mImageUri == null) {
+                        System.err.println("its nullahh");
+                    }
+                    //System.err.println("Image URL onActivityResult for camera coming up: " + mImageUri.toString());
+                    System.err.println("plez work " + data.toString());
+                    //Picasso.with(getContext()).load(mImageUri).into(event_image);
+
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    event_image.setImageBitmap(bitmap);
+                    mImageUri = getImageUri(getContext(), bitmap);
+                }
+                break;
         }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 
     private void uploadImage(HabitEvent habitEvent) {
