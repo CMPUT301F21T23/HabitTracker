@@ -27,7 +27,10 @@ import com.google.android.gms.location.LocationServices;
 import com.example.habittracker.activities.eventlist.EventListActivity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class EventDetailActivity extends AppCompatActivity {
     private HabitEvent event;
@@ -77,8 +80,6 @@ public class EventDetailActivity extends AppCompatActivity {
             location1.setEnabled(false);
         }
         else {
-            addImage.setVisibility(View.INVISIBLE);
-            addLocation.setVisibility(View.INVISIBLE);
             cancel_bt.setVisibility(View.INVISIBLE);
             confirm_bt.setVisibility(View.INVISIBLE);
             edit_bt.setVisibility(View.INVISIBLE);
@@ -164,9 +165,21 @@ public class EventDetailActivity extends AppCompatActivity {
         add_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ArrayList<Integer> tempDate;
                 HabitEvent tempE = new HabitEvent();
                 tempE.setHabit(habit.getTitle());
-                tempE.setStartDate(stringToArraylist(date.getText().toString()));
+                String temp_dateString = date.getText().toString();
+                if(temp_dateString.isEmpty()) {
+                    String myFormat = "yyyy-MM-dd";
+                    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                    tempDate = stringToArraylist(sdf.format(Calendar.getInstance().getTime()));
+//                                tempHabitEvent.setCalendar(Calendar.getInstance().getTime());
+                }
+                else {
+//                                tempHabitEvent.setCalendar(date_calendar);
+                    tempDate = stringToArraylist(date.getText().toString());
+                }
+                tempE.setStartDate(tempDate);
                 tempE.setLocation(location1.getText().toString());
                 tempE.setComment(editText1.getText().toString());
                 tempE.updateDB();
