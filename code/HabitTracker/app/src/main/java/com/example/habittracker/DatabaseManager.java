@@ -615,6 +615,48 @@ public class DatabaseManager {
     }
 
     /**
+     * Unfollows a particular user.
+     * @param currentUserId {@code String} Current user's id
+     * @param requestid     {@code String} The user to be unfollowed
+     * @param pending       {@code Boolean} true if follow request is still pending, false otherwise
+     * @param callback      {@code UserListOperationCallback} Callback object
+     */
+    public void unfollowUser(String currentUserId, String requestid, Boolean pending, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(currentUserId);
+        String field = "following";
+        if (pending) {
+            field = "pendingFollowReqs";
+        }
+        // start off by removing requestid from the (pending) following list of userid
+        removeUserListItem(currentUserId, requestid, field, new UserListOperationCallback() {
+            @Override
+            public void onCallbackSuccess(String userid) {
+                if (pending) {
+                    // also need to remove userid from the pendingFollowerReqs of requestid
+                    removeUserListItem(requestid, currentUserId, "pendingFollowerReqs",
+                            new UserListOperationCallback() {
+                                @Override
+                                public void onCallbackSuccess(String userid) {
+                                    callback.onCallbackSuccess(userid);
+                                }
+
+                                @Override
+                                public void onCallbackFailure(String reason) {
+                                    callback.onCallbackFailure(reason);
+                                }
+                            });
+                } else {
+                    callback.onCallbackSuccess(userid);
+                }
+            }
+            @Override
+            public void onCallbackFailure(String reason) {
+                callback.onCallbackFailure(reason);
+            }
+        });
+    }
+
+    /**
      * Adds an item to any of the ArrayList fields of the User document.
      * @param userid        {@code String} The current user's id
      * @param requestid     {@code String} The item to be added
