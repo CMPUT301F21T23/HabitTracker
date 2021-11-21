@@ -30,6 +30,11 @@ import java.util.ArrayList;
 public class EventDetailActivity extends AppCompatActivity {
     private HabitEvent event;
     OnFragmentInteractionListener listener;
+    private String location;
+
+    EditText location1 = findViewById(R.id.address);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +42,7 @@ public class EventDetailActivity extends AppCompatActivity {
         EditText habit_title = findViewById(R.id.habitTitle);
         EditText editText1 = findViewById(R.id.comment_body);
         EditText date = findViewById(R.id.date_editText);
-        EditText location1 = findViewById(R.id.address);
+
         ImageView event_image = (ImageView) findViewById(R.id.img_f);
         Button addImage = findViewById(R.id.addPhoto);
         Button addLocation = findViewById(R.id.getPermission);
@@ -45,6 +50,9 @@ public class EventDetailActivity extends AppCompatActivity {
         Button delete_bt = findViewById(R.id.delete);
         Button cancel_bt = findViewById(R.id.cancel);
         Button confirm_bt = findViewById(R.id.confirm);
+
+
+
 
         Intent intent = getIntent();
         event = (HabitEvent) intent.getSerializableExtra("event");
@@ -75,6 +83,14 @@ public class EventDetailActivity extends AppCompatActivity {
                 event.deleteDB();
                 Intent temp_intent = new Intent(getApplicationContext(), EventListActivity.class);
                 startActivity(temp_intent);
+            }
+        });
+
+        addLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -125,8 +141,19 @@ public class EventDetailActivity extends AppCompatActivity {
                     }
                 });
             }
+
         });
 
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2){
+            String message = data.getStringExtra("location");
+            location = message;
+            location1.setText(location);
+        }
     }
 }

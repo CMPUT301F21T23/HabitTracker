@@ -138,10 +138,8 @@ public class AddEventFragment extends DialogFragment {
         get_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(getActivity(), MapsActivity.class);
                 startActivityForResult(intent, 2);
-
             }
 
 
