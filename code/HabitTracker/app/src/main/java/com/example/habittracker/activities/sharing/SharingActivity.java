@@ -48,7 +48,7 @@ public class SharingActivity extends AppCompatActivity {
         followButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new SharingInputFragment().show(getSupportFragmentManager(), "FOLLOW");
+                new SharingInputFragment().show(getSupportFragmentManager(), SharingInputFragment.TAG);
             }
         });
         // get the View objects

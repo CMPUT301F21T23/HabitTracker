@@ -33,7 +33,7 @@ import com.example.habittracker.utils.StringCallback;
  * HabitInputFragment prompts the user to enter details about a Habit.
  */
 public class SharingInputFragment extends DialogFragment {
-
+    public static String TAG = "SharingInputDialog";
     /**
      * Creates a DialogFragment that allows the user to follow the public habits of another user.
      * @param savedInstanceState
