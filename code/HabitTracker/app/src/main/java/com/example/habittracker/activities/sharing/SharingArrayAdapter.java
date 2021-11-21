@@ -16,6 +16,10 @@ import com.example.habittracker.utils.CustomHabitList;
 
 import java.util.ArrayList;
 
+/**
+ * SharingArrayAdapter is used to contain and show a list of Habits along with their progress.
+ * Clicking on a Habit takes the user to the detailed habit progress view.
+ */
 public class SharingArrayAdapter extends CustomHabitList {
     private Context context;
     private ArrayList<Habit> habitsList;
@@ -33,6 +37,13 @@ public class SharingArrayAdapter extends CustomHabitList {
         this.habitsList = habitsList;
     }
 
+    /**
+     * Overrides the getView function to customize the list view content.
+     * @param position      {@code int} Index of data in the data list
+     * @param convertView   {@code View} View object
+     * @param parent
+     * @return              {@code View} Modified view object
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

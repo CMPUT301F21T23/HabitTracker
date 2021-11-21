@@ -21,6 +21,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
+/**
+ * SharingActivity displays the public habits of the users that the current user is following.
+ */
 public class SharingActivity extends AppCompatActivity {
 
     public ListView sharingListView;
