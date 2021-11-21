@@ -169,7 +169,7 @@ public class Habit implements Serializable {
         //  prolly database manager. check w Zarif.
 
         // the attribute names as specified in the schema and the values that correspond
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progressBar", "display"};
+        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
         Object [] values = { reason, dateArrayList, weekDays, progress, titleDisplay};
 
         // populate the hash map
