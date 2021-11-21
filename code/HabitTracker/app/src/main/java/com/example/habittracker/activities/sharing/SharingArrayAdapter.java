@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 /**
  * SharingArrayAdapter is used to contain and show a list of Habits along with their progress.
- * Clicking on a Habit takes the user to the detailed habit progress view.
  */
 public class SharingArrayAdapter extends CustomHabitList {
     private Context context;
@@ -65,9 +64,9 @@ public class SharingArrayAdapter extends CustomHabitList {
             userid.setText(habit.getUser().getUsername());
         }
         // update the progress bar
-        Integer overallProgress = habit.getOverallProgress();
-        progressBar.setProgress(overallProgress);
-        progressValue.setText(overallProgress.toString() + "%");
+        Integer progress = habit.getProgress();
+        progressBar.setProgress(progress);
+        progressValue.setText(progress.toString() + "%");
         return convertView;
     }
 }

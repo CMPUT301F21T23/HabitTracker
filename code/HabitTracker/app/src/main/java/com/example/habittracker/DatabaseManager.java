@@ -3,7 +3,6 @@ package com.example.habittracker;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 
 import com.example.habittracker.utils.CheckPasswordCallback;
@@ -23,19 +22,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -829,7 +824,7 @@ public class DatabaseManager {
                                 for (DocumentSnapshot doc: querySnapshot.getDocuments()) {
                                     ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                                     ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
-                                    Long overallProgress = (Long) doc.getData().get("overallProgress");
+                                    Long progress = (Long) doc.getData().get("progress");
                                     Calendar cal = Calendar.getInstance();
                                     if(dateArray == null || daysArray == null){
                                         continue;
@@ -851,7 +846,7 @@ public class DatabaseManager {
                                     // set the owner of this Habit
                                     habit.setUser(new User(userid));
                                     // set the overall progress of the Habit
-                                    habit.setOverallProgress(overallProgress.intValue());
+                                    habit.setProgress(progress.intValue());
 
                                     callback.onCallbackSuccess(habit);
                                 }

@@ -19,7 +19,7 @@ public class Habit implements Serializable {
     private String titleDisplay;
     private String reason;
     private Date startDate;
-    private Integer overallProgress = 0;
+    private Integer progress;
     private ArrayList<String> weekDays;
     private User user;
 
@@ -44,7 +44,7 @@ public class Habit implements Serializable {
         this.titleDisplay = titleDisplay;
         this.reason = reason;
         this.startDate = startDate;
-        this.overallProgress = 0;
+        this.progress = 0;
         this.isPublic = isPublic;
 
         this.weekDays = weekDays;
@@ -115,16 +115,16 @@ public class Habit implements Serializable {
      * Gets the overall progress for a Habit.
      * @return          {@code int} Overall progress
      */
-    public Integer getOverallProgress() {
-        return overallProgress;
+    public Integer getProgress() {
+        return progress;
     }
 
     /**
      * Sets the overall progress for a Habit.
-     * @param overallProgress   {@code int} Overall progress
+     * @param progress   {@code int} Overall progress
      */
-    public void setOverallProgress(Integer overallProgress) {
-        this.overallProgress = overallProgress;
+    public void setProgress(Integer progress) {
+        this.progress = progress;
     }
 
     /**
@@ -170,7 +170,7 @@ public class Habit implements Serializable {
 
         // the attribute names as specified in the schema and the values that correspond
         String [] attributes = {"reason", "dateStarted", "whatDays", "progressBar", "display"};
-        Object [] values = { reason, dateArrayList, weekDays, overallProgress, titleDisplay};
+        Object [] values = { reason, dateArrayList, weekDays, progress, titleDisplay};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {

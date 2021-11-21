@@ -2,9 +2,11 @@ package com.example.habittracker.activities.sharing;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -13,6 +15,7 @@ import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.ProgressTrackingActivity;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.activities.fragments.SharingInputFragment;
 import com.example.habittracker.utils.HabitCallback;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 
 /**
  * SharingActivity displays the public habits of the users that the current user is following.
+ * Clicking on a Habit takes the user to the detailed habit progress view.
  */
 public class SharingActivity extends AppCompatActivity {
 
@@ -57,6 +61,18 @@ public class SharingActivity extends AppCompatActivity {
 
         // update the sharing list
         updateSharingList();
+
+        // reroutes the user to the deatiled progress view when they click on a habit
+        sharingListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getApplicationContext(), ProgressTrackingActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", sharingList.get(i));
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
