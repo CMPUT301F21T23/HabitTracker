@@ -834,7 +834,7 @@ public class DatabaseManager {
 
                                     // create a Habit object
                                     Habit habit = new Habit(
-                                            doc.getId(),
+                                            (String) doc.getData().get("title"),
                                             (String) doc.getData().get("display"),
                                             (String) doc.getData().get("reason"),
                                             date,

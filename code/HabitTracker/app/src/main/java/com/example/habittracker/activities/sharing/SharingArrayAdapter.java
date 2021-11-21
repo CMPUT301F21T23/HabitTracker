@@ -59,7 +59,7 @@ public class SharingArrayAdapter extends CustomHabitList {
 
         // update the View objects
         Habit habit = habitsList.get(position);
-        habitTitle.setText(habit.getTitleDisplay());
+        habitTitle.setText(habit.getTitle());
         if (habit.getUser() != null) {
             userid.setText(habit.getUser().getUsername());
         }

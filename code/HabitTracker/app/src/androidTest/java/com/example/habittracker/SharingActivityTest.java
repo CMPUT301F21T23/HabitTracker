@@ -134,6 +134,7 @@ public class SharingActivityTest {
         CollectionReference habitsColRef = DatabaseManager.get().getHabitsColRef(testUserid2);
         testHabit1 = "Play basketball";
         HashMap<String, Object> testHabit1Doc = new HashMap<>();
+        testHabit1Doc.put("title", testHabit1);
         testHabit1Doc.put("reason", "I want to get more atheletic.");
         testHabit1Doc.put("dateStarted", Arrays.asList(2021, 10, 23));
         testHabit1Doc.put("isPublic", true);
@@ -147,6 +148,7 @@ public class SharingActivityTest {
         // create a private Habit for testUserid2
         testHabit2 = "Practice swimming";
         HashMap<String, Object> testHabit2Doc = new HashMap<>();
+        testHabit2Doc.put("title", testHabit2);
         testHabit2Doc.put("reason", "I want to reduce my body fat.");
         testHabit2Doc.put("dateStarted", Arrays.asList(2021, 10, 11));
         testHabit2Doc.put("isPublic", false);
@@ -198,7 +200,7 @@ public class SharingActivityTest {
         final ListView sharingList = activity.sharingListView;
 
         Habit testHabit1Object = (Habit) sharingList.getItemAtPosition(0);
-        assertEquals(testHabit1, testHabit1Object.getTitleDisplay());
+        assertEquals(testHabit1, testHabit1Object.getTitle());
 
         // progress for testHabit1 should be 90
         assertEquals((Integer) 90, testHabit1Object.getProgress());
