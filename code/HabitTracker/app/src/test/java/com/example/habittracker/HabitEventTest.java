@@ -102,21 +102,21 @@ public class HabitEventTest {
         assertEquals(ans,"ualberta");
     }
 
-    @Test
-    void testHabit(){
-        HabitEvent temp = mockHabitEvent();
-        temp.setHabit("Habit 2");
-        String ans = temp.getHabit();
-        assertEquals(ans,"Habit 2");
-    }
+//    @Test
+//    void testHabit(){
+//        HabitEvent temp = mockHabitEvent();
+//        temp.setHabit("Habit 2");
+//        String ans = temp.getHabit();
+//        assertEquals(ans,"Habit 2");
+//    }
 
-    @Test
-    void setHabit(){
-        HabitEvent temp = mockHabitEvent();
-        temp.setHabit("Habit 2");
-        String ans = temp.getHabit();
-        assertEquals(ans,"Habit 2");
-    }
+//    @Test
+//    void setHabit(){
+//        HabitEvent temp = mockHabitEvent();
+//        temp.setHabit("Habit 2");
+//        String ans = temp.getHabit();
+//        assertEquals(ans,"Habit 2");
+//    }
 
     @Test
     void setEventID(){

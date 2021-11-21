@@ -59,7 +59,7 @@ public class HabitEvent implements Serializable {
         this.imageUrl = image;
         this.habitEventDocument = new HashMap<>();
         this.setEventId(eventId);
-        this.setHabit(habit);
+        this.setHabitInDB(habit,0);
         this.setComment(comment);
         this.setStartDate(startDate);
         this.setLocation(location);
@@ -105,7 +105,6 @@ public class HabitEvent implements Serializable {
      */
     public String getHabit() { return this.habitId; }
 
-
     /**
      * Gets the location of the habit event
      * @return location
@@ -126,10 +125,15 @@ public class HabitEvent implements Serializable {
      * Allows editing/setting of the habit name
      * @param habit {String} the habit name
      */
-    public void setHabit(String habit) {
-        this.habitEventDocument.put("Habit", habit);
-        this.habitId = habit;
+    public void setHabitInDB(String habit, int action) {
+        DatabaseManager.get().getAndSetHabitId(this.userId, habit, this, action);
     }
+
+    public void setHabit(String habit) {
+        this.habitId = habit;
+        this.habitEventDocument.put("Habit", habit);
+    }
+
     /**
      * add new habit event to the database
      */

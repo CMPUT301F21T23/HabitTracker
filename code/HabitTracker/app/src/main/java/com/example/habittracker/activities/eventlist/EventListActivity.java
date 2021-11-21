@@ -120,13 +120,13 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         if(!editFlag) {
 //            eventAdapter.add(newEvent);
 //            eventAdapter.notifyDataSetChanged();
-            newEvent.updateDB();
+//            newEvent.updateDB();
             onResume();
             getEvents();
         }
         else{
 //            eventAdapter.notifyDataSetChanged();
-            newEvent.editDB();
+//            newEvent.editDB();
             onResume();
             getEvents();
         }

@@ -303,6 +303,36 @@ public class DatabaseManager {
                 });
     }
 
+    public void getAndSetHabitId(String userid, String habitTitle, HabitEvent he, int action) {
+        // first query the habit
+        usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .whereEqualTo("title", habitTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // set the habit id to the habit event
+                                he.setHabit(document.getReference().getId());
+
+                                if (action ==1) {
+                                    he.editDB();
+                                }
+                                else if (action == 2) {
+                                    he.updateDB();
+                                }
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
      /**
       *  Delete a habit event for a given habit
       * @param userid        {@code String} User ID
@@ -474,37 +504,57 @@ public class DatabaseManager {
      */
     public void getAllHabitEvents(String user, Habit habit, HabitEventListCallback callback) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
-        CollectionReference doc = usersColRef
+//        DocumentReference habitDocRef = null;
+        usersColRef
                 .document(user)
                 .collection(habitsColName)
-                .document(habit.getTitle())
-                .collection(habitEventsColName);
-        doc.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<HabitEvent> eventArray = new ArrayList<>();
+//                .document(habit.getTitle())
 
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                .whereEqualTo("title", habit.getTitle())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-                        Log.d("parent",""+doc.getReference().getParent().getParent().getId());
-                        ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
-                        eventArray.add(new HabitEvent(
-                                doc.getReference().getParent().getParent().getId(),
-                                doc.getId(),
-                                (String)doc.getData().get("comment"),
-                                dateArray,
-                                (String)doc.getData().get("location"),
-                                "image"
-                        ));
+                                document.getReference()
+                                        .collection(habitEventsColName)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    ArrayList<HabitEvent> eventArray = new ArrayList<>();
+
+                                                    for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                                                        Log.d("parent",""+doc.getReference().getParent().getParent().getId());
+                                                        ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
+                                                        eventArray.add(new HabitEvent(
+                                                                doc.getReference().getParent().getParent().getId(),
+                                                                doc.getId(),
+                                                                (String)doc.getData().get("comment"),
+                                                                dateArray,
+                                                                (String)doc.getData().get("location"),
+                                                                "image"
+                                                        ));
+                                                    }
+                                                    callback.onCallbackSuccess(eventArray);
+                                                }
+                                                else{
+                                                    callback.onCallbackFailed();
+                                                }
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
                     }
-                    callback.onCallbackSuccess(eventArray);
-                }
-                else{
-                    callback.onCallbackFailed();
-                }
-            }
-        });
+                });
+
     }
 
     /**
