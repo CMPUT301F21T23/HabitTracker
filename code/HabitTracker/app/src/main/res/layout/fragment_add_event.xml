@@ -55,6 +55,7 @@
             android:id="@+id/comment_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLength="20"
             android:ems="10"
             android:padding="5dp"
             android:inputType="textPersonName"/>
