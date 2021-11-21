@@ -121,14 +121,20 @@ public class HabitEvent implements Serializable {
         this.location = location;
     }
 
+
     /**
-     * Allows editing/setting of the habit name
-     * @param habit {String} the habit name
+     * Gets the habit id and performs an action accordingly to the desired outcome
+     * @param habit     {String}    the title of the habit you want the id of
+     * @param action    {int}       the type of action to be performed after finding the id
      */
     public void setHabitInDB(String habit, int action) {
         DatabaseManager.get().getAndSetHabitId(this.userId, habit, this, action);
     }
 
+    /**
+     * Allows editing/setting of the habit name
+     * @param habit {String} the habit name
+     */
     public void setHabit(String habit) {
         this.habitId = habit;
         this.habitEventDocument.put("Habit", habit);

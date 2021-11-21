@@ -69,7 +69,7 @@ public class Habit implements Serializable {
      * Sets sharing status
      * @param isPublic {boolean}   true if public, false otherwise
      */
-    public void setPublic(boolean isPublic) {
+    public void setShareStatus(boolean isPublic) {
         this.isPublic = isPublic;
     }
 

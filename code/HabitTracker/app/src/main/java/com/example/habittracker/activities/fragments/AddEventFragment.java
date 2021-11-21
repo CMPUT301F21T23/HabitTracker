@@ -260,9 +260,8 @@ public class AddEventFragment extends DialogFragment {
 
                             editM.setStartDate(stringToArraylist(date.getText().toString()));
                             editM.setLocation(location1.getText().toString());
-                            editM.setHabitInDB(attachedHabit, 1);
                             editM.setComment(editText1.getText().toString());
-//                                editM.setCalendar(date_calendar);
+                            editM.setHabitInDB(attachedHabit, 1);
                             editFlag = true;
 
                             listener.onOkPressed(editM, editFlag);
@@ -283,7 +282,6 @@ public class AddEventFragment extends DialogFragment {
                             String tempLocation = location1.getText().toString();
                             String tempComments = editText1.getText().toString();
                             HabitEvent tempHabitEvent = new HabitEvent();
-                            tempHabitEvent.setHabitInDB(tempHabit,2);
                             if(temp_dateString.isEmpty()) {
                                 String myFormat = "yyyy-MM-dd";
                                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -297,8 +295,7 @@ public class AddEventFragment extends DialogFragment {
                             tempHabitEvent.setLocation(tempLocation);
                             tempHabitEvent.setStartDate(tempDate);
                             tempHabitEvent.setComment(tempComments);
-
-
+                            tempHabitEvent.setHabitInDB(tempHabit,2);
                             listener.onOkPressed(tempHabitEvent, editFlag);
                         }
                     }).create();

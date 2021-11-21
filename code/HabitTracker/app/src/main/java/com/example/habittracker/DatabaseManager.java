@@ -327,6 +327,7 @@ public class DatabaseManager {
                                 // set the habit id to the habit event
                                 he.setHabit(document.getReference().getId());
 
+                                // handle the action here, these actions NEED to be performed thru a callback
                                 if (action ==1) {
                                     he.editDB();
                                 }
