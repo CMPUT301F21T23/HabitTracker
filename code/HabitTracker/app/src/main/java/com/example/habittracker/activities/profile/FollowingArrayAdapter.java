@@ -76,13 +76,9 @@ public class FollowingArrayAdapter extends ArrayAdapter<User> {
         unfollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String removeField = "following";
-                if (pendingStatus.get(user) == true) {
-                    removeField = "pendingFollowReqs";
-                }
-                DatabaseManager.get().removeUserListItem(SharedInfo.getInstance().getCurrentUser().getUsername(),
+                DatabaseManager.get().unfollowUser(SharedInfo.getInstance().getCurrentUser().getUsername(),
                         user.getUsername(),
-                        removeField,
+                        pendingStatus.get(user),
                         new UserListOperationCallback() {
                             @Override
                             public void onCallbackSuccess(String userid) {
@@ -91,11 +87,13 @@ public class FollowingArrayAdapter extends ArrayAdapter<User> {
                                 pendingStatus.remove(user);
                                 FollowingArrayAdapter.super.notifyDataSetChanged();
                             }
+
                             @Override
                             public void onCallbackFailure(String reason) {
                                 Log.d(TAG, reason);
                             }
-                        });
+                        }
+                );
             }
         });
         return convertView;

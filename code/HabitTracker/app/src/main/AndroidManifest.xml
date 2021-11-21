@@ -41,7 +41,7 @@
             android:name=".activities.ProgressTrackingActivity"
             android:exported="true" />
         <activity
-            android:name=".activities.SharingActivity"
+            android:name=".activities.sharing.SharingActivity"
             android:exported="true" />
         <activity
             android:name=".activities.profile.ProfileLoginActivity"

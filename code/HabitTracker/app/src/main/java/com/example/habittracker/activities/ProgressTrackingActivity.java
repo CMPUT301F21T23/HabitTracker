@@ -114,7 +114,7 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         setHabit(value);
 
         //Code idea from https://stackoverflow.com/questions/50650224/wait-until-firestore-data-is-retrieved-to-launch-an-activity
-        getDb().getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(),getHabit(),new HabitEventListCallback() {
+        getDb().getAllHabitEvents(getHabit().getUser().getUsername(), getHabit(), new HabitEventListCallback() {
             /**
              * Called when success to get habit events
              * @param eventList {ArrayList<HabitEvent>}

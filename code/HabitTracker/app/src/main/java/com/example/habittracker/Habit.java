@@ -19,8 +19,9 @@ public class Habit implements Serializable {
     private String titleDisplay;
     private String reason;
     private Date startDate;
-    private int progress; // provisional until we determine how to implement progress
+    private Integer progress;
     private ArrayList<String> weekDays;
+    private User user;
 
     private boolean isPublic = false;
 
@@ -108,6 +109,38 @@ public class Habit implements Serializable {
      */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    /**
+     * Gets the overall progress for a Habit.
+     * @return          {@code int} Overall progress
+     */
+    public Integer getProgress() {
+        return progress;
+    }
+
+    /**
+     * Sets the overall progress for a Habit.
+     * @param progress   {@code int} Overall progress
+     */
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
+
+    /**
+     * Gets the User that owns this Habit.
+     * @return      {@code User} User object
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the User that owns this Habit.
+     * @param user  {@code User} User object
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
