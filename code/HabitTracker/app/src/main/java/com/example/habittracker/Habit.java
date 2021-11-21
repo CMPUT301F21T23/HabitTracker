@@ -20,6 +20,7 @@ public class Habit implements Serializable {
     private String title;
     private String reason;
     private Date startDate;
+    private User owner;
     private int progress; // provisional until we determine how to implement progress
     private ArrayList<String> weekDays;
 
@@ -38,12 +39,13 @@ public class Habit implements Serializable {
      * @param startDate         {Date}      the date in which the habit was started
      * @param weekDays          {ArrayList<String>}  the days of the week during which the habit should be practiced
      */
-    public Habit (String titlePermanent, String reason, Date startDate, ArrayList<String> weekDays) {
+    public Habit (String titlePermanent, String reason, Date startDate, ArrayList<String> weekDays, boolean isPublic, User owner) {
         this.title = titlePermanent;
         this.reason = reason;
         this.startDate = startDate;
         this.progress = 0;
         this.isPublic = isPublic;
+        this.owner = SharedInfo.getInstance().getCurrentUser();
 
         this.weekDays = weekDays;
     }
@@ -56,13 +58,21 @@ public class Habit implements Serializable {
         return title;
     }
 
-//    /**
-//     * Gets the displayable title for the habit
-//     * @return title
-//     */
-//    public String getTitleDisplay() {
-//        return(titleDisplay);
-//    }
+    /**
+     * Returns the owner user
+     * @return title
+     */
+    public User getUser() {
+        return (owner);
+    }
+
+    /**
+     * Sets the owner to user
+     * @param user {User}   the user to set this to.
+     */
+    public void setUser(User user) {
+        owner = user;
+    }
 
     /**
      * Gets the description for the habit
