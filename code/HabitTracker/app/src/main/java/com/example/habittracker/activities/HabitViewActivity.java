@@ -50,7 +50,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         if (habit != null) {
             // set habit title
             TextView habit_title = findViewById(R.id.habitTitle);
-            habit_title.setText(habit.getTitleDisplay());
+            habit_title.setText(habit.getTitle());
 
             // set habit reason
             TextView dft_text_reason = findViewById(R.id.habitReason);

@@ -18,7 +18,7 @@ public class HabitTest {
         weekDays.add("Mon");
 
         currentDate = new Date();
-        return new Habit("123456789",
+        return new Habit(
                 "Paint",
                 "It makes me happy",
                 currentDate,
@@ -28,14 +28,14 @@ public class HabitTest {
     @Test
     void testGetTitle() {
         Habit habit = mockHabit();
-        assertEquals(habit.getTitle(), "123456789");
+        assertEquals(habit.getTitle(), "Paint");
     }
 
-    @Test
-    void testGetTitleDisplay() {
-        Habit habit = mockHabit();
-        assertEquals(habit.getTitleDisplay(), "Paint");
-    }
+//    @Test
+//    void testGetTitleDisplay() {
+//        Habit habit = mockHabit();
+//        assertEquals(habit.getTitleDisplay(), "Paint");
+//    }
 
     @Test
     void testGetReason() {
@@ -58,8 +58,8 @@ public class HabitTest {
     @Test
     void testSetTitle() {
         Habit habit = mockHabit();
-        habit.setTitle("987654321");
-        assertEquals(habit.getTitle(), "987654321");
+        habit.setTitle("Draw");
+        assertEquals(habit.getTitle(), "Draw");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class HabitTest {
 
         expected.put("whatDays", weekDays);
         expected.put("progress", 0); // provisional
-        expected.put("display", "Paint");
+        expected.put("title", "Paint");
 
         // the function to test
         HashMap<String, Object> test =  habit.toDocument();

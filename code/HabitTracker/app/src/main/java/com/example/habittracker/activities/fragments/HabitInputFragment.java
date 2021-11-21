@@ -140,7 +140,7 @@ public class HabitInputFragment extends DialogFragment {
                         if (bundle!= null) {
                             oldTitle = bundle.getString("old_habit_title");
                         }
-                        Habit habit = new Habit(title, title, reason, datePicker.getSetDate(), weekDays);
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays);
                         // todo: will have to make UI to make it public/private
 
                         listener.onOkPressed(habit, oldTitle);

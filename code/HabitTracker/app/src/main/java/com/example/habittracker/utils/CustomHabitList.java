@@ -53,7 +53,7 @@ public class CustomHabitList extends ArrayAdapter<Habit> {
         TextView habitReason = view.findViewById(R.id.habitReason);
 
         // modify the text the views display so it's up to date
-        habitTitle.setText(habit.getTitleDisplay());
+        habitTitle.setText(habit.getTitle());
         habitReason.setText(habit.getReason());
 
         return (view);
