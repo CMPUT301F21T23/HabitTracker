@@ -9,7 +9,9 @@ import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
+import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.StringCallback;
+
 import com.example.habittracker.utils.UserListOperationCallback;
 import com.example.habittracker.utils.SharingListCallback;
 import com.example.habittracker.utils.UserDetailsCallback;
@@ -28,6 +30,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableReference;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -152,31 +156,71 @@ public class DatabaseManager {
     /**
      * Adds a habit to the Habits collection for a given userid.
      * @param userid        {@code String} User ID
-     * @param habitTitle    {@code String} Key of the Habit
      * @param doc           {@code HashMap<String, Object>} Document
      * @return              {@code DocumentReference} DocumentReference for the Habit document created
      */
-    DocumentReference addHabitDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
+    public void addHabitDocument(String userid, HashMap<String, Object> doc) {
         // instantiate the document
-        DocumentReference docRef = usersColRef.document(userid).collection(habitsColName).document(habitTitle);
+        CollectionReference colRef = usersColRef.document(userid).collection(habitsColName);
 
         // set the data
-        docRef.set(doc)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        colRef.add(doc)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(Void unused) {
-                        Log.d(DB_TAG, String.format("Document with habit title %s successfully added to the Habits collection",
-                                habitTitle));
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(DB_TAG, "Habit successfully created");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(DB_TAG, String.format("Document with habit title %s failed to be added to the Habits collection",
-                                habitTitle));
+                        Log.d(DB_TAG, "Habit failed to be created");
                     }
                 });
-        return docRef;
+    }
+
+    /**
+     * Updates a habit document
+     * @param prevTitle {@code String}                  The original title of the habit
+     * @param title     {@code String}                  The new title of the habit
+     * @param doc       {@code HashMap<String,Object>}  The newly updated document
+     */
+    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
+
+        usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .whereEqualTo("title", prevTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                document.getReference().update(doc)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(DB_TAG,
+                                                    String.format("HabitEvent successfully created for Habit with title %s",
+                                                    title));
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d(DB_TAG,
+                                                    String.format("HabitEvent failed to be created for Habit with title %s",
+                                                    title));
+                                        }
+                                    });
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     /**
@@ -185,24 +229,44 @@ public class DatabaseManager {
      * @param habitTitle    {@code String} The title of the habit to be deleted
      */
     public void deleteHabitDocument(String userid, String habitTitle) {
-        DocumentReference docRef = usersColRef
+        // delete the actual habit
+         usersColRef
                 .document(userid)
                 .collection(habitsColName)
-                .document(habitTitle);
+                .whereEqualTo("title", habitTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-        docRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(DB_TAG, String.format("Habit successfully deleted for Habit with title %s",
-                                habitTitle));
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(DB_TAG, String.format("Habit failed to be deleted for Habit with title %s",
-                                habitTitle));
+                                HashMap<String, Object> data = new HashMap<>();
+                                data.put("path", document.getReference().getPath());
+                                HttpsCallableReference deleteFn =
+                                        FirebaseFunctions.getInstance().getHttpsCallable("recursiveDelete");
+                                deleteFn.call(data);
+
+                                document.getReference().delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(DB_TAG, String.format("Habit successfully deleted for Habit with title %s",
+                                                        habitTitle));
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(DB_TAG, String.format("Habit failed to be deleted for Habit with title %s",
+                                                        habitTitle));
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
                     }
                 });
     }
@@ -239,19 +303,41 @@ public class DatabaseManager {
     }
 
     /**
-     * Updates a habit document
-     * @param prevTitle {@code String}                  The original title of the habit
-     * @param title     {@code String}                  The new title of the habit
-     * @param doc       {@code HashMap<String,Object>}  The newly updated document
+     * Modifies attribute of habit event for performing adding and editing operations
+     * @param userid        {String}    the current user
+     * @param habitTitle    {String}    the title of the selected habit
+     * @param he            {HabitEvent}the habit event to modify
+     * @param action        {int}       id of the type of action to perform in callback.
      */
-    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
-
-        DocumentReference colRef = usersColRef
+    public void getAndSetHabitId(String userid, String habitTitle, HabitEvent he, int action) {
+        // first query the habit
+        usersColRef
                 .document(userid)
                 .collection(habitsColName)
-                .document(prevTitle);
+                .whereEqualTo("title", habitTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // set the habit id to the habit event
+                                he.setHabit(document.getReference().getId());
 
-        colRef.update(doc);
+                                // handle the action here, these actions NEED to be performed thru a callback
+                                if (action ==1) {
+                                    he.editDB();
+                                }
+                                else if (action == 2) {
+                                    he.updateDB();
+                                }
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
      /**
@@ -399,14 +485,23 @@ public class DatabaseManager {
                         if(dateArray == null || daysArray == null){
                             continue;
                         }
+                        boolean shared;
+                        try {
+                            shared = (boolean) doc.getData().get("isPublic");
+                        } catch (NullPointerException npe) {
+                            shared = true; // assume it's public when no preference is given
+                        }
+
+
                         cal.set(dateArray.get(0).intValue(),dateArray.get(1).intValue()-1,dateArray.get(2).intValue());
                         Date date = cal.getTime();
                         habitArray.add(new Habit(
-                                doc.getId(),
-                                (String)doc.getData().get("display"),
+                                (String)doc.getData().get("title"),
                                 (String)doc.getData().get("reason"),
                                 date,
-                                daysArray //.toArray(new String[daysArray.size()])
+                                daysArray,
+                                shared,
+                                SharedInfo.getInstance().getCurrentUser()
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);
@@ -417,6 +512,7 @@ public class DatabaseManager {
             }
         });
     }
+
     /**
      * This method return an array list of all habit events for a habit using a callback function.
      * @param user
@@ -425,37 +521,57 @@ public class DatabaseManager {
      */
     public void getAllHabitEvents(String user, Habit habit, HabitEventListCallback callback) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
-        CollectionReference doc = usersColRef
+//        DocumentReference habitDocRef = null;
+        usersColRef
                 .document(user)
                 .collection(habitsColName)
-                .document(habit.getTitle())
-                .collection(habitEventsColName);
-        doc.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<HabitEvent> eventArray = new ArrayList<>();
+//                .document(habit.getTitle())
 
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                .whereEqualTo("title", habit.getTitle())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
 
-                        Log.d("parent",""+doc.getReference().getParent().getParent().getId());
-                        ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
-                        eventArray.add(new HabitEvent(
-                                doc.getReference().getParent().getParent().getId(),
-                                doc.getId(),
-                                (String)doc.getData().get("comment"),
-                                dateArray,
-                                (String)doc.getData().get("location"),
-                                "image"
-                        ));
+                                document.getReference()
+                                        .collection(habitEventsColName)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    ArrayList<HabitEvent> eventArray = new ArrayList<>();
+
+                                                    for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                                                        Log.d("parent",""+doc.getReference().getParent().getParent().getId());
+                                                        ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
+                                                        eventArray.add(new HabitEvent(
+                                                                doc.getReference().getParent().getParent().getId(),
+                                                                doc.getId(),
+                                                                (String)doc.getData().get("comment"),
+                                                                dateArray,
+                                                                (String)doc.getData().get("location"),
+                                                                "image"
+                                                        ));
+                                                    }
+                                                    callback.onCallbackSuccess(eventArray);
+                                                }
+                                                else{
+                                                    callback.onCallbackFailed();
+                                                }
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
                     }
-                    callback.onCallbackSuccess(eventArray);
-                }
-                else{
-                    callback.onCallbackFailed();
-                }
-            }
-        });
+                });
+
     }
 
     /**
@@ -807,6 +923,11 @@ public class DatabaseManager {
         });
     }
 
+    /**
+     * Gets all public habits of the given user.
+     * @param userid        {String}        the given user
+     * @param callback      {HabitCallback} the action to be performed
+     */
     public void getAllPublicHabits(String userid, HabitCallback callback) {
         // get the Habits collection for the given user
         CollectionReference colRef = usersColRef.document(userid).collection(habitsColName);
@@ -835,19 +956,14 @@ public class DatabaseManager {
                                     // create a Habit object
                                     Habit habit = new Habit(
                                             (String) doc.getData().get("title"),
-                                            (String) doc.getData().get("display"),
                                             (String) doc.getData().get("reason"),
                                             date,
-                                            daysArray
+                                            daysArray,
+                                            true,
+                                            new User(userid)
                                     );
-
-                                    // TODO: the following two setter methods should not be used
-                                    // TODO: Habit constructor should take care of these
-                                    // set the owner of this Habit
-                                    habit.setUser(new User(userid));
                                     // set the overall progress of the Habit
                                     habit.setProgress(progress.intValue());
-
                                     callback.onCallbackSuccess(habit);
                                 }
                             }

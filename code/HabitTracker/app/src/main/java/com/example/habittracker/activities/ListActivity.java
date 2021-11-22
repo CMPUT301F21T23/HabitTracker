@@ -1,10 +1,10 @@
 package com.example.habittracker.activities;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,18 +16,13 @@ import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.utils.CustomHabitList;
-import com.example.habittracker.utils.DateConverter;
 
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ListActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 
@@ -65,20 +60,18 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
             }
         });
 
-        DatabaseManager
-                .get()
-                .getHabitsColRef(SharedInfo.getInstance().getCurrentUser().getUsername())
-                .addSnapshotListener(
-                        new EventListener<QuerySnapshot>() {
+        DatabaseManager.get().getAllHabits(
+                SharedInfo.getInstance().getCurrentUser().getUsername(),
+                new HabitListCallback() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        // Clear the old list
-                        habitList.clear();
-                        repopulate(value, error);
-                        habitAdapter.notifyDataSetChanged();
+                    public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                        updateDisplay(habitList);
                     }
-                }
-        );
+                    @Override
+                    public void onCallbackFailed() {
+
+                    }
+                });
     }
 
     /**
@@ -92,34 +85,12 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
     }
 
     /**
-     * Repopulates the activity that lists all habits belonging to a user
-     * @param value {QuerySnapshot}                 the snapshot value
-     * @param error {FirebaseFirestoreException}    error, if any
+     * Updates the list of habits displayed in this activity
+     * @param habitlist {ArrayList<Habit>} An arraylist containing habits
      */
-    private void repopulate (QuerySnapshot value, FirebaseFirestoreException error) {
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
-
-        if (error == null) {
-            for (QueryDocumentSnapshot doc : value) {
-                String habitTitle = doc.getId();
-
-                String habitReason = (String) doc.getData().get(attributes[0]);
-
-                ArrayList<Long> dateTest = (ArrayList<Long>) doc.get(attributes[1]);
-                String displayTitle = (String) doc.getData().get(attributes[4]);
-                Date startDate = DateConverter.arrayListToDate(dateTest);
-
-                ArrayList<String> weekDays = (ArrayList<String>) doc.get(attributes[2]);
-
-                habitList.add(
-                        new Habit(
-                                habitTitle,
-                                displayTitle,
-                                habitReason,
-                                startDate,
-                                weekDays
-                                ));
-            }
-        }
+    private void updateDisplay (ArrayList<Habit> habitlist) {
+        habitList.clear();
+        habitList.addAll(habitlist);
+        habitAdapter.notifyDataSetChanged();
     }
 }

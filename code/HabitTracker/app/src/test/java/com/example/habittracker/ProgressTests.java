@@ -34,8 +34,15 @@ public class ProgressTests {
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE,-2);
-        Habit habit = new Habit("Habit","displayHabit","Reason", cal.getTime(), weekdays);
-        return habit;
+        User mockUser = new User("mockUser");
+        return new Habit(
+                "Habit",
+                "Reason",
+                cal.getTime(),
+                weekdays,
+                true,
+                mockUser
+        );
     }
 
     /**

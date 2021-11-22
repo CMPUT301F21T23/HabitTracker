@@ -1,6 +1,7 @@
 package com.example.habittracker.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
@@ -50,7 +51,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         if (habit != null) {
             // set habit title
             TextView habit_title = findViewById(R.id.habitTitle);
-            habit_title.setText(habit.getTitleDisplay());
+            habit_title.setText(habit.getTitle());
 
             // set habit reason
             TextView dft_text_reason = findViewById(R.id.habitReason);
@@ -98,6 +99,11 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                     dayButtons[index].setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.spotify));
                 }
             }
+
+            // Set share status
+            SwitchCompat dft_share_status = findViewById(R.id.switch1);
+            boolean isPublic = habit.isPublic();
+            dft_share_status.setChecked(isPublic);
         }
 
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));

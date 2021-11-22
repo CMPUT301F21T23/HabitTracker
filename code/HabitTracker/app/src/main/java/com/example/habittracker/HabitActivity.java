@@ -88,7 +88,7 @@ public class HabitActivity extends AppCompatActivity {
         habitDocument.put("progress", 0);
 
         // use database manager
-        DatabaseManager.get().addHabitDocument(userid, title, habitDocument);
+        DatabaseManager.get().addHabitDocument(userid, habitDocument);
 
         // add data for the habit event document
         habitEventDocument.put("comment", "Comment 1");
