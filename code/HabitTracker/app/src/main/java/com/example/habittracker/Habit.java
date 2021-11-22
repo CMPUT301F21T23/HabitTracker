@@ -20,9 +20,9 @@ public class Habit implements Serializable {
     private String title;
     private String reason;
     private Date startDate;
-    private User owner;
-    private int progress; // provisional until we determine how to implement progress
+    private Integer progress;
     private ArrayList<String> weekDays;
+    private User user;
 
     private boolean isPublic = false;
 
@@ -45,7 +45,7 @@ public class Habit implements Serializable {
         this.startDate = startDate;
         this.progress = 0;
         this.isPublic = isPublic;
-        this.owner = owner;
+        this.user = owner;
         this.weekDays = weekDays;
     }
 
@@ -71,22 +71,6 @@ public class Habit implements Serializable {
      */
     public void setShareStatus(boolean isPublic) {
         this.isPublic = isPublic;
-    }
-
-    /**
-     * Returns the owner user
-     * @return owner
-     */
-    public User getUser() {
-        return (owner);
-    }
-
-    /**
-     * Sets the owner to user
-     * @param user {User}   the user to set this to.
-     */
-    public void setUser(User user) {
-        owner = user;
     }
 
     /**
@@ -133,6 +117,38 @@ public class Habit implements Serializable {
      */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    /**
+     * Gets the overall progress for a Habit.
+     * @return          {@code int} Overall progress
+     */
+    public Integer getProgress() {
+        return progress;
+    }
+
+    /**
+     * Sets the overall progress for a Habit.
+     * @param progress   {@code int} Overall progress
+     */
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
+
+    /**
+     * Gets the User that owns this Habit.
+     * @return      {@code User} User object
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the User that owns this Habit.
+     * @param user  {@code User} User object
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**

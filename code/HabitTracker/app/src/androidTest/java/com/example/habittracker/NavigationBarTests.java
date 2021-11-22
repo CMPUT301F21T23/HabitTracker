@@ -1,13 +1,10 @@
 package com.example.habittracker;
 
-import android.provider.ContactsContract;
-
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.habittracker.activities.ListActivity;
-import com.example.habittracker.activities.LoginActivity;
-import com.example.habittracker.activities.SharingActivity;
+import com.example.habittracker.activities.sharing.SharingActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
