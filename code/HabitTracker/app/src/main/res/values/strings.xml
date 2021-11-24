@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">HabitTracker</string>
-    <string name="title_habit_list">All Habits</string>
+    <string name="title_habit_list">My Habits</string>
     <string name="add_habit_content_desc">Adds a habit to the list.</string>
     <string name="title_home">Habits For Today</string>
     <string name="normal_map">AddLocation</string>
