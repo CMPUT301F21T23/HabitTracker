@@ -427,7 +427,8 @@
                             android:layout_height="wrap_content"
                             android:adjustViewBounds="true"
                             app:tint="@color/spotify_comp"
-                            android:scaleType="fitEnd"
+                            android:scaleType="fitXY"
+                            android:alpha=".75"
                             app:srcCompat="@drawable/stats" />
 
                         <Button
@@ -457,7 +458,8 @@
                             android:id="@+id/imageView4"
                             android:layout_width="match_parent"
                             android:adjustViewBounds="true"
-                            android:scaleType="centerInside"
+                            android:scaleType="fitXY"
+                            android:alpha=".75"
                             app:tint="@color/spotify_comp"
                             android:layout_height="wrap_content"
                             app:srcCompat="@drawable/notebook_event" />

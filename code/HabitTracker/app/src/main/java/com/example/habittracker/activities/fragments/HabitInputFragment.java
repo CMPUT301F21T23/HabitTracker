@@ -141,11 +141,10 @@ public class HabitInputFragment extends DialogFragment {
                         Bundle bundle = getArguments();
                         String oldTitle = null;
                         // editing case
-                        if (bundle!= null) {
-                            oldTitle = bundle.getString("old_habit_title");
-                        }
+//                        if (bundle!= null) {
+//                            oldTitle = bundle.getString("old_habit_title");
+//                        }
                         Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays, isPublic, SharedInfo.getInstance().getCurrentUser());
-                        // todo: will have to make UI to make it public/private
 
                         listener.onOkPressed(habit, oldTitle);
                         alertDialog.dismiss();

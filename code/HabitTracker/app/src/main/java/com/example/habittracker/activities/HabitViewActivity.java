@@ -117,16 +117,9 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
              */
             @Override
             public void onClick(View view) {
-//                Bundle bundle = new Bundle();
-//                bundle.putString("old_habit_title", habit.getTitle());
-
-//                Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
-//                intent.putExtra(EXTRA_HABIT, (Serializable) list.getItemAtPosition(position));
-//                startActivity(intent);
-
-//                HabitInputFragment hif = new HabitInputFragment();
-//                hif.setArguments(bundle);
-//                hif.show(getSupportFragmentManager(), "EDIT EVENT");
+                Intent intent = new Intent(getApplicationContext(),HabitEditActivity.class);
+                intent.putExtra(ListActivity.EXTRA_HABIT, (Serializable) habit);
+                startActivity(intent);
             }
         });
 
@@ -164,6 +157,14 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                 startActivity(intent);
             }
         });
+
+        // get the update status from the bundle.
+        boolean updated = intent.getBooleanExtra(HabitEditActivity.EXTRA_UPDATE_STAT, false);
+        if (updated) {
+            String oldTitle = intent.getStringExtra("old_habit_title");
+            onOkPressed(habit, oldTitle);
+        }
+
     }
 
     /**
@@ -184,9 +185,6 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                         prevTitle,
                         newTitle,
                         habitHm);
-
-        Intent intent = new Intent(getApplicationContext(),ListActivity.class);
-        startActivity(intent);
     }
 
 }

@@ -97,6 +97,14 @@ public class Habit implements Serializable {
     }
 
     /**
+     * Sets the week days where the habit is meant to be practiced
+     * @return weekDays
+     */
+    public void setWeekDays(ArrayList<String> newList) {
+        weekDays = newList;
+    }
+
+    /**
      * Changes the title of the habit
      * @param title {String} the title to change
      */
