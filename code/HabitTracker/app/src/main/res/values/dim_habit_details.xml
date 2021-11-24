@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="ic_left_margin">25dp</dimen>
+    <dimen name="date_circle_dim">60dp</dimen>
+</resources>

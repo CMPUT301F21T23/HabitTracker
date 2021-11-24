@@ -21,6 +21,7 @@ import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.utils.SharedInfo;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -116,12 +117,16 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
              */
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putString("old_habit_title", habit.getTitle());
+//                Bundle bundle = new Bundle();
+//                bundle.putString("old_habit_title", habit.getTitle());
 
-                HabitInputFragment hif = new HabitInputFragment();
-                hif.setArguments(bundle);
-                hif.show(getSupportFragmentManager(), "EDIT EVENT");
+//                Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
+//                intent.putExtra(EXTRA_HABIT, (Serializable) list.getItemAtPosition(position));
+//                startActivity(intent);
+
+//                HabitInputFragment hif = new HabitInputFragment();
+//                hif.setArguments(bundle);
+//                hif.show(getSupportFragmentManager(), "EDIT EVENT");
             }
         });
 
