@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,6 +12,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:maxLength="20"
+        android:padding="20dp"
         android:inputType="textPersonName"
         android:hint="Habit Title"
         />
@@ -21,6 +23,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:maxLength="30"
+        android:padding="20dp"
         android:inputType="textPersonName"
         android:hint="Habit Reason" />
 
@@ -29,96 +32,265 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:padding="20dp"
         android:inputType="textPersonName"
         android:focusable="false"
-        android:hint="Date To Start" />
+        android:hint="Habit Starting Date" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/chooseDays"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:text="Choose Days:"
-        android:textSize="18sp" />
-
-    <Switch
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/shared"
-        android:paddingRight="20dp"
+        android:padding="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Allow Sharing"
         android:textSize="18sp"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/chooseDays"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <CheckBox
-            android:id="@+id/monday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Mon" />
-
-        <CheckBox
-            android:id="@+id/tuesday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Tue" />
-
-        <CheckBox
-            android:id="@+id/wednesday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Wed" />
-
-        <CheckBox
-            android:id="@+id/thursday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Thu" />
-    </LinearLayout>
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp"
+        android:text="Choose Days:"
+        android:textSize="18sp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        tools:ignore="UseSwitchCompatOrMaterialXml">
-
-        <CheckBox
-            android:id="@+id/friday"
-            android:layout_width="92dp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/date_circle_dim"
+        android:orientation="horizontal">
+        <View
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="0dp"
-            android:layout_weight="1"
-            android:text="Fri" />
-
-        <CheckBox
-            android:id="@+id/saturday"
-            android:layout_width="92dp"
+            android:layout_weight="1.5">
+        </View>
+        <ToggleButton
+            android:id="@+id/tue"
+            android:layout_width="@dimen/date_circle_dim"
+            android:layout_height="@dimen/date_circle_dim"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_circle_background"
+            android:minHeight="48dp"
+            android:scaleType="fitXY"
+            android:textColor="@color/white"
+            android:textOff="Tue"
+            android:textOn="Tue"
+            android:textSize="11sp"
+            app:backgroundTint="@color/grey_1"
+            app:layout_constraintStart_toStartOf="parent" />
+        <View
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="0dp"
             android:layout_weight="1"
-            android:text="Sat" />
-
-        <CheckBox
-            android:id="@+id/sunday"
-            android:layout_width="92dp"
+            >
+        </View>
+        <ToggleButton
+            android:id="@+id/thu"
+            android:layout_width="@dimen/date_circle_dim"
+            android:layout_height="@dimen/date_circle_dim"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_circle_background"
+            android:minHeight="48dp"
+            android:scaleType="fitXY"
+            android:textColor="@color/white"
+            android:textOff="Thu"
+            android:textOn="Thu"
+            android:textSize="11sp"
+            app:backgroundTint="@color/grey_1"
+            app:layout_constraintStart_toStartOf="parent" />
+        <View
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="0dp"
             android:layout_weight="1"
-            android:text="Sun" />
-
-
+            >
+        </View>
+        <ToggleButton
+            android:id="@+id/sat"
+            android:layout_width="@dimen/date_circle_dim"
+            android:layout_height="@dimen/date_circle_dim"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_circle_background"
+            android:minHeight="48dp"
+            android:scaleType="fitXY"
+            android:textColor="@color/white"
+            android:textOff="Sat"
+            android:textOn="Sat"
+            android:textSize="11sp"
+            app:backgroundTint="@color/grey_1"
+            app:layout_constraintStart_toStartOf="parent" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            >
+        </View>
 
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/date_circle_dim"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="@dimen/ic_left_margin"
+        android:orientation="horizontal">
+
+
+        <ToggleButton
+            android:textOff="Mon"
+            android:textOn="Mon"
+            android:textColor="@color/white"
+            android:id="@+id/mon"
+            android:layout_width="@dimen/date_circle_dim"
+            android:layout_height="@dimen/date_circle_dim"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_circle_background"
+            android:minHeight="48dp"
+            android:scaleType="fitXY"
+            android:textSize="11sp"
+            app:backgroundTint="@color/grey_1"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+        </View>
+
+        <ToggleButton
+            android:textOff="Wed"
+            android:textOn="Wed"
+            android:textColor="@color/white"
+            android:id="@+id/wed"
+            android:layout_width="@dimen/date_circle_dim"
+            android:layout_height="@dimen/date_circle_dim"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_circle_background"
+            android:minHeight="48dp"
+            android:scaleType="fitXY"
+            android:textSize="11sp"
+            app:backgroundTint="@color/grey_1"
+            app:layout_constraintStart_toStartOf="parent" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+        </View>
+
+        <ToggleButton
+            android:id="@+id/fri"
+            android:layout_width="@dimen/date_circle_dim"
+            android:layout_height="@dimen/date_circle_dim"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_circle_background"
+            android:minHeight="48dp"
+            android:scaleType="fitXY"
+            android:textColor="@color/white"
+            android:textOff="Fri"
+            android:textOn="Fri"
+            android:textSize="11sp"
+            app:backgroundTint="@color/grey_1"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+        </View>
+        <ToggleButton
+            android:id="@+id/sun"
+            android:layout_width="@dimen/date_circle_dim"
+            android:layout_height="@dimen/date_circle_dim"
+            android:adjustViewBounds="true"
+            android:background="@drawable/ic_circle_background"
+            android:minHeight="48dp"
+            android:scaleType="fitXY"
+            android:textSize="11sp"
+            android:textColor="@color/white"
+            android:textOff="Sun"
+            android:textOn="Sun"
+            app:backgroundTint="@color/grey_1"
+            app:layout_constraintStart_toStartOf="parent" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            >
+        </View>
+    </LinearLayout>
+
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal">-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/monday"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Mon" />-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/tuesday"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Tue" />-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/wednesday"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Wed" />-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/thursday"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Thu" />-->
+<!--    </LinearLayout>-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="horizontal"-->
+<!--        tools:ignore="UseSwitchCompatOrMaterialXml">-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/friday"-->
+<!--            android:layout_width="92dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Fri" />-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/saturday"-->
+<!--            android:layout_width="92dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Sat" />-->
+
+<!--        <CheckBox-->
+<!--            android:id="@+id/sunday"-->
+<!--            android:layout_width="92dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="Sun" />-->
+
+
+
+<!--    </LinearLayout>-->
     <!--    checkbox widgets specifying which days of the week the habit should occur-->
 </LinearLayout>

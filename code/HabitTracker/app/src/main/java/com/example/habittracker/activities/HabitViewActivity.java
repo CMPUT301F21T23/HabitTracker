@@ -31,7 +31,7 @@ import java.util.Locale;
 /**
  * HabitViewActivity class: the activity that displays details concerning a Habit
  */
-public class HabitViewActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
+public class HabitViewActivity extends AppCompatActivity {
 
     private Habit habit;
 
@@ -173,7 +173,6 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
      * @param habit     {Habit}
      * @param prevTitle {String}    The title of the previously modified habit
      */
-    @Override
     public void onOkPressed(Habit habit, String prevTitle) {
         String newTitle = habit.getTitle();
 
