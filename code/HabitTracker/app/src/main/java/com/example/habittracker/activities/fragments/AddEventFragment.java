@@ -179,7 +179,28 @@ public class AddEventFragment extends DialogFragment {
                 //startActivity(intent);
                 System.out.println("Choosing an image");
                 //openFileChooser();
-                openCamera();
+                //openCamera();
+                // AlertDialog code from: http://kvenkataprasad.blogspot.com/2017/04/pick-image-from-gallery-or-camera-using.html
+
+                final CharSequence[] items;
+
+                items = new CharSequence[2];
+                items[0] = "Camera";
+                items[1] = "Gallery";
+
+                android.app.AlertDialog.Builder alertdialog = new android.app.AlertDialog.Builder(getContext());
+                alertdialog.setTitle("Add Image");
+                alertdialog.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (items[item].equals("Camera")) {
+                            openCamera();
+                        } else if (items[item].equals("Gallery")) {
+                            openFileChooser();
+                        }
+                    }
+                });
+                alertdialog.show();
             }
         });
 
@@ -440,6 +461,8 @@ public class AddEventFragment extends DialogFragment {
         startActivityForResult(takePicture, TAKE_PHOTO_REQUEST);
     }
 
+    // Help with fixing a bug: https://stackoverflow.com/questions/9890757/android-camera-data-intent-returns-null
+    // Creating a bitmap from the camera: https://stackoverflow.com/questions/32403265/android-data-getdata-returns-null-from-cameraactivity-for-some-phones
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -456,12 +479,10 @@ public class AddEventFragment extends DialogFragment {
                 break;
             case TAKE_PHOTO_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    mImageUri = data.getData();
-                    if (mImageUri == null) {
-                        System.err.println("its nullahh");
-                    }
+                    //mImageUri = data.getData();
+                    //if (mImageUri == null) { System.err.println("its null ahh"); }
                     //System.err.println("Image URL onActivityResult for camera coming up: " + mImageUri.toString());
-                    System.err.println("plez work " + data.toString());
+                    //System.err.println("plez work " + data.toString());
                     //Picasso.with(getContext()).load(mImageUri).into(event_image);
 
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
@@ -472,6 +493,7 @@ public class AddEventFragment extends DialogFragment {
         }
     }
 
+    // Getting a Uri from a bitmap: https://stackoverflow.com/questions/12555420/how-to-get-a-uri-object-from-bitmap
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
