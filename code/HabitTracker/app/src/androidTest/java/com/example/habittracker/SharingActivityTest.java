@@ -237,6 +237,7 @@ public class SharingActivityTest {
         solo.clickOnButton("SEND");
         // wait 3 seconds for database operations to complete
         solo.waitForText("no text", 1, 3000);
+        solo.clickOnButton("OK");
 
         // go to the ProfileFollowingActivity
         solo.clickOnView(solo.getView(R.id.profile));

@@ -1,5 +1,6 @@
 package com.example.habittracker.activities.sharing;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
  * SharingActivity displays the public habits of the users that the current user is following.
  * Clicking on a Habit takes the user to the detailed habit progress view.
  */
-public class SharingActivity extends AppCompatActivity {
+public class SharingActivity extends AppCompatActivity implements SharingInputFragment.FollowUserDialogListener {
 
     public ListView sharingListView;
     private ArrayAdapter<Habit> sharingArrayAdapter;
@@ -94,5 +95,19 @@ public class SharingActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    /**
+     * Shows an AlertDialog to notify the user that the follow request was successful.
+     * @param requestid     {@code String} The username of the user requested to follow
+     */
+    @Override
+    public void onSuccess(String requestid) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SharingActivity.this);
+        builder.setCancelable(true);
+        builder.setTitle("Follow Request");
+        builder.setMessage(String.format("Follow request sent to %s!", requestid));
+        builder.setPositiveButton("OK", null);
+        builder.show();
     }
 }
