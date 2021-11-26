@@ -17,8 +17,10 @@ import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -37,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
-    private ArrayAdapter<Habit> habitAdapter;
+    private CustomHabitList habitAdapter;
 
     /**
      * Populates the screen's interactables (nav bar click, button clicks, etc..)
@@ -85,65 +87,31 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        // snapshot
         DatabaseManager
                 .get()
-                .getHabitsColRef(SharedInfo.getInstance().getCurrentUser().getUsername())
-                .addSnapshotListener(
-                new EventListener<QuerySnapshot>() {
-                    /**
-                     * Populates daily habit view when visiting this activity again or changes occur
-                     * (or really, an event occurs)
-                     * @param value {@code QuerySnapshot}               the snapshot result
-                     * @param error {@code FirebaseFirestoreException}  in case of error, result.
-                     */
+                .getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        // Clear the old list
-                        habitList.clear();
-                        repopulate(value, error);
-                        habitAdapter.notifyDataSetChanged();
+                    public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                        repopulate(habitList);
                     }
-                }
-        );
+
+                    @Override
+                    public void onCallbackFailed() {
+
+                    }
+                });
     }
 
     /**
-     * Repopulates the activity that lists all habits belonging to a user
-     * @param value {QuerySnapshot}                 the snapshot value
-     * @param error {FirebaseFirestoreException}    error, if any
+     * sets the arraylist and notifies data changed
+     * @param habitList
      */
-    private void repopulate (QuerySnapshot value, FirebaseFirestoreException error) {
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
-
-        if (error == null) {
-            for (QueryDocumentSnapshot doc : value) {
-                ArrayList<String> weekDays = (ArrayList<String>) doc.get(attributes[2]);
-
-                // check if the habit should be performed in today's day of the week
-                if ( (weekDays != null) && (weekDays.contains(DateConverter.getCurrentWeekDay())) ) {
-
-                    // check if the habit started today or before today.
-                    ArrayList<Long> dateTest = (ArrayList<Long>) doc.get(attributes[1]);
-                    Date startDate = DateConverter.arrayListToDate(dateTest);
-                    Date today = new Date();
-
-                    if (today.after(startDate)) {
-                        String habitTitle = doc.getId();
-                        String displayTitle = (String) doc.getData().get(attributes[4]);
-                        String habitReason = (String) doc.getData().get(attributes[0]);
-
-                        habitList.add(
-                                new Habit(
-                                        habitTitle,
-                                        displayTitle,
-                                        habitReason,
-                                        startDate,
-                                        weekDays
-                                ));
-                    }
-                }
+    private void repopulate (ArrayList<Habit> habitList) {
+        for (Habit h : habitList) {
+            if ((h.getWeekDays() != null) && (h.getWeekDays().contains(DateConverter.getCurrentWeekDay()))) {
+                this.habitList.add(h);
             }
+            this.habitAdapter.notifyDataSetChanged();
         }
     }
-    }
+}

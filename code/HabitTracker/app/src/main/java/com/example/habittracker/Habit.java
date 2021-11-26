@@ -38,12 +38,12 @@ public class Habit implements Serializable {
      * @param startDate         {Date}      the date in which the habit was started
      * @param weekDays          {ArrayList<String>}  the days of the week during which the habit should be practiced
      */
-    public Habit (String titlePermanent, String titleDisplay, String reason, Date startDate, ArrayList<String> weekDays) {
+    public Habit (String titlePermanent, String titleDisplay, String reason, Date startDate,int progress, ArrayList<String> weekDays) {
         this.title = titlePermanent;
         this.titleDisplay = titleDisplay;
         this.reason = reason;
         this.startDate = startDate;
-        this.progress = 0;
+        this.progress = progress;
         this.isPublic = isPublic;
 
         this.weekDays = weekDays;
@@ -103,6 +103,18 @@ public class Habit implements Serializable {
     }
 
     /**
+     * Gets the progress of a habit
+     * @return progress
+     */
+    public int getProgress() { return progress; }
+
+    /**
+     * Changes the progress of the habit
+     * @param progress {int}
+     */
+    public void setProgress(int progress) { this.progress = progress; }
+
+    /**
      * Changes the startDate of the habit
      * @param startDate {Date} the date to change
      */
@@ -136,8 +148,8 @@ public class Habit implements Serializable {
         //  prolly database manager. check w Zarif.
 
         // the attribute names as specified in the schema and the values that correspond
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
-        Object [] values = { reason, dateArrayList, weekDays, progress, titleDisplay};
+        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "order", "display"};
+        Object [] values = { reason, dateArrayList, weekDays, progress, 0, titleDisplay};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {

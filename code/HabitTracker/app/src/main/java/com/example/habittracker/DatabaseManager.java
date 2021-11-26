@@ -398,6 +398,7 @@ public class DatabaseManager {
                         //Log.d("",""+doc.getData().get("whatDays")+"-----"+doc.getData().get("dateStarted"));
                         ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                         ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
+                        int progress = Long.valueOf((long)doc.getData().get("progress")).intValue();
                         Calendar cal = Calendar.getInstance();
                         if(dateArray == null || daysArray == null){
                             continue;
@@ -409,6 +410,7 @@ public class DatabaseManager {
                                 (String)doc.getData().get("display"),
                                 (String)doc.getData().get("reason"),
                                 date,
+                                progress,
                                 daysArray //.toArray(new String[daysArray.size()])
                         ));
                     }
@@ -426,22 +428,24 @@ public class DatabaseManager {
      * @param habit
      * @param callback
      */
-    public void getAllHabitEvents(String user, Habit habit, HabitEventListCallback callback) {
+    public void getAllHabitEvents(String user, String habit, HabitEventListCallback callback) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference doc = usersColRef
                 .document(user)
                 .collection(habitsColName)
-                .document(habit.getTitle())
+                .document(habit)
                 .collection(habitEventsColName);
         doc.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     ArrayList<HabitEvent> eventArray = new ArrayList<>();
+                    String habit = "";
 
                     for (QueryDocumentSnapshot doc : task.getResult()) {
 
-                        Log.d("parent",""+doc.getReference().getParent().getParent().getId());
+                        //Log.d("parent",""+doc.getReference().getParent().getParent().getId());
+                        habit = doc.getReference().getParent().getParent().getId();
                         ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
                         eventArray.add(new HabitEvent(
                                 doc.getReference().getParent().getParent().getId(),

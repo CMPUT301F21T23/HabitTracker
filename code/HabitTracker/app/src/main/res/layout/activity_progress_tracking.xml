@@ -6,65 +6,123 @@
     android:layout_height="match_parent"
     tools:context=".activities.ProgressTrackingActivity">
 
-    <Button
-        android:id="@+id/tracking_back_button"
-        android:layout_width="154dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:text="Back"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/overall_progress_text_view"
+    <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_height="200dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:text="Overall Progress:"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/recent_progress_text_view"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tracking_back_button" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/recent_progress_text_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:text="Recent Progress:"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/graphTitle"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/overall_progress_text_view" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ProgressBar
+                android:id="@+id/overall_progress_bar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:indeterminateOnly="false"
+                android:max="100"
+                android:progress="20"
+                android:progressDrawable="@drawable/sharing_activity_progress_bar"
+                tools:progress="60" />
+
+            <TextView
+                android:id="@+id/overall_progress_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/overall_progress_bar"
+                app:layout_constraintEnd_toEndOf="@+id/overall_progress_bar"
+                app:layout_constraintStart_toStartOf="@+id/overall_progress_bar"
+                app:layout_constraintTop_toTopOf="@+id/overall_progress_bar"
+                tools:text="60%" />
+
+            <TextView
+                android:id="@+id/overall_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Completed"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/overall_progress_bar"
+                app:layout_constraintTop_toTopOf="@+id/overall_progress_bar" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ProgressBar
+                android:id="@+id/consistency_progress_bar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:indeterminateOnly="false"
+                android:max="100"
+                android:progress="20"
+                android:progressDrawable="@drawable/sharing_activity_progress_bar"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:progress="60" />
+
+            <TextView
+                android:id="@+id/consistency_progress_bar_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/consistency_progress_bar"
+                app:layout_constraintEnd_toEndOf="@+id/consistency_progress_bar"
+                app:layout_constraintStart_toStartOf="@+id/consistency_progress_bar"
+                app:layout_constraintTop_toTopOf="@+id/consistency_progress_bar"
+                tools:text="60%" />
+
+            <TextView
+                android:id="@+id/consistency_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Consistency"
+                app:layout_constraintEnd_toEndOf="@+id/consistency_progress_bar"
+                app:layout_constraintStart_toStartOf="@+id/consistency_progress_bar"
+                app:layout_constraintTop_toTopOf="@+id/consistency_progress_bar" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/graphTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
         android:text="Last 30 Days Progress"
         android:textAlignment="center"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/overall_progress_text_view" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="300dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,21 +132,22 @@
             android:id="@+id/progress_graph"
             android:layout_width="match_parent"
             android:layout_height="293dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/progress_stats_text_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/tracking_back_button"
+        android:layout_width="154dp"
+        android:layout_height="65dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
-        android:text="TextView"
+        android:layout_marginBottom="8dp"
+        android:text="Back"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

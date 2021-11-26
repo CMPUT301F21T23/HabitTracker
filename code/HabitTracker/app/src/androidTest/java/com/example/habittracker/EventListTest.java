@@ -187,7 +187,7 @@ public class EventListTest {
         habitDoc.put("dateStarted", Arrays.asList(2021,11,1));
         habitDoc.put("display", "habit");
         habitDoc.put("reason", "");
-        habitDoc.put("progress", "");
+        habitDoc.put("progress", 0);
         habitDoc.put("whatDays", Arrays.asList("Mon", "Wed"));
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
                 .set(habitDoc);

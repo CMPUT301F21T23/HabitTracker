@@ -58,7 +58,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:scrollbarThumbHorizontal="@color/progress_bar_overall">
 
                     <TextView
                         android:id="@+id/dateToStart"
@@ -239,26 +240,18 @@
                             app:layout_constraintStart_toStartOf="parent" />
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/progress"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="10dp"
-                        android:paddingTop="10dp"
-                        android:text="Progress"
-                        android:textAlignment="gravity"
-                        android:textSize="20sp" />
-
                     <Button
                         android:id="@+id/see_progress_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="0dp"
-                        android:layout_weight="1"
                         android:minWidth="20dp"
                         android:minHeight="48dp"
                         android:text="SEE PROGRESS"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:layout_conversion_absoluteHeight="48dp"
+                        tools:layout_conversion_absoluteWidth="146dp"
+                        tools:layout_editor_absoluteX="216dp"
+                        tools:layout_editor_absoluteY="556dp" />
 
                 </LinearLayout>
 

@@ -21,6 +21,13 @@
             app:srcCompat="@android:drawable/ic_input_add"
             app:tint="#151515" />
 
+        <Button
+            android:id="@+id/reorder_button"
+            android:layout_width="116dp"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="REORDER" />
+
     </FrameLayout>
 
     <TextView

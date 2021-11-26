@@ -24,17 +24,18 @@ public class ProgressTests {
     private Habit mockHabit(){
         SharedInfo.getInstance().setCurrentUser(new User(""));
         ArrayList<String> weekdays = new ArrayList<>();
+        weekdays.add("Sun");
         weekdays.add("Mon");
         weekdays.add("Tue");
         weekdays.add("Wed");
         weekdays.add("Thu");
         weekdays.add("Fri");
         weekdays.add("Sat");
-        weekdays.add("Sun");
+
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE,-2);
-        Habit habit = new Habit("Habit","displayHabit","Reason", cal.getTime(), weekdays);
+        Habit habit = new Habit("Habit","displayHabit","Reason", cal.getTime(),0, weekdays);
         return habit;
     }
 
@@ -57,7 +58,7 @@ public class ProgressTests {
         Habit habit = mockHabit();
         ArrayList<HabitEvent> events = mockEvents(habit);
         HashMap<String,Integer> hash = ProgressUtil.getOverallProgress(habit,events,1,100);
-        assertEquals(33,hash.get("score"));
+        assertEquals(33,hash.get("overall"));
         assertEquals(33,hash.get("recent"));
         assertEquals(1,hash.get("ideal"));
         assertEquals(2,hash.get("under"));

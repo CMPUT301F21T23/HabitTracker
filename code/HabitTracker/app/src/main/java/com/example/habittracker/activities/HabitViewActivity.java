@@ -4,24 +4,33 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.graphics.drawable.RotateDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
 import com.example.habittracker.DatabaseManager;
 
 import com.example.habittracker.Habit;
+import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
+import com.example.habittracker.activities.tracking.ProgressUtil;
+import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -101,6 +110,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
         }
 
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
+
         Button editButton = findViewById(R.id.editBtn);
         editButton.setOnClickListener(new View.OnClickListener() {
 
@@ -149,6 +159,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                 Intent intent = new Intent(getApplicationContext(),ProgressTrackingActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("habit", habit);
+                bundle.putString("user",SharedInfo.getInstance().getCurrentUser().getUsername());
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

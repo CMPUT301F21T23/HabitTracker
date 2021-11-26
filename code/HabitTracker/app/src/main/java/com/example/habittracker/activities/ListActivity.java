@@ -5,19 +5,30 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.Habit;
+import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
+import com.example.habittracker.activities.tracking.ProgressUtil;
 import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
 
+import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.EventListener;
@@ -27,13 +38,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ListActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
-    private ArrayAdapter<Habit> habitAdapter;
+    private CustomHabitList habitAdapter;
+
 
     // constant
     static final String EXTRA_HABIT = "habit";
@@ -65,20 +80,37 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
             }
         });
 
+        Button reorder_button = findViewById(R.id.reorder_button);
+        reorder_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Button self = (Button) view;
+                if(self.getText().equals("REORDER")){
+                    self.setText("DONE");
+                    ((View) view.getParent()).findViewById(R.id.add_habit_button).setEnabled(false);
+                    habitAdapter.toggleButtons(true);
+                }
+                else{
+                    self.setText("REORDER");
+                    ((View) view.getParent()).findViewById(R.id.add_habit_button).setEnabled(true);
+                    habitAdapter.toggleButtons(false);
+                }
+            }
+        });
+
         DatabaseManager
                 .get()
-                .getHabitsColRef(SharedInfo.getInstance().getCurrentUser().getUsername())
-                .addSnapshotListener(
-                        new EventListener<QuerySnapshot>() {
+                .getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        // Clear the old list
-                        habitList.clear();
-                        repopulate(value, error);
-                        habitAdapter.notifyDataSetChanged();
+                    public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                        repopulate(habitList);
                     }
-                }
-        );
+
+                    @Override
+                    public void onCallbackFailed() {
+
+                    }
+                });
     }
 
     /**
@@ -92,34 +124,19 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
     }
 
     /**
-     * Repopulates the activity that lists all habits belonging to a user
-     * @param value {QuerySnapshot}                 the snapshot value
-     * @param error {FirebaseFirestoreException}    error, if any
+     * sets the arraylist and notifies data changed
+     * @param habitList
      */
-    private void repopulate (QuerySnapshot value, FirebaseFirestoreException error) {
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
-
-        if (error == null) {
-            for (QueryDocumentSnapshot doc : value) {
-                String habitTitle = doc.getId();
-
-                String habitReason = (String) doc.getData().get(attributes[0]);
-
-                ArrayList<Long> dateTest = (ArrayList<Long>) doc.get(attributes[1]);
-                String displayTitle = (String) doc.getData().get(attributes[4]);
-                Date startDate = DateConverter.arrayListToDate(dateTest);
-
-                ArrayList<String> weekDays = (ArrayList<String>) doc.get(attributes[2]);
-
-                habitList.add(
-                        new Habit(
-                                habitTitle,
-                                displayTitle,
-                                habitReason,
-                                startDate,
-                                weekDays
-                                ));
-            }
+    private void repopulate (ArrayList<Habit> habitList) {
+        int orderCount = 0;
+        for(Habit h:habitList){
+            this.habitList.add(h);
+            HashMap<String,Object> doc = h.toDocument();
+            doc.put("order",orderCount);
+            DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),h.getTitle(),h.getTitle(), doc);
+            orderCount++;
         }
+        this.habitAdapter.notifyDataSetChanged();
+
     }
 }

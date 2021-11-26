@@ -36,8 +36,9 @@ public class ProgressUtil {
         double weight = penaltyWeight;
         int idealNumOfEvents;
 
-        int missedDays = 0,tooManyDays = 0,onIdealDays = 0,totalIdeal = 0,totalRecentIdeal =0;
+        int missedDays = 0,tooManyDays = 0,onIdealDays = 0,totalIdeal = 0,totalRecentIdeal = 0,totalEvents = 0;
 
+        totalEvents = habitEvents.size();
         //setup start time and end times
         Calendar habitCal = Calendar.getInstance();
         habitCal.setTime(habitStart);
@@ -46,11 +47,10 @@ public class ProgressUtil {
         Calendar recentStart = Calendar.getInstance();
         recentStart.setTime(start.getTime());
         end.setTime(start.getTime());
-        start.set(habitCal.get(Calendar.YEAR),habitCal.get(Calendar.MONTH),habitCal.get(Calendar.DAY_OF_MONTH));
+        start.setTime(habitCal.getTime());
 
         //go back only a month
         recentStart.add(Calendar.MONTH,-1);
-
 
         //loop through each day
         for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
@@ -95,9 +95,19 @@ public class ProgressUtil {
                 dataRecent.add(score);
             }
         }
+        int score;
+        if(totalIdeal > 0){
+            score = (int) (((double)totalEvents/(double)totalIdeal)*100.0);
+        }
+        else{
+            score = 100;
+        }
         //put all scores and stats into hashmap and return
-        scoreAndStats.put("score", (int) calcAverage(dataOverall));
+        scoreAndStats.put("consistency", (int) calcAverage(dataOverall));
         scoreAndStats.put("recent",(int) calcAverage(dataRecent));
+        scoreAndStats.put("overall", score);
+        scoreAndStats.put("total_events",totalEvents);
+        scoreAndStats.put("total_ideal",totalIdeal);
         scoreAndStats.put("under",missedDays);
         scoreAndStats.put("over",tooManyDays);
         scoreAndStats.put("ideal",onIdealDays);
@@ -130,25 +140,25 @@ public class ProgressUtil {
             //switch for converting string to proper int value
             switch(day){
                 case "Mon":
-                    dayInt.add(1);
-                    break;
-                case "Tue":
                     dayInt.add(2);
                     break;
-                case "Wed":
+                case "Tue":
                     dayInt.add(3);
                     break;
-                case "Thu":
+                case "Wed":
                     dayInt.add(4);
                     break;
-                case "Fri":
+                case "Thu":
                     dayInt.add(5);
                     break;
-                case "Sat":
+                case "Fri":
                     dayInt.add(6);
                     break;
-                case "Sun":
+                case "Sat":
                     dayInt.add(7);
+                    break;
+                case "Sun":
+                    dayInt.add(1);
                     break;
             }
         }
