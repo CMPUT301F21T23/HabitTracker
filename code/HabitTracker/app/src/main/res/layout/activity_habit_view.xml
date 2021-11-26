@@ -240,18 +240,46 @@
                             app:layout_constraintStart_toStartOf="parent" />
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/see_progress_button"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:minWidth="20dp"
-                        android:minHeight="48dp"
-                        android:text="SEE PROGRESS"
-                        app:layout_constraintStart_toStartOf="parent"
-                        tools:layout_conversion_absoluteHeight="48dp"
-                        tools:layout_conversion_absoluteWidth="146dp"
-                        tools:layout_editor_absoluteX="216dp"
-                        tools:layout_editor_absoluteY="556dp" />
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/see_progress_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="0dp"
+                            android:layout_weight="1"
+                            android:layout_margin="10dp"
+                            android:minWidth="20dp"
+                            android:minHeight="48dp"
+                            android:text="SEE PROGRESS"
+                            app:layout_constraintStart_toStartOf="parent"/>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch1"
+                            android:clickable="false"
+                            android:layout_width="wrap_content"
+                            android:padding="10dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:text="Share Habit" />
+
+                    </LinearLayout>
+
+
+<!--                    <androidx.appcompat.widget.SwitchCompat-->
+<!--                        android:id="@+id/switch1"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Switch" />-->
+
+<!--                    app:layout_constraintBaseline_toBaselineOf="@+id/see_progress_button"-->
+<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                    app:layout_constraintRight_toLeftOf="@id/editBtn"-->
+
 
                 </LinearLayout>
 

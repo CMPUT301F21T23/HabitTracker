@@ -1,6 +1,8 @@
 package com.example.habittracker;
 
 
+import android.util.Log;
+
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.SharedInfo;
 
@@ -16,11 +18,11 @@ import java.util.HashMap;
  */
 public class Habit implements Serializable {
     private String title;
-    private String titleDisplay;
     private String reason;
     private Date startDate;
-    private int progress; // provisional until we determine how to implement progress
+    private Integer progress;
     private ArrayList<String> weekDays;
+    private User user;
 
     private boolean isPublic = false;
 
@@ -32,20 +34,19 @@ public class Habit implements Serializable {
     }
     /**
      * Creates a habit belonging to a user.
-     * @param titleDisplay      {string}    the title of the habit (ie. Sleep Early)
      * @param titlePermanent    {string}    the title of the habit (ie. Sleep Early)
      * @param reason            {String}    a description of the habit
      * @param startDate         {Date}      the date in which the habit was started
      * @param weekDays          {ArrayList<String>}  the days of the week during which the habit should be practiced
      */
-    public Habit (String titlePermanent, String titleDisplay, String reason, Date startDate,int progress, ArrayList<String> weekDays) {
+    public Habit (String titlePermanent, String reason, Date startDate, ArrayList<String> weekDays, int progress, boolean isPublic, User owner) {
+
         this.title = titlePermanent;
-        this.titleDisplay = titleDisplay;
         this.reason = reason;
         this.startDate = startDate;
         this.progress = progress;
         this.isPublic = isPublic;
-
+        this.user = owner;
         this.weekDays = weekDays;
     }
 
@@ -58,12 +59,21 @@ public class Habit implements Serializable {
     }
 
     /**
-     * Gets the displayable title for the habit
-     * @return title
+     * Returns sharing status
+     * @return isPublic
      */
-    public String getTitleDisplay() {
-        return(titleDisplay);
+    public boolean isPublic() {
+        return isPublic;
     }
+
+    /**
+     * Sets sharing status
+     * @param isPublic {boolean}   true if public, false otherwise
+     */
+    public void setShareStatus(boolean isPublic) {
+        this.isPublic = isPublic;
+    }
+
     /**
      * Gets the description for the habit
      * @return reason
@@ -103,12 +113,6 @@ public class Habit implements Serializable {
     }
 
     /**
-     * Gets the progress of a habit
-     * @return progress
-     */
-    public int getProgress() { return progress; }
-
-    /**
      * Changes the progress of the habit
      * @param progress {int}
      */
@@ -123,14 +127,45 @@ public class Habit implements Serializable {
     }
 
     /**
+     * Gets the overall progress for a Habit.
+     * @return          {@code int} Overall progress
+     */
+    public Integer getProgress() {
+        return progress;
+    }
+
+    /**
+     * Sets the overall progress for a Habit.
+     * @param progress   {@code int} Overall progress
+     */
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
+
+    /**
+     * Gets the User that owns this Habit.
+     * @return      {@code User} User object
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the User that owns this Habit.
+     * @param user  {@code User} User object
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
      * Add habit to database.
      */
     public void addToDB() {
         HashMap <String, Object> doc = this.toDocument();
         DatabaseManager
                 .get()
-                .addHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(), title, doc);
-        //TODO: Remember to get user when you are done testing
+                .addHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(), doc);
     }
 
     /**
@@ -143,13 +178,11 @@ public class Habit implements Serializable {
         // make necessary conversion to convert to document
         ArrayList<Integer> dateArrayList = DateConverter.dateToArrayList(startDate);
 
-        // TODO: have to add isPublic attribute to the schema. Check with Zarif for naming
         // TODO: the list of attributes for habit should be somewhere commonly accessible.
-        //  prolly database manager. check w Zarif.
 
         // the attribute names as specified in the schema and the values that correspond
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "order", "display"};
-        Object [] values = { reason, dateArrayList, weekDays, progress, 0, titleDisplay};
+        String [] attributes = {"title", "reason", "dateStarted", "whatDays", "progress","order", "isPublic"};
+        Object [] values = {title, reason, dateArrayList, weekDays, progress, 0, isPublic};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {

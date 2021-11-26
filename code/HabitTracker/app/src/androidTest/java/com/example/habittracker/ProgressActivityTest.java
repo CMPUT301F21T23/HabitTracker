@@ -4,10 +4,8 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.habittracker.activities.HabitViewActivity;
-import com.example.habittracker.activities.HomeActivity;
 import com.example.habittracker.activities.ListActivity;
 import com.example.habittracker.activities.ProgressTrackingActivity;
-import com.example.habittracker.activities.SharingActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;

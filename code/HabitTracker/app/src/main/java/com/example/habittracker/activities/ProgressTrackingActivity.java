@@ -104,13 +104,11 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         // Bundle for intent's extra arguments
         Bundle b = this.getIntent().getExtras();
         Habit value = null;
-        String username = null;
         if(b != null) {
             value = (Habit) b.getSerializable("habit");
-            username = (String) b.getString("user");
         }
-        if(value == null || username == null) {
-            Log.d("Error Progress", "No habit or username given to progress activity.");
+        if(value == null) {
+            Log.d("Error Progress", "No habit given to progress activity.");
             //close activity
             finish();
         }
@@ -118,7 +116,9 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         setHabit(value);
 
         //Code idea from https://stackoverflow.com/questions/50650224/wait-until-firestore-data-is-retrieved-to-launch-an-activity
-        getDb().getAllHabitEvents(username,getHabit().getTitle(),new HabitEventListCallback() {
+        Log.d("test",getHabit().getUser().getUsername());
+        getDb().getAllHabitEvents(getHabit().getUser().getUsername(), getHabit().getTitle(), new HabitEventListCallback() {
+
             /**
              * Called when success to get habit events
              * @param eventList {ArrayList<HabitEvent>}

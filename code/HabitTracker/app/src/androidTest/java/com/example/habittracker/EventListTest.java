@@ -3,27 +3,19 @@ package com.example.habittracker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import android.app.AlertDialog;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.habittracker.activities.ListActivity;
-import com.example.habittracker.activities.SharingActivity;
 import com.example.habittracker.activities.eventlist.EventListActivity;
-import com.example.habittracker.activities.fragments.AddEventFragment;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
 
-import com.example.habittracker.activities.HomeActivity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -94,7 +86,7 @@ public class EventListTest {
     public void testEventListActivity() {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.home));
-        solo.clickOnView(solo.getView(R.id.event_list_button));
+        solo.clickOnView(solo.getView(R.id.follow_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
         solo.clickOnView(solo.getView(R.id.add_event_button));
         assertTrue(solo.waitForText("Add Event", 1, 2000));
@@ -115,7 +107,7 @@ public class EventListTest {
     public void testAddNewHabitEvent() {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.home));
-        solo.clickOnView(solo.getView(R.id.event_list_button));
+        solo.clickOnView(solo.getView(R.id.follow_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
         solo.clickOnView(solo.getView(R.id.add_event_button));
         solo.waitForText("Add Event",1,20000);
@@ -142,7 +134,7 @@ public class EventListTest {
     public void testEditDeleteHabitEvent() {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.home));
-        solo.clickOnView(solo.getView(R.id.event_list_button));
+        solo.clickOnView(solo.getView(R.id.follow_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
         solo.clickInList(0);
         solo.waitForText("Edit event/Delete event",1,2000);

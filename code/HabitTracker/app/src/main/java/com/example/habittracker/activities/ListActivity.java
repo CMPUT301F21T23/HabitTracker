@@ -1,13 +1,9 @@
 package com.example.habittracker.activities;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,23 +21,14 @@ import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.activities.tracking.ProgressUtil;
 import com.example.habittracker.utils.CustomHabitList;
-import com.example.habittracker.utils.DateConverter;
 
-import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public class ListActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 
@@ -129,6 +116,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
      */
     private void repopulate (ArrayList<Habit> habitList) {
         int orderCount = 0;
+        this.habitAdapter.clear();
         for(Habit h:habitList){
             this.habitList.add(h);
             HashMap<String,Object> doc = h.toDocument();
@@ -137,6 +125,5 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
             orderCount++;
         }
         this.habitAdapter.notifyDataSetChanged();
-
     }
 }

@@ -15,10 +15,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import com.example.habittracker.Habit;
 import com.example.habittracker.R;
 import com.example.habittracker.utils.CustomDatePicker;
+import com.example.habittracker.utils.SharedInfo;
 
 import java.util.ArrayList;
 
@@ -66,6 +68,7 @@ public class HabitInputFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_habit_input, null);
         inputTitle = view.findViewById(R.id.title);
         inputReason = view.findViewById(R.id.reason);
+        Switch inputShare = view.findViewById(R.id.shared);
 
         // adds a responsive DatePicker
         CustomDatePicker datePicker = new CustomDatePicker(getActivity(), view, R.id.dateToStart);
@@ -131,6 +134,7 @@ public class HabitInputFragment extends DialogFragment {
                     public void onClick(View view) {
                         String title = inputTitle.getText().toString();
                         String reason = inputReason.getText().toString();
+                        boolean isPublic = inputShare.isChecked();
 
                         ArrayList<String> weekDays = getWeekDaysChecked();
 
@@ -140,7 +144,7 @@ public class HabitInputFragment extends DialogFragment {
                         if (bundle!= null) {
                             oldTitle = bundle.getString("old_habit_title");
                         }
-                        Habit habit = new Habit(title, title, reason, datePicker.getSetDate(),0, weekDays);
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays,0, isPublic, SharedInfo.getInstance().getCurrentUser());
                         // todo: will have to make UI to make it public/private
 
                         listener.onOkPressed(habit, oldTitle);

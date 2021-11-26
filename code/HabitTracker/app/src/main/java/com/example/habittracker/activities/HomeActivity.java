@@ -1,6 +1,5 @@
 package com.example.habittracker.activities;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -22,11 +21,6 @@ import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,7 +45,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
 
-        list = findViewById(R.id.today_habits_list_view);
+        list = findViewById(R.id.sharing_list_view);
 
         this.habitAdapter = new CustomHabitList(this, habitList);
         this.list.setAdapter(habitAdapter);
@@ -73,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        Button event_list_button = findViewById(R.id.event_list_button);
+        Button event_list_button = findViewById(R.id.follow_button);
         event_list_button.setOnClickListener(new View.OnClickListener() {
 
             /**
@@ -87,12 +81,13 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        DatabaseManager
-                .get()
-                .getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
+        // snapshot
+        DatabaseManager.get().getAllHabits(
+                SharedInfo.getInstance().getCurrentUser().getUsername(),
+                new HabitListCallback() {
                     @Override
                     public void onCallbackSuccess(ArrayList<Habit> habitList) {
-                        repopulate(habitList);
+                        updateDisplay(habitList);
                     }
 
                     @Override
@@ -103,15 +98,24 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     /**
-     * sets the arraylist and notifies data changed
-     * @param habitList
+     * Repopulates the activity that lists all habits belonging to a user
+     * @param habitlist {ArrayList<Habit>} list containing all habits of the user
      */
-    private void repopulate (ArrayList<Habit> habitList) {
-        for (Habit h : habitList) {
-            if ((h.getWeekDays() != null) && (h.getWeekDays().contains(DateConverter.getCurrentWeekDay()))) {
-                this.habitList.add(h);
+    private void updateDisplay (ArrayList<Habit> habitlist) {
+        habitList.clear();
+        for (Habit habit : habitlist) {
+
+            ArrayList<String> weekDays = habit.getWeekDays();
+            // check if the habit should be performed in today's day of the week
+            if ( (weekDays != null) && (weekDays.contains(DateConverter.getCurrentWeekDay())) ) {
+                // check if the habit started today or before today.
+                Date today = new Date();
+                if (today.after(habit.getStartDate())) {
+                    habitList.add(habit);
+                }
             }
             this.habitAdapter.notifyDataSetChanged();
         }
+        habitAdapter.notifyDataSetChanged();
     }
 }
