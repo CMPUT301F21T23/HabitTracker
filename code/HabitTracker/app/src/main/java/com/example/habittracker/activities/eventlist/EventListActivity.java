@@ -11,35 +11,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.Habit;
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
-import com.example.habittracker.activities.HabitViewActivity;
-import com.example.habittracker.activities.fragments.AddEventFragment;
 import com.example.habittracker.activities.fragments.OnFragmentInteractionListener;
 import com.example.habittracker.utils.HabitEventListCallback;
-import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * The EventListActivity class that extends AppCompatActivity and implements
@@ -53,6 +46,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
     private ArrayList<HabitEvent> eventDataList;
     private String delete_event=null;
     private Boolean flag = false;
+    private Habit temp_h;
 
     /**
      * Override the OnCreate method. Set up a list of event objects and display them
@@ -71,6 +65,22 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         eventAdapter = new CustomList(this, eventDataList);
         eventList.setAdapter(eventAdapter);
 
+
+        Intent intent = getIntent();
+        temp_h = (Habit) intent.getSerializableExtra("habit");
+
+        Button back = findViewById(R.id.list_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Ovrride onClick function for back button
+             * @param v
+             */
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         /* Add floating button fragment. */
         final FloatingActionButton addEventButton = findViewById(R.id.add_event_button);
         addEventButton.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +90,13 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
              */
             @Override
             public void onClick(View v) {
-                new AddEventFragment().show(getSupportFragmentManager(),"ADD_EVENT");
+//                new AddEventFragment().show(getSupportFragmentManager(),"ADD_EVENT");
+                Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", (Serializable) temp_h);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -100,14 +116,75 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                 Intent intent = new Intent(getApplicationContext(), EventDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("event", (Serializable) editE);
+                bundle.putSerializable("habit", (Serializable) temp_h);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                finish();
 
             }
 
         });
 
-        getEvents();
+//        getEvents();
+
+
+        // set up snapshot listener
+        // We have to use snapshot listen because image uploading is asynchronous and slow.
+        String usersColName = "Users";
+        String habitsColName = "Habits";
+        String habitEventsColName = "HabitEvents";
+        String DB_TAG = "DatabaseManager";
+        DatabaseManager
+                .get()
+                .getUsersColRef()
+                .document(SharedInfo.getInstance().getCurrentUser().getUsername())
+                .collection(habitsColName)
+                .whereEqualTo("title", temp_h.getTitle())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                DatabaseManager
+                                        .get()
+                                        .getUsersColRef()
+                                        .document(SharedInfo.getInstance().getCurrentUser().getUsername())
+                                        .collection(habitsColName)
+                                        .document(document.getReference().getId())
+                                        .collection(habitEventsColName)
+                                        .addSnapshotListener(
+                                                new EventListener<QuerySnapshot>() {
+                                                    /**
+                                                     * Override onEvent function to set up snapshot listener
+                                                     * @param value
+                                                     * @param error
+                                                     */
+                                                    @Override
+                                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                        // Clear the old list
+                                                        eventDataList.clear();
+                                                        for (QueryDocumentSnapshot doc : value) {
+                                                            ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
+                                                            eventDataList.add(new HabitEvent(
+                                                                    doc.getReference().getParent().getParent().getId(),
+                                                                    doc.getId(),
+                                                                    (String)doc.getData().get("comment"),
+                                                                    dateArray,
+                                                                    (String)doc.getData().get("location"),
+                                                                    (String) doc.getData().get("imageUrl")));
+
+                                                        }
+                                                        eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                                                    }
+                                                }
+                                        );
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     /**
@@ -120,15 +197,13 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         if(!editFlag) {
 //            eventAdapter.add(newEvent);
 //            eventAdapter.notifyDataSetChanged();
-//            newEvent.updateDB();
             onResume();
-            getEvents();
+//            getEvents();
         }
         else{
 //            eventAdapter.notifyDataSetChanged();
-//            newEvent.editDB();
             onResume();
-            getEvents();
+//            getEvents();
         }
     }
 
@@ -142,7 +217,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 //        eventAdapter.notifyDataSetChanged();
         deleteEvent.deleteDB();
         onResume();
-        getEvents();
+//        getEvents();
     }
 
     /**
@@ -154,6 +229,8 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         super.onResume();
     }
 
+
+    // This function should be discarded, leave it here for future usage.
     private void getEvents() {
         // set up snapshot listener
         String usersColName = "Users";
@@ -165,53 +242,32 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
-//        dm.getAllHabits("John_test_user", new HabitListCallback() {
-        // Replace with this line when sharedInfo is up
-        dm.getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
+        eventDataList.clear();
+        dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), temp_h, new HabitEventListCallback() {
             /**
-             * Set callback to get all Habit IDs
-             * @param habitList
+             * Override onCallbackSuccess function to get all habit events from firestore
+             * database
+             * @param eventArrayList
              */
             @Override
-            public void onCallbackSuccess(ArrayList<Habit> habitList) {
-                for(int i = 0;i<habitList.size();i++) {
-                    System.out.println(habitList.get(i).getTitle());
-                    habit_list.add(habitList.get(i).getTitle());
-                    Log.d("Here", habit_list.get(i));
-                    Log.d("list size", String.valueOf(habitList.size()));
-                }
-                eventDataList.clear();
-
-                for (int i = 0;i<habit_list.size();i++) {
-                    dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), habitList.get(i), new HabitEventListCallback() {
-                        @Override
-                        public void onCallbackSuccess(ArrayList<HabitEvent> eventArrayList) {
-                            for (HabitEvent doc : eventArrayList) {
-                                boolean duplicate_flag = false;
-                                for (int i = 0;i<eventDataList.size();i++) {
-                                    if(eventDataList.get(i).getEventId() == doc.getEventId()) {
-                                        duplicate_flag = true;
-                                    }
-                                }
-                                if(duplicate_flag) {
-                                    continue;
-                                }
-                                if(!(doc.getHabit()=="")) {
-                                    eventDataList.add(doc);
-                                }
-
-                            }
-                            eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                            //from the cloud
+            public void onCallbackSuccess(ArrayList<HabitEvent> eventArrayList) {
+                for (HabitEvent doc : eventArrayList) {
+                    boolean duplicate_flag = false;
+                    for (int i = 0;i<eventDataList.size();i++) {
+                        if(eventDataList.get(i).getEventId() == doc.getEventId()) {
+                            duplicate_flag = true;
                         }
+                    }
+                    if(duplicate_flag) {
+                        continue;
+                    }
+                    if(!(doc.getHabit().equals(""))) {
+                        eventDataList.add(doc);
+                    }
 
-                        @Override
-                        public void onCallbackFailed() {
-
-                        }
-                    });
                 }
-
+                eventAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                //from the cloud
             }
 
             @Override

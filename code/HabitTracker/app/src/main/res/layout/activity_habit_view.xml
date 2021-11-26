@@ -265,19 +265,29 @@
                             android:layout_weight="2"
                             android:layout_height="wrap_content"
                             android:text="Share Habit" />
+                        <Button
+                            android:id="@+id/see_event_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="70dp"
+                            android:layout_weight="1"
+                            android:minWidth="20dp"
+                            android:minHeight="48dp"
+                            android:text="SEE EVENTS">
+                        </Button>
 
                     </LinearLayout>
 
 
-<!--                    <androidx.appcompat.widget.SwitchCompat-->
-<!--                        android:id="@+id/switch1"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Switch" />-->
+                    <!--                    <androidx.appcompat.widget.SwitchCompat-->
+                    <!--                        android:id="@+id/switch1"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:text="Switch" />-->
 
-<!--                    app:layout_constraintBaseline_toBaselineOf="@+id/see_progress_button"-->
-<!--                    app:layout_constraintLeft_toLeftOf="parent"-->
-<!--                    app:layout_constraintRight_toLeftOf="@id/editBtn"-->
+                    <!--                    app:layout_constraintBaseline_toBaselineOf="@+id/see_progress_button"-->
+                    <!--                    app:layout_constraintLeft_toLeftOf="parent"-->
+                    <!--                    app:layout_constraintRight_toLeftOf="@id/editBtn"-->
 
 
                 </LinearLayout>

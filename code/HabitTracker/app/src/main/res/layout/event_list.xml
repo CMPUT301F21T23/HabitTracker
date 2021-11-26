@@ -8,19 +8,11 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/contentView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-
-        android:textSize="30sp"></TextView>
-
-    <TextView
         android:id="@+id/dateView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:textSize="10sp">
+        android:textSize="20sp">
     </TextView>
 
     <ImageView

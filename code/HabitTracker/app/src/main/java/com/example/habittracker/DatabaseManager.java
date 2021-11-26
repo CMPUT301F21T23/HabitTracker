@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * DatabaseManager is a singleton class that holds the instance of a Cloud Firestore database.
@@ -54,12 +56,15 @@ public class DatabaseManager {
     private String habitsColName = "Habits";
     private String habitEventsColName = "HabitEvents";
     private String DB_TAG = "DatabaseManager";
+    private StorageReference mStorageRef;
+
 
     // private constructor: no one from outside is allowed to invoke this
     private DatabaseManager() {
         // get the Cloud Firestore instance
         db = FirebaseFirestore.getInstance();
         usersColRef = db.collection(usersColName);
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
     }
 
     // enforce singleton pattern
@@ -74,6 +79,13 @@ public class DatabaseManager {
             databaseManager = new DatabaseManager();
         }
         return databaseManager;
+    }
+    /**
+     * Get the Firebase storage instance
+     * @return StorageReference
+     */
+    public StorageReference getStorageRef() {
+        return mStorageRef;
     }
 
     /**
@@ -555,7 +567,7 @@ public class DatabaseManager {
                                                                 (String)doc.getData().get("comment"),
                                                                 dateArray,
                                                                 (String)doc.getData().get("location"),
-                                                                "image"
+                                                                (String) doc.getData().get("imageUrl")
                                                         ));
                                                     }
                                                     callback.onCallbackSuccess(eventArray);

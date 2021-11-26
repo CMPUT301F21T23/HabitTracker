@@ -190,4 +190,22 @@ public class HabitEvent implements Serializable {
     public Date getCalendar() {
         return this.date_calendar;
     }
+
+    /**
+     * Setter for imageUrl
+     * @param imageUrl
+     */
+    public void setImageUrl(String imageUrl) {
+        habitEventDocument.put("imageUrl", imageUrl);
+        this.imageUrl = imageUrl;
+    }
+
+    /**
+     * Getter for imageUrl
+     * @return imageUrl: String
+     */
+    public String getImageUrl() {
+        return this.imageUrl;
+        //return "https://firebasestorage.googleapis.com/v0/b/habittracker-9232f.appspot.com/o/uploads%2F1636920826943.png?alt=media&token=9046a941-44df-437d-895d-73ffef423ef7";
+    }
 }
