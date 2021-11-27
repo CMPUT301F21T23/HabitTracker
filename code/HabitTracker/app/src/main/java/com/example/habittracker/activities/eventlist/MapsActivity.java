@@ -16,6 +16,7 @@ import com.example.habittracker.R;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.habittracker.activities.eventlist.LocationActivity;
@@ -173,36 +174,69 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * Override onMaprReady function
      * @param googleMap
      */
+//    @Override
+//    public void onMapReady(GoogleMap googleMap) {
+//        mMap = googleMap;
+//        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+//        float zoom = 100;
+//        setMapLongClick(mMap);
+//        // Add a marker in ETLC and move the camera
+//        LatLng home = new LatLng(53.5271, -113.5289);
+//        mMap.addMarker(new MarkerOptions().position(home).title("Marker in ETLC"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(home));
+//
+//        setPoiClick(googleMap);
+//        enableMyLocation();
+//    }
+//
+//    /**
+//     * implement back button functionality
+//     */
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Intent myIntent = new Intent(MapsActivity.this, LocationActivity.class);
+//
+//        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
+//            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
+//        }
+//
+//        myIntent.putExtra("map_latitude", myLatitude.toString());
+//        myIntent.putExtra("map_longitude", myLongitude.toString());
+//        myIntent.putExtra("map_address", myAddress);
+//        startActivity(myIntent);
+//    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         float zoom = 100;
         setMapLongClick(mMap);
-        // Add a marker in ETLC and move the camera
-        LatLng home = new LatLng(53.5271, -113.5289);
-        mMap.addMarker(new MarkerOptions().position(home).title("Marker in ETLC"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(home));
 
         setPoiClick(googleMap);
         enableMyLocation();
     }
 
     /**
-     * implement back button functionality
+     * switches back with captured location
      */
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent myIntent = new Intent(MapsActivity.this, LocationActivity.class);
 
-        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
-            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
-        }
 
-        myIntent.putExtra("map_latitude", myLatitude.toString());
-        myIntent.putExtra("map_longitude", myLongitude.toString());
-        myIntent.putExtra("map_address", myAddress);
-        startActivity(myIntent);
+    public void onClick(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
+        finish();
     }
+
+    public void onBackPressed(){
+        super.onBackPressed();
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
+
+        finish();
+    }
+
 }
