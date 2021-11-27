@@ -74,7 +74,8 @@ public class CustomListTest {
         solo.setDatePicker(0, 2021, 10, 1);
         solo.clickOnView(solo.getView(android.R.id.button1));
         solo.clickOnView(solo.getView(R.id.confirm));
-        solo.clickOnView(solo.getView(R.id.back));
+//        solo.clickOnView(solo.getView(R.id.back));
+        solo.goBack();
         assertTrue(solo.waitForText("2021-11-01",1,2000));
     }
 

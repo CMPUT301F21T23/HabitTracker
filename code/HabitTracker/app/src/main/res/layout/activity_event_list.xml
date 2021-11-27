@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="630dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,20 +32,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="6dp"
             android:clickable="true"
             android:focusable="true"
             app:backgroundTint="@color/spotify"
-            app:srcCompat="@android:drawable/ic_input_add" />
-
-        <Button
-            android:id="@+id/list_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginStart="100dp"
-            android:layout_marginEnd="100dp"
-            android:padding="5dp"
-            android:text="Back"></Button>
+            app:srcCompat="@android:drawable/ic_input_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     </FrameLayout>
 
