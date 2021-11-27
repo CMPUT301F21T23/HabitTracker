@@ -82,7 +82,7 @@ public class EventDetailTest {
 
         //The listview can only display 2 items at a time, select 1 means the last item of listview
         solo.clickInList(0);
-        solo.clickOnView(solo.getView(R.id.back));
+        solo.goBack();
     }
 
     /**
@@ -115,13 +115,13 @@ public class EventDetailTest {
         assertTrue(solo.waitForText("another comment",1,2000));
         // add the event
         solo.clickOnView(solo.getView(R.id.confirm));
-        solo.clickOnView(solo.getView(R.id.back));
+        solo.goBack();
 
         solo.clickInList(0);
         solo.assertCurrentActivity("Wrong Activity", EventDetailActivity.class);
         solo.clickOnView(solo.getView(R.id.edit));
         solo.clickOnView(solo.getView(R.id.cancel));
-        solo.clickOnView(solo.getView(R.id.back));
+        solo.goBack();
 
 
         solo.clickInList(0);

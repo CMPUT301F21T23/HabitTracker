@@ -81,9 +81,8 @@ public class EventDetailActivity extends AppCompatActivity {
     private Button cancel_bt;
     private Button confirm_bt;
     private Button add_bt;
-    private Button back_bt;
-    private boolean editFlag;
     private String location;
+    private boolean editFlag;
     OnFragmentInteractionListener listener;
 
     /**
@@ -105,13 +104,14 @@ public class EventDetailActivity extends AppCompatActivity {
         cancel_bt = findViewById(R.id.cancel);
         confirm_bt = findViewById(R.id.confirm);
         add_bt = findViewById(R.id.add);
-        back_bt = findViewById(R.id.back);
 
 
 
         Intent intent = getIntent();
         event = (HabitEvent) intent.getSerializableExtra("event");
         habit = (Habit) intent.getSerializableExtra("habit");
+
+        location1.setEnabled(false);
 
         // If no event object is passed to this activity, set up for adding new habit event.
         if(event != null) {
@@ -163,6 +163,14 @@ public class EventDetailActivity extends AppCompatActivity {
                 temp_intent.putExtras(bundle);
                 startActivity(temp_intent);
                 finish();
+            }
+        });
+
+        addLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EventDetailActivity.this, MapsActivity.class);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -220,7 +228,6 @@ public class EventDetailActivity extends AppCompatActivity {
                 confirm_bt.setVisibility(View.VISIBLE);
                 edit_bt.setVisibility(View.INVISIBLE);
                 delete_bt.setVisibility(View.INVISIBLE);
-                back_bt.setVisibility(View.INVISIBLE);
 
                 cancel_bt.setOnClickListener(new View.OnClickListener() {
                     /**
@@ -229,6 +236,7 @@ public class EventDetailActivity extends AppCompatActivity {
                      */
                     @Override
                     public void onClick(View v) {
+                        resetEventDetail();
                         addImage.setVisibility(View.INVISIBLE);
                         addLocation.setVisibility(View.INVISIBLE);
                         editText1.setEnabled(false);
@@ -238,7 +246,6 @@ public class EventDetailActivity extends AppCompatActivity {
                         confirm_bt.setVisibility(View.INVISIBLE);
                         edit_bt.setVisibility(View.VISIBLE);
                         delete_bt.setVisibility(View.VISIBLE);
-                        back_bt.setVisibility(View.VISIBLE);
                     }
                 });
                 confirm_bt.setOnClickListener(new View.OnClickListener() {
@@ -266,33 +273,8 @@ public class EventDetailActivity extends AppCompatActivity {
                         confirm_bt.setVisibility(View.INVISIBLE);
                         edit_bt.setVisibility(View.VISIBLE);
                         delete_bt.setVisibility(View.VISIBLE);
-                        back_bt.setVisibility(View.VISIBLE);
                     }
                 });
-            }
-        });
-
-        back_bt.setOnClickListener(new View.OnClickListener() {
-            /**
-             * implement actions after clicking back button
-             * @param v
-             */
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(EventDetailActivity.this, EventListActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("habit", (Serializable) habit);
-                intent.putExtras(bundle);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        addLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(EventDetailActivity.this, MapsActivity.class);
-                startActivityForResult(intent, 2);
             }
         });
 
@@ -482,4 +464,28 @@ public class EventDetailActivity extends AppCompatActivity {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }*/
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(EventDetailActivity.this, EventListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("habit", (Serializable) habit);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    private void resetEventDetail() {
+        ArrayList<Integer> temp_date = event.getStartDate();
+
+        date.setText(arrayListToString(temp_date));
+        Log.d("date", date.getText().toString());
+        editText1.setText(String.valueOf(event.getComment()));
+        location1.setText(event.getLocation());
+        Picasso.with(EventDetailActivity.this)
+                .load(event.getImageUrl())
+                .placeholder(R.mipmap.ic_launcher)
+                .fit()
+                .centerCrop()
+                .into(event_image);
+    }
 }

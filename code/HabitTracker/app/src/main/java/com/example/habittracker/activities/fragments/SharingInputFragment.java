@@ -34,6 +34,36 @@ import com.example.habittracker.utils.StringCallback;
  */
 public class SharingInputFragment extends DialogFragment {
     public static String TAG = "SharingInputDialog";
+    private FollowUserDialogListener listener;
+
+    /**
+     * This interface is used to invoke some action on the parent activity when
+     * a request to follow a new user is successful.
+     */
+    public interface FollowUserDialogListener {
+        /**
+         * Called on success.
+         * @param requestid     {@code String} The username of the user requested to follow
+         */
+        void onSuccess(String requestid);
+    }
+
+
+    /**
+     * This method automatically gets called when a fragment attaches to an activity.
+     * Instantiates the listener object.
+     * @param context
+     */
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FollowUserDialogListener) {
+            listener = (FollowUserDialogListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement FollowUserDialogListener");
+        }
+    }
+
     /**
      * Creates a DialogFragment that allows the user to follow the public habits of another user.
      * @param savedInstanceState
@@ -61,7 +91,7 @@ public class SharingInputFragment extends DialogFragment {
                 // get the text entered by the user
                 String followUserid = inputName.getText().toString();
                 if (followUserid.length() == 0) {
-                    Toast.makeText(getContext(), "Username field cannot be empty!", Toast.LENGTH_SHORT).show();
+                    inputName.setError("Username field cannot be empty");
                     return;
                 }
                 Toast.makeText(getContext(), "Processing your request!", Toast.LENGTH_SHORT).show();
@@ -71,13 +101,13 @@ public class SharingInputFragment extends DialogFragment {
                         new StringCallback() {
                             @Override
                             public void onCallbackSuccess(String msg) {
-                                Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
                                 alertDialog.dismiss();
+                                listener.onSuccess(followUserid);
                             }
 
                             @Override
                             public void onCallbackFailure(String reason) {
-                                Toast.makeText(getContext(), reason, Toast.LENGTH_SHORT).show();
+                                inputName.setError(reason);
                             }
                         }
                 );

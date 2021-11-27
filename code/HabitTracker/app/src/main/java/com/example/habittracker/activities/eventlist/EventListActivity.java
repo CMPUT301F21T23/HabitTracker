@@ -69,17 +69,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         Intent intent = getIntent();
         temp_h = (Habit) intent.getSerializableExtra("habit");
 
-        Button back = findViewById(R.id.list_back);
-        back.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Ovrride onClick function for back button
-             * @param v
-             */
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
 
         /* Add floating button fragment. */
         final FloatingActionButton addEventButton = findViewById(R.id.add_event_button);
@@ -275,5 +265,10 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 
             }
         });
+    }
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

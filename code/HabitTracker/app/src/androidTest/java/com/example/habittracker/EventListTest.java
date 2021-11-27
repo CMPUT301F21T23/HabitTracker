@@ -75,9 +75,9 @@ public class EventListTest {
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
 
         solo.clickOnView(solo.getView(R.id.add_event_button));
-        solo.clickOnView(solo.getView(R.id.back));
+        solo.goBack();
         solo.clickInList(0);
-        solo.clickOnView(solo.getView(R.id.back));
+        solo.goBack();
     }
 
     /**

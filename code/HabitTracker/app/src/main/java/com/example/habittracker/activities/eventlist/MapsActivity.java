@@ -13,14 +13,9 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import com.example.habittracker.R;
 
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.example.habittracker.activities.eventlist.LocationActivity;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -36,11 +31,12 @@ import java.util.Locale;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
-
+    /**
+     * initialize variables
+     */
     private static final int REQUEST_LOCATION_PERMISSION = 0;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-
     String myAddress = "No identified address";
     Double myLatitude = 0.0;
     Double myLongitude = 0.0;
@@ -113,9 +109,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     e.printStackTrace();
                 }
 
-                Toast.makeText(MapsActivity.this, myAddress, Toast.LENGTH_LONG).show();
+                //Toast.makeText(MapsActivity.this, myAddress, Toast.LENGTH_LONG).show();
                 myLatitude = latLng.latitude;
                 myLongitude = latLng.longitude;
+                TextView tView = findViewById(R.id.locationDisplay);
+                tView.setText(myAddress);
                 map.addMarker(new MarkerOptions().position(latLng)
                         .title(myAddress));
             }
@@ -161,52 +159,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    /**
-     * Override onMaprReady function
-     * @param googleMap
-     */
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        mMap = googleMap;
-//        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//        float zoom = 100;
-//        setMapLongClick(mMap);
-//        // Add a marker in ETLC and move the camera
-//        LatLng home = new LatLng(53.5271, -113.5289);
-//        mMap.addMarker(new MarkerOptions().position(home).title("Marker in ETLC"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(home));
-//
-//        setPoiClick(googleMap);
-//        enableMyLocation();
-//    }
-//
-//    /**
-//     * implement back button functionality
-//     */
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        Intent myIntent = new Intent(MapsActivity.this, LocationActivity.class);
-//
-//        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
-//            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
-//        }
-//
-//        myIntent.putExtra("map_latitude", myLatitude.toString());
-//        myIntent.putExtra("map_longitude", myLongitude.toString());
-//        myIntent.putExtra("map_address", myAddress);
-//        startActivity(myIntent);
-//    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -221,8 +173,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * switches back with captured location
      */
-
-
     public void onClick(View view) {
         Intent intent = new Intent();
         intent.putExtra("location",myAddress);
@@ -230,6 +180,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         finish();
     }
 
+    /**
+     * switch back with captured location
+     */
     public void onBackPressed(){
         super.onBackPressed();
         Intent intent = new Intent();
