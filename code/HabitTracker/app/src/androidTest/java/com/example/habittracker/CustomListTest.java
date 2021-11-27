@@ -3,12 +3,7 @@ package com.example.habittracker;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import android.app.AlertDialog;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -16,13 +11,13 @@ import androidx.test.rule.ActivityTestRule;
 import com.example.habittracker.activities.ListActivity;
 import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
+import com.example.habittracker.activities.sharing.SharingActivity;
 import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
 
-import com.example.habittracker.activities.HomeActivity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,7 +31,7 @@ import java.util.HashMap;
 /**
  * Intent test for EventListActivity.
  */
-public class EventListTest {
+public class CustomListTest {
     private Solo solo;
     public User mockUser = new User("mockUser");
 
@@ -56,10 +51,10 @@ public class EventListTest {
     }
 
     /**
-     * test EventListActivity
+     * test add new habit event
      */
     @Test
-    public void testEventListActivity() {
+    public void testCustomListContent() {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.list));
         solo.assertCurrentActivity("Wrong Activity", ListActivity.class);
@@ -73,11 +68,15 @@ public class EventListTest {
         solo.waitForText("SEE EVENTS", 1, 2000);
         solo.clickOnButton("SEE EVENTS");
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
-
-        solo.clickOnView(solo.getView(R.id.add_event_button));
-        solo.goBack();
         solo.clickInList(0);
+        solo.clickOnView(solo.getView(R.id.edit));
+        solo.clickOnView(solo.getView(R.id.date_editText));
+        solo.setDatePicker(0, 2021, 10, 1);
+        solo.clickOnView(solo.getView(android.R.id.button1));
+        solo.clickOnView(solo.getView(R.id.confirm));
+//        solo.clickOnView(solo.getView(R.id.back));
         solo.goBack();
+        assertTrue(solo.waitForText("2021-11-01",1,2000));
     }
 
     /**
