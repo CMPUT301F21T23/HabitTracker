@@ -25,6 +25,8 @@ package com.example.habittracker.activities.fragments;
 
 import static com.example.habittracker.utils.DateConverter.arrayListToString;
 import static com.example.habittracker.utils.DateConverter.stringToArraylist;
+
+import com.example.habittracker.activities.eventlist.MapsActivity;
 import com.example.habittracker.utils.SharedInfo;
 
 import android.Manifest;
@@ -92,6 +94,7 @@ public class AddEventFragment extends DialogFragment {
 
     private TextView eventTitle;
     private EditText location1;
+    private String location;
     private EditText editText1;
     private EditText date;
     private Spinner s;
@@ -117,6 +120,15 @@ public class AddEventFragment extends DialogFragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2){
+            String message = data.getStringExtra("location");
+            location = message;
+            location1.setText(location);
+        }
+    }
     /**
      * Override the onCreateDialog method of DialogFragment. Set up a list of EditText for event
      * information and a spinner for doseUnit.
@@ -138,13 +150,8 @@ public class AddEventFragment extends DialogFragment {
         get_location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
-//                } else {
-//                    getLocation();
-//                }
-                Intent intent = new Intent(getActivity(), LocationActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -346,22 +353,22 @@ public class AddEventFragment extends DialogFragment {
     /**
      * get location function, should be replaced by Aparna's function in the future.
      */
-    private void getLocation() {
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                Location location = task.getResult();
-                if (location != null) {
-                    try {
-                        Geocoder geocoder = new Geocoder(requireContext(),
-                                Locale.getDefault());
-                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                        location1.setText(addresses.get(0).getAddressLine(0).toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
+//    private void getLocation() {
+//        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Location> task) {
+//                Location location = task.getResult();
+//                if (location != null) {
+//                    try {
+//                        Geocoder geocoder = new Geocoder(requireContext(),
+//                                Locale.getDefault());
+//                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//                        location1.setText(addresses.get(0).getAddressLine(0).toString());
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+//    }
 }

@@ -16,9 +16,10 @@ import com.example.habittracker.R;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-import com.example.habittracker.activities.eventlist.LocationActivity;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -180,29 +181,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         float zoom = 100;
         setMapLongClick(mMap);
         // Add a marker in ETLC and move the camera
-        LatLng home = new LatLng(53.5271, -113.5289);
-        mMap.addMarker(new MarkerOptions().position(home).title("Marker in ETLC"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(home));
+//        LatLng home = new LatLng(53.5271, -113.5289);
+//        mMap.addMarker(new MarkerOptions().position(home).title("Marker in ETLC"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(home));
 
         setPoiClick(googleMap);
         enableMyLocation();
     }
 
+
+    public void onClick(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
+        finish();
+    }
+
     /**
      * implement back button functionality
      */
-    public void onBackPressed() {
+    public void onBackPressed(){
         super.onBackPressed();
-        Intent myIntent = new Intent(MapsActivity.this, LocationActivity.class);
-
-        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
-            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
-        }
-
-        myIntent.putExtra("map_latitude", myLatitude.toString());
-        myIntent.putExtra("map_longitude", myLongitude.toString());
-        myIntent.putExtra("map_address", myAddress);
-        startActivity(myIntent);
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
+        finish();
     }
+
 }
