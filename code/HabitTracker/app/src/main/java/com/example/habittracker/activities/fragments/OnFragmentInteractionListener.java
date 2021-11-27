@@ -24,6 +24,8 @@
 
 package com.example.habittracker.activities.fragments;
 
+import com.example.habittracker.HabitEvent;
+
 /**
  * This interface OnFragmentInteractionListener contains
  * 3 methods that allows developer to implement in the
@@ -31,7 +33,7 @@ package com.example.habittracker.activities.fragments;
  * @author Yongquan Zhang
  */
 public interface OnFragmentInteractionListener{
-    void onOkPressed();
-    void onDeletePressed();
+    void onDeletePressed(HabitEvent editE);
     void onResume();
+    void onOkPressed(HabitEvent habitEvent, boolean editFlag);
 }

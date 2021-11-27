@@ -13,13 +13,9 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import com.example.habittracker.R;
 
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.TextView;
 
-import com.example.habittracker.activities.eventlist.LocationActivity;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -35,15 +31,19 @@ import java.util.Locale;
 
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
-
+    /**
+     * initialize variables
+     */
     private static final int REQUEST_LOCATION_PERMISSION = 0;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
-
     String myAddress = "No identified address";
     Double myLatitude = 0.0;
     Double myLongitude = 0.0;
 
+    /**
+     * ask for permission
+     */
     private void enableMyLocation() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -56,6 +56,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * enable location
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
@@ -74,9 +80,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Long click to select location
+     * @param map
+     */
     private void setMapLongClick(final GoogleMap map) {
 
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            /**
+             * Override long click function
+             * @param latLng
+             */
             @Override
             public void onMapLongClick(LatLng latLng) {
                 String snippet = String.format(Locale.getDefault(),
@@ -95,17 +109,27 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     e.printStackTrace();
                 }
 
-                Toast.makeText(MapsActivity.this, myAddress, Toast.LENGTH_LONG).show();
+                //Toast.makeText(MapsActivity.this, myAddress, Toast.LENGTH_LONG).show();
                 myLatitude = latLng.latitude;
                 myLongitude = latLng.longitude;
+                TextView tView = findViewById(R.id.locationDisplay);
+                tView.setText(myAddress);
                 map.addMarker(new MarkerOptions().position(latLng)
                         .title(myAddress));
             }
         });
     }
 
+    /**
+     * set poi click
+     * @param map
+     */
     private void setPoiClick(final GoogleMap map) {
         map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
+            /**
+             * Override onPoiClick
+             * @param poi
+             */
             @Override
             public void onPoiClick(PointOfInterest poi) {
                 Marker poiMarker = mMap.addMarker(new MarkerOptions()
@@ -118,40 +142,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-
-
-
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.map_options, menu);
-//        return true;
-//    }
-//
-//
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Change the map type based on the user's selection.
-//        switch (item.getItemId()) {
-//            case R.id.normal_map:
-//                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-//                return true;
-//            case R.id.hybrid_map:
-//                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//                return true;
-//            case R.id.satellite_map:
-//                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-//                return true;
-//            case R.id.terrain_map:
-//                mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
-
+    /**
+     * Override onCreate fucntion
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -159,52 +153,43 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-//        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
-//        getSupportFragmentManager().beginTransaction()
-//                .add(R.id.map, mapFragment).commit();
-//        mapFragment.getMapAsync(this);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         float zoom = 100;
         setMapLongClick(mMap);
-        // Add a marker in ETLC and move the camera
-        LatLng home = new LatLng(53.5271, -113.5289);
-        mMap.addMarker(new MarkerOptions().position(home).title("Marker in ETLC"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(home, zoom));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(home));
 
         setPoiClick(googleMap);
         enableMyLocation();
     }
 
-    public void onBackPressed() {
-        super.onBackPressed();
-        Intent myIntent = new Intent(MapsActivity.this, LocationActivity.class);
-
-        if (myLatitude == 0.0 || myLongitude == 0.0 || myAddress.equals("No identified address")) {
-            Toast.makeText(this, "Please choose different location", Toast.LENGTH_LONG).show();
-        }
-
-        myIntent.putExtra("map_latitude", myLatitude.toString());
-        myIntent.putExtra("map_longitude", myLongitude.toString());
-        myIntent.putExtra("map_address", myAddress);
-        startActivity(myIntent);
+    /**
+     * switches back with captured location
+     */
+    public void onClick(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
+        finish();
     }
+
+    /**
+     * switch back with captured location
+     */
+    public void onBackPressed(){
+        super.onBackPressed();
+        Intent intent = new Intent();
+        intent.putExtra("location",myAddress);
+        setResult(2,intent);
+
+        finish();
+    }
+
 }

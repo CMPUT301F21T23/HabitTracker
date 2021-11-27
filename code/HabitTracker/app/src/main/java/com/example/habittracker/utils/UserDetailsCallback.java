@@ -1,14 +1,14 @@
 package com.example.habittracker.utils;
 
-import com.example.habittracker.User;
+import java.util.HashMap;
 
 
 public interface UserDetailsCallback {
     /**
-     * called when task is successful
-     * @param user {User}
+     * success callback
+     * @param userDetails
      */
-    void onCallbackSuccess(User user);
+    void onCallbackSuccess(HashMap<String,Object> userDetails);
 
     /**
      * called when task is unsuccessful

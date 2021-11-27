@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.habittracker.Habit;
 import com.example.habittracker.HabitEvent;
+import com.example.habittracker.utils.DateConverter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -41,7 +42,7 @@ public class GraphUtil {
          addSeriesToGraph(graph,series);
          addSeriesToGraph(graph,seriesIdeal);
          if(autoAxisScale){
-             setXAxisScale(graph,series.getLowestValueX(),series.getHighestValueX());
+             //setXAxisScale(graph,series.getLowestValueX(),series.getHighestValueX());
              setYAxisScale(graph,Math.min(0,series.getLowestValueY()),Math.max(idealPerDay,series.getHighestValueY()));
          }
     }
@@ -59,15 +60,19 @@ public class GraphUtil {
         ArrayList<Integer> daysOfHabit = ProgressUtil.getHabitDays(habit);
 
         Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        Calendar habitTime = Calendar.getInstance();
+        habitTime.setTime(habitStart);
+        end.setTime(start.getTime());
         start.add(Calendar.MONTH,-1);
         //check if habit start is within last month, otherwise set start to a month ago
-        if(habitStart.before(start.getTime())){
-            habitStart = start.getTime();
+        if(!habitStart.before(start.getTime())){
+            start.set(habitTime.get(Calendar.YEAR),habitTime.get(Calendar.MONTH),habitTime.get(Calendar.DAY_OF_MONTH));
         }
-        start.setTime(habitStart);
-        Calendar end = Calendar.getInstance();
+
+
         int ideal; // ideal num of events for that day
-        for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+        for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
             //
             if(!daysOfHabit.contains(start.get(Calendar.DAY_OF_WEEK))){
                 ideal = 0;
@@ -75,7 +80,7 @@ public class GraphUtil {
             else{
                 ideal = idealPerDay;
             }
-            series.appendData(new DataPoint(date,ideal),true,30);
+            series.appendData(new DataPoint(date,ideal),true,31);
         }
         return series;
     }
@@ -94,20 +99,21 @@ public class GraphUtil {
         ArrayList<Integer> daysOfHabit = ProgressUtil.getHabitDays(habit);
 
         Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        end.setTime(start.getTime());
         start.add(Calendar.MONTH,-1);
         //check if habit start is within last month, otherwise set start to a month ago
         if(habitStart.before(start.getTime())){
             habitStart = start.getTime();
         }
         start.setTime(habitStart);
-        Calendar end = Calendar.getInstance();
 
-        for (Date date = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
+        for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
             int numOnDay = 0;
             for (int i = 0 ; i < habitEvents.size(); i++){
                 Calendar first = Calendar.getInstance();
                 Calendar sec = Calendar.getInstance();
-                first.setTime(habitEvents.get(i).getStartDate());
+                first.setTime(DateConverter.intArrayListToDate(habitEvents.get(i).getStartDate()));
                 sec.setTime(date);
                 boolean sameDay = first.get(Calendar.DAY_OF_YEAR) == sec.get(Calendar.DAY_OF_YEAR) && first.get(Calendar.YEAR) == sec.get(Calendar.YEAR);
                 if(sameDay){
@@ -171,8 +177,12 @@ public class GraphUtil {
      */
     static public void setDateAsXAxis(GraphView graph, Context context, int numberOfLabels){
         graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(context));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
-        graph.getGridLabelRenderer().setHumanRounding(false);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+        graph.getViewport().setMaxX(Calendar.getInstance().getTime().getTime());
+        Calendar month = Calendar.getInstance();
+        month.add(Calendar.MONTH,-1);
+        graph.getViewport().setMinX(month.getTime().getTime());
+        graph.getViewport().setXAxisBoundsManual(true);
     }
 
     /**

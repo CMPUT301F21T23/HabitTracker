@@ -4,31 +4,43 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.habittracker.utils.BooleanCallback;
+
+import com.example.habittracker.utils.CheckPasswordCallback;
+import com.example.habittracker.utils.HabitCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
+import com.example.habittracker.utils.StringCallback;
+
+import com.example.habittracker.utils.UserListOperationCallback;
+import com.example.habittracker.utils.SharingListCallback;
 import com.example.habittracker.utils.UserDetailsCallback;
+import com.example.habittracker.utils.UserExistsCallback;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableReference;
-import com.google.firebase.functions.HttpsCallableResult;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 /**
  * DatabaseManager is a singleton class that holds the instance of a Cloud Firestore database.
@@ -44,12 +56,15 @@ public class DatabaseManager {
     private String habitsColName = "Habits";
     private String habitEventsColName = "HabitEvents";
     private String DB_TAG = "DatabaseManager";
+    private StorageReference mStorageRef;
+
 
     // private constructor: no one from outside is allowed to invoke this
     private DatabaseManager() {
         // get the Cloud Firestore instance
         db = FirebaseFirestore.getInstance();
         usersColRef = db.collection(usersColName);
+        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
     }
 
     // enforce singleton pattern
@@ -64,6 +79,13 @@ public class DatabaseManager {
             databaseManager = new DatabaseManager();
         }
         return databaseManager;
+    }
+    /**
+     * Get the Firebase storage instance
+     * @return StorageReference
+     */
+    public StorageReference getStorageRef() {
+        return mStorageRef;
     }
 
     /**
@@ -80,6 +102,14 @@ public class DatabaseManager {
      */
     public CollectionReference getUsersColRef() {
         return usersColRef;
+    }
+
+    /**
+     * Get a reference to the Habit sub-collection of a given user
+     * @return      {@code CollectionReference} Users collection reference
+     */
+    public CollectionReference getHabitsColRef(String userid) {
+        return (usersColRef.document(userid).collection(habitsColName));
     }
 
     /**
@@ -112,7 +142,7 @@ public class DatabaseManager {
      * @param doc       {@code HashMap<String, Object>} Document
      * @return          {@code DocumentReference} DocumentReference for the User document created
      */
-    DocumentReference addUsersDocument(String userid, HashMap<String, Object> doc) {
+    public DocumentReference addUsersDocument(String userid, HashMap<String, Object> doc) {
         // instantiate the document
         DocumentReference docRef = usersColRef.document(userid);
 
@@ -138,31 +168,119 @@ public class DatabaseManager {
     /**
      * Adds a habit to the Habits collection for a given userid.
      * @param userid        {@code String} User ID
-     * @param habitTitle    {@code String} Key of the Habit
      * @param doc           {@code HashMap<String, Object>} Document
      * @return              {@code DocumentReference} DocumentReference for the Habit document created
      */
-    DocumentReference addHabitDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
+    public void addHabitDocument(String userid, HashMap<String, Object> doc) {
         // instantiate the document
-        DocumentReference docRef = usersColRef.document(userid).collection(habitsColName).document(habitTitle);
+        CollectionReference colRef = usersColRef.document(userid).collection(habitsColName);
 
         // set the data
-        docRef.set(doc)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        colRef.add(doc)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(Void unused) {
-                        Log.d(DB_TAG, String.format("Document with habit title %s successfully added to the Habits collection",
-                                habitTitle));
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(DB_TAG, "Habit successfully created");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(DB_TAG, String.format("Document with habit title %s failed to be added to the Habits collection",
-                                habitTitle));
+                        Log.d(DB_TAG, "Habit failed to be created");
                     }
                 });
-        return docRef;
+    }
+
+    /**
+     * Updates a habit document
+     * @param prevTitle {@code String}                  The original title of the habit
+     * @param title     {@code String}                  The new title of the habit
+     * @param doc       {@code HashMap<String,Object>}  The newly updated document
+     */
+    public void updateHabitDocument(String userid, String prevTitle, String title, HashMap<String,Object> doc) {
+
+        usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .whereEqualTo("title", prevTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                document.getReference().update(doc)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(DB_TAG,
+                                                    String.format("HabitEvent successfully created for Habit with title %s",
+                                                    title));
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d(DB_TAG,
+                                                    String.format("HabitEvent failed to be created for Habit with title %s",
+                                                    title));
+                                        }
+                                    });
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Delete a habit for a user
+     * @param userid        {@code String} User ID
+     * @param habitTitle    {@code String} The title of the habit to be deleted
+     */
+    public void deleteHabitDocument(String userid, String habitTitle) {
+        // delete the actual habit
+         usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .whereEqualTo("title", habitTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                HashMap<String, Object> data = new HashMap<>();
+                                data.put("path", document.getReference().getPath());
+                                HttpsCallableReference deleteFn =
+                                        FirebaseFunctions.getInstance().getHttpsCallable("recursiveDelete");
+                                deleteFn.call(data);
+
+                                document.getReference().delete()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(DB_TAG, String.format("Habit successfully deleted for Habit with title %s",
+                                                        habitTitle));
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(DB_TAG, String.format("Habit failed to be deleted for Habit with title %s",
+                                                        habitTitle));
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 
     /**
@@ -171,7 +289,7 @@ public class DatabaseManager {
      * @param habitTitle    {@code String} Habit Title
      * @param doc           {@code HashMap<String, Object>} Document
      */
-    void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
+    public void addHabitEventDocument(String userid, String habitTitle, HashMap<String, Object> doc) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference colRef = usersColRef
                 .document(userid)
@@ -197,10 +315,114 @@ public class DatabaseManager {
     }
 
     /**
+     * Modifies attribute of habit event for performing adding and editing operations
+     * @param userid        {String}    the current user
+     * @param habitTitle    {String}    the title of the selected habit
+     * @param he            {HabitEvent}the habit event to modify
+     * @param action        {int}       id of the type of action to perform in callback.
+     */
+    public void getAndSetHabitId(String userid, String habitTitle, HabitEvent he, int action) {
+        // first query the habit
+        usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .whereEqualTo("title", habitTitle)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // set the habit id to the habit event
+                                he.setHabit(document.getReference().getId());
+
+                                // handle the action here, these actions NEED to be performed thru a callback
+                                if (action ==1) {
+                                    he.editDB();
+                                }
+                                else if (action == 2) {
+                                    he.updateDB();
+                                }
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+     /**
+      *  Delete a habit event for a given habit
+      * @param userid        {@code String} User ID
+      * @param habitTitle    {@code String} Habit Title
+      * @param eventID       {@code String} Event ID
+      */
+    public void deleteHabitEventDocument(String userid, String habitTitle, String eventID) {
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        CollectionReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle)
+                .collection(habitEventsColName);
+
+        colRef.document(eventID)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("HabitEvent successfully created for Habit with title %s",
+                                habitTitle));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("HabitEvent failed to be created for Habit with title %s",
+                                habitTitle));
+                    }
+                });
+    }
+
+    /**
+     * edit a habit event for a given habit
+     * @param userid        {@code String} User ID
+     * @param habitTitle    {@code String} Habit Title
+     * @param eventID       {@code String} Event ID
+     * @param doc           {@code HashMap<String, Object>} Document
+     */
+    public void updateHabitEventDocument(String userid, String habitTitle, String eventID, HashMap<String, Object> doc) {
+        // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
+        CollectionReference colRef = usersColRef
+                .document(userid)
+                .collection(habitsColName)
+                .document(habitTitle)
+                .collection(habitEventsColName);
+
+        colRef.document(eventID)
+                .update(doc)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(DB_TAG, String.format("HabitEvent successfully created for Habit with title %s",
+                                habitTitle));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(DB_TAG, String.format("HabitEvent failed to be created for Habit with title %s",
+                                habitTitle));
+                    }
+                });
+
+    }
+
+    /**
      * Deletes a user document along with all of its subcollections.
      * @param userid        {@code String} User ID
      */
-    void deleteUserDocument(String userid) {
+    public void deleteUserDocument(String userid) {
         // delete all habit documents for this user
         usersColRef.document(userid).collection(habitsColName)
                 .get()
@@ -254,8 +476,8 @@ public class DatabaseManager {
 
     /**
      * This uses a callback to allow another class to get the list of habit of a user
-     * @param user
-     * @param callback
+     * @param user      {@code String}  the user logged in
+     * @param callback  {@code HabitListCallback}   an action to perform as a callback
      */
     public void getAllHabits(String user, HabitListCallback callback) {
         // Users -> userid (key) -> Habits
@@ -268,20 +490,30 @@ public class DatabaseManager {
                 if (task.isSuccessful()) {
                     ArrayList<Habit> habitArray = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Log.d("",""+doc.getData().get("whatDays")+"-----"+doc.getData().get("dateStarted"));
+                        //Log.d("",""+doc.getData().get("whatDays")+"-----"+doc.getData().get("dateStarted"));
                         ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                         ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
                         Calendar cal = Calendar.getInstance();
                         if(dateArray == null || daysArray == null){
                             continue;
                         }
+                        boolean shared;
+                        try {
+                            shared = (boolean) doc.getData().get("isPublic");
+                        } catch (NullPointerException npe) {
+                            shared = true; // assume it's public when no preference is given
+                        }
+
+
                         cal.set(dateArray.get(0).intValue(),dateArray.get(1).intValue()-1,dateArray.get(2).intValue());
                         Date date = cal.getTime();
                         habitArray.add(new Habit(
-                                doc.getId(),
+                                (String)doc.getData().get("title"),
                                 (String)doc.getData().get("reason"),
                                 date,
-                                daysArray.toArray(new String[daysArray.size()])
+                                daysArray,
+                                shared,
+                                SharedInfo.getInstance().getCurrentUser()
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);
@@ -301,40 +533,64 @@ public class DatabaseManager {
      */
     public void getAllHabitEvents(String user, Habit habit, HabitEventListCallback callback) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
-        CollectionReference doc = usersColRef
+//        DocumentReference habitDocRef = null;
+        usersColRef
                 .document(user)
                 .collection(habitsColName)
-                .document(habit.getTitle())
-                .collection(habitEventsColName);
-        doc.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<HabitEvent> eventArray = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Date date;
-                        try {
-                             date = new SimpleDateFormat("yyyy-MM-dd").parse((String)doc.getData().get("startDate"));
-                        } catch (Exception e) {
-                            date = new Date();
+//                .document(habit.getTitle())
+
+                .whereEqualTo("title", habit.getTitle())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        // successfully found a habit to edit
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+
+                                document.getReference()
+                                        .collection(habitEventsColName)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    ArrayList<HabitEvent> eventArray = new ArrayList<>();
+
+                                                    for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                                                        Log.d("parent",""+doc.getReference().getParent().getParent().getId());
+                                                        ArrayList<Integer> dateArray = (ArrayList<Integer>) doc.getData().get("startDate");
+                                                        eventArray.add(new HabitEvent(
+                                                                doc.getReference().getParent().getParent().getId(),
+                                                                doc.getId(),
+                                                                (String)doc.getData().get("comment"),
+                                                                dateArray,
+                                                                (String)doc.getData().get("location"),
+                                                                (String) doc.getData().get("imageUrl")
+                                                        ));
+                                                    }
+                                                    callback.onCallbackSuccess(eventArray);
+                                                }
+                                                else{
+                                                    callback.onCallbackFailed();
+                                                }
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d(DB_TAG, "Error getting documents: ", task.getException());
                         }
-                        eventArray.add(new HabitEvent(
-                                habit,
-                                (String)doc.getData().get("comment"),
-                                date,
-                                (String)doc.getData().get("comment"),
-                                "image"
-                        ));
                     }
-                    callback.onCallbackSuccess(eventArray);
-                }
-                else{
-                    callback.onCallbackFailed();
-                }
-            }
-        });
+                });
+
     }
 
+    /**
+     * reutrns Hashmap of user details (username,follower,etc) from username string
+     * @param username
+     * @param callback
+     */
     public void getUserDetails(String username, UserDetailsCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
@@ -343,18 +599,23 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    User user;
+                    HashMap<String,Object> userDetails = new HashMap<>();
                     DocumentSnapshot document = task.getResult();
                     if(!document.exists()){
                         callback.onCallbackFailed();
                         return;
                     }
-                    String hashedPassword = (String) document.getData().get("hashedPassword");
-                    user = new User(
-                            username,
-                            hashedPassword
-                    );
-                    callback.onCallbackSuccess(user);
+                    ArrayList<String> following = (ArrayList<String>) document.getData().get("following");
+                    ArrayList<String> followers = (ArrayList<String>) document.getData().get("followers");
+                    ArrayList<String> pendingFollowReqs = (ArrayList<String>) document.getData().get("pendingFollowReqs");
+                    ArrayList<String> pendingFollowerReqs = (ArrayList<String>) document.getData().get("pendingFollowReqs");
+                    userDetails.put("username",username);
+                    userDetails.put("following",following);
+                    userDetails.put("followers",followers);
+                    userDetails.put("pendingFollowReqs",pendingFollowReqs);
+                    userDetails.put("pendingFollowerReqs",pendingFollowerReqs);
+
+                    callback.onCallbackSuccess(userDetails);
                 }
                 else{
                     callback.onCallbackFailed();
@@ -363,7 +624,12 @@ public class DatabaseManager {
         });
     }
 
-    public void userExists(String username, BooleanCallback callback){
+    /**
+     * Check if username exists
+     * @param username
+     * @param callback
+     */
+    public void userExists(String username, UserExistsCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
                 .document(username);
@@ -371,12 +637,14 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    boolean flag = false;
                     DocumentSnapshot document = task.getResult();
                     if(document.exists()){
-                        flag = true;
+                        callback.onCallbackSuccess(username);
                     }
-                    callback.onCallbackSuccess(flag);
+                    else{
+                        callback.onCallbackFailed();
+                    }
+
                 }
                 else{
                     callback.onCallbackFailed();
@@ -385,7 +653,12 @@ public class DatabaseManager {
         });
     }
 
-    public void checkPassword(String username, String hashedPassword, BooleanCallback callback){
+    /**
+     * Check if username and password is correct and then returns username and hashed password
+     * @param username
+     * @param callback
+     */
+    public void checkPassword(String username, CheckPasswordCallback callback){
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         DocumentReference doc = usersColRef
                 .document(username);
@@ -393,20 +666,349 @@ public class DatabaseManager {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
-                    boolean flag = false;
                     DocumentSnapshot document = task.getResult();
-                    if(!document.exists()){
+                    if (!document.exists()) {
                         callback.onCallbackFailed();
                         return;
-                    }else if(hashedPassword.equals((String)document.getData().get("hashedPassword"))){
-                        flag = true;
                     }
-                    callback.onCallbackSuccess(flag);
-                }
-                else{
+                    String hashedPassword = (String)document.getData().get("hashedPassword");
+                    try {
+                        callback.onCallbackSuccess(username, hashedPassword);
+                    } catch (InvalidKeySpecException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    }
+                } else {
                     callback.onCallbackFailed();
                 }
             }
         });
+    }
+
+    /**
+     * Gets the list of pending requests for a user.
+     * @param userid        {@code String} User ID
+     * @param callback      {@code SharingListCallback} Callback object
+     */
+    public void getPendingFollowers(String userid, SharingListCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        ArrayList<String> pendingFollowersList = (ArrayList<String>) document.get("pendingFollowerReqs");
+                        callback.onCallbackSuccess(pendingFollowersList);
+                    } else {
+                        callback.onCallbackFailure(String.format("Document for %s does not exist", userid));
+                    }
+                } else {
+                    callback.onCallbackFailure(task.getException().toString());
+                }
+            }
+        });
+    }
+
+    /**
+     * Removes an item from any of the ArrayList fields of the User document.
+     * This can be used to decline a follow request or remove a follower or unfollow another user.
+     * @param userid        {@code String} The current user's id
+     * @param requestid     {@code String} The item to be removed
+     * @param field         {@code String}  Either 'followers' or 'following' or 'pendingFollowReqs'
+     *                                      or 'pendingFollowerReqs'
+     * @param callback      {@code UserListOperationCallback} Callback object
+     */
+    public void removeUserListItem(String userid, String requestid, String field, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.update(field, FieldValue.arrayRemove(requestid))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        callback.onCallbackSuccess(requestid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallbackFailure(e.toString());
+                    }
+                });
+    }
+
+    /**
+     * Unfollows a particular user.
+     * @param currentUserId {@code String} Current user's id
+     * @param requestid     {@code String} The user to be unfollowed
+     * @param pending       {@code Boolean} true if follow request is still pending, false otherwise
+     * @param callback      {@code UserListOperationCallback} Callback object
+     */
+    public void unfollowUser(String currentUserId, String requestid, Boolean pending, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(currentUserId);
+        String field = "following";
+        if (pending) {
+            field = "pendingFollowReqs";
+        }
+        // start off by removing requestid from the (pending) following list of userid
+        removeUserListItem(currentUserId, requestid, field, new UserListOperationCallback() {
+            @Override
+            public void onCallbackSuccess(String userid) {
+                if (pending) {
+                    // also need to remove userid from the pendingFollowerReqs of requestid
+                    removeUserListItem(requestid, currentUserId, "pendingFollowerReqs",
+                            new UserListOperationCallback() {
+                                @Override
+                                public void onCallbackSuccess(String userid) {
+                                    callback.onCallbackSuccess(userid);
+                                }
+
+                                @Override
+                                public void onCallbackFailure(String reason) {
+                                    callback.onCallbackFailure(reason);
+                                }
+                            });
+                } else {
+                    callback.onCallbackSuccess(userid);
+                }
+            }
+            @Override
+            public void onCallbackFailure(String reason) {
+                callback.onCallbackFailure(reason);
+            }
+        });
+    }
+
+    /**
+     * Adds an item to any of the ArrayList fields of the User document.
+     * @param userid        {@code String} The current user's id
+     * @param requestid     {@code String} The item to be added
+     * @param field         {@code String} Either 'followers' or 'following' or 'pendingFollowReqs'
+     *      *                              or 'pendingFollowerReqs'
+     * @param callback      {@code UserListOperationCallback} Callback object
+     */
+    public void addUserListItem(String userid, String requestid, String field, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.update(field, FieldValue.arrayUnion(requestid))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        callback.onCallbackSuccess(requestid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallbackFailure(e.toString());
+                    }
+                });
+    }
+
+    /**
+     * Accepts a follow request for a user.
+     * @param userid            {@code String} The current user's id
+     * @param requestid         {@code String} The user id of the person who sent the follow request
+     * @param callback          {@code UserListOperationCallback} Callback objects
+     */
+    public void acceptFollowRequest(String userid, String requestid, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        // remove the user from 'pendingFollowerReqs' and add them to 'followers'
+        docRef.update("pendingFollowerReqs", FieldValue.arrayRemove(requestid),
+                "followers", FieldValue.arrayUnion(requestid))
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        callback.onCallbackSuccess(requestid);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onCallbackFailure(e.toString());
+                    }
+                });
+    }
+
+    /**
+     * Sends a request to follow the public habits of a user
+     * @param currentUserid     {@code String} Current user's id
+     * @param requestid         {@code String} Target user's id
+     * @param callback          {@code StringCallback} Callback object
+     */
+    public void sendFollowRequest(String currentUserid, String requestid, StringCallback callback) {
+        // get the following list of the current user and check if the requestid is already there
+        getUserListItems(currentUserid, "following", new SharingListCallback() {
+            @Override
+            public void onCallbackSuccess(ArrayList<String> dataList) {
+                // search dataList for requestid
+                if (dataList.contains(requestid)) {
+                    callback.onCallbackFailure("You are already following this user!");
+                } else {
+                    // get the pendingFollowReqs list for the current user and check if a follow
+                    // request has already been sent
+                    getUserListItems(currentUserid, "pendingFollowReqs", new SharingListCallback() {
+                        @Override
+                        public void onCallbackSuccess(ArrayList<String> dataList) {
+                            // search dataList for requestid
+                            if (dataList.contains(requestid)) {
+                                callback.onCallbackFailure("Follow request pending!");
+                            } else {
+                                // check if the user with requestid exists
+                                // if the user exists send the follow request
+                                userExists(requestid, new UserExistsCallback() {
+                                    @Override
+                                    public void onCallbackSuccess(String username) {
+                                        // the user exists
+                                        // add target user to the pendingFollowReqs of the current user
+                                        addUserListItem(currentUserid, requestid, "pendingFollowReqs",
+                                                new UserListOperationCallback() {
+                                                    @Override
+                                                    public void onCallbackSuccess(String userid) {
+                                                        // add the current user to the pendingFollowerReqs of the target user
+                                                        addUserListItem(requestid, currentUserid, "pendingFollowerReqs",
+                                                                new UserListOperationCallback() {
+                                                                    @Override
+                                                                    public void onCallbackSuccess(String userid) {
+                                                                        String msg = "Follow request sent!";
+                                                                        callback.onCallbackSuccess(msg);
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onCallbackFailure(String reason) {
+                                                                        callback.onCallbackFailure(reason);
+                                                                    }
+                                                                });
+                                                    }
+
+                                                    @Override
+                                                    public void onCallbackFailure(String reason) {
+                                                        callback.onCallbackFailure(reason);
+                                                    }
+                                                });
+                                    }
+
+                                    @Override
+                                    public void onCallbackFailed() {
+                                        callback.onCallbackFailure(String.format("Userid %s does not exist", requestid));
+                                    }
+                                });
+                            }
+                        }
+                        @Override
+                        public void onCallbackFailure(String reason) {
+                            callback.onCallbackFailure(reason);
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCallbackFailure(String reason) {
+                callback.onCallbackFailure(reason);
+            }
+        });
+    }
+
+    /**
+     * Gets the followers/following/pendingFollowers/pendingFollowing list for a user
+     * @param userid        {@code String} User ID
+     * @param field         {@code String} Either 'followers' or 'following' or 'pendingFollowReqs'
+     *                                    or 'pendingFollowerReqs'
+     * @param callback      {@code SharingListCallback} Callback object
+     */
+    public void getUserListItems(String userid, String field, SharingListCallback callback) {
+        DocumentReference docRef = usersColRef.document(userid);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        ArrayList<String> followersList = (ArrayList<String>) document.get(field);
+                        callback.onCallbackSuccess(followersList);
+                    } else {
+                        callback.onCallbackFailure(String.format("Document for %s does not exist", userid));
+                    }
+                } else {
+                    callback.onCallbackFailure(task.getException().toString());
+                }
+            }
+        });
+    }
+
+    /**
+     * Gets all public habits of the given user.
+     * @param userid        {String}        the given user
+     * @param callback      {HabitCallback} the action to be performed
+     */
+    public void getAllPublicHabits(String userid, HabitCallback callback) {
+        // get the Habits collection for the given user
+        CollectionReference colRef = usersColRef.document(userid).collection(habitsColName);
+        // get all Habits that are public
+        colRef.whereEqualTo("isPublic", true)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                // the query gives at least one document
+                                // iterate over all the documents given by the query
+                                for (DocumentSnapshot doc: querySnapshot.getDocuments()) {
+                                    ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
+                                    ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
+                                    Long progress = (Long) doc.getData().get("progress");
+                                    Calendar cal = Calendar.getInstance();
+                                    if(dateArray == null || daysArray == null){
+                                        continue;
+                                    }
+                                    cal.set(dateArray.get(0).intValue(),dateArray.get(1).intValue()-1,dateArray.get(2).intValue());
+                                    Date date = cal.getTime();
+
+                                    // create a Habit object
+                                    Habit habit = new Habit(
+                                            (String) doc.getData().get("title"),
+                                            (String) doc.getData().get("reason"),
+                                            date,
+                                            daysArray,
+                                            true,
+                                            new User(userid)
+                                    );
+                                    // set the overall progress of the Habit
+                                    habit.setProgress(progress.intValue());
+                                    callback.onCallbackSuccess(habit);
+                                }
+                            }
+                        } else {
+                            callback.onCallbackFailure(task.getException().toString());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Gets alls the public habits of users that are being followed by the current user/
+     * @param userid        {@code String} The current user's userid
+     * @param callback      {@code HabitCallback} Callback interface that is called when a Habit
+     *                                           document retrieved and Habit object is created
+     */
+    public void getFollowingHabits(String userid, HabitCallback callback) {
+        // get the list of users that this user is following
+        getUserListItems(userid, "following",
+                new SharingListCallback() {
+                    @Override
+                    public void onCallbackSuccess(ArrayList<String> dataList) {
+                        // iterate over the following list
+                        for (String followingUser: dataList) {
+                            // get all the public habits for the user
+                            getAllPublicHabits(followingUser, callback);
+                        }
+                    }
+
+                    @Override
+                    public void onCallbackFailure(String reason) {
+                        callback.onCallbackFailure(reason);
+                    }
+                });
     }
 }

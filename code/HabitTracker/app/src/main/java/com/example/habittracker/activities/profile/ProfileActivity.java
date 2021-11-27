@@ -8,13 +8,16 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.habittracker.DatabaseManager;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.LoginActivity;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.utils.SharedInfo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -22,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
     ListView profileList;
     ArrayAdapter<String> profileListAdapter;
     ArrayList<String> profileDataList;
+    TextView usernameDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
         //setContentView(R.layout.profile.xml);
         setContentView(R.layout.activity_profile);
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
+
         //setContentView(R.layout.login);
 /*
         profileList = findViewById(R.id.profileList);
@@ -39,6 +44,10 @@ public class ProfileActivity extends AppCompatActivity {
         profileListAdapter = new ArrayAdapter<>(this, R.layout.content, profileDataList);
         profileList.setAdapter(profileListAdapter);
 */
+        // Set the username text to the current user's name
+        usernameDisplay = findViewById(R.id.sharing_input_text_view);
+        usernameDisplay.setText(SharedInfo.getInstance().getCurrentUser().getUsername());
+
         Button followers_button = findViewById(R.id.followersButton);
         followers_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         follower_requests_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ProfileFollowRequestsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfilePendingFollowersActivity.class);
                 startActivity(intent);
             }
         });
@@ -70,10 +79,42 @@ public class ProfileActivity extends AppCompatActivity {
         logout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), ProfileLoginActivity.class);
+                // Log the user out
+
+                // Set the global user instance
+                SharedInfo.getInstance().clearCurrentUser();
+
+                // Switch to login screen
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
             }
         });
+
+        /*
+        Button delete_button = findViewById(R.id.delete_account);
+        delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Delete the user from the database
+                DatabaseManager db = DatabaseManager.get();
+                String username = SharedInfo.getInstance().getCurrentUser().getUsername();
+                if (username != null && !username.equals("")) {
+                    db.deleteUserDocument(username);
+                } else {
+                    System.out.println("Trying to log out a null user :/");
+                }
+
+                // Log the user out
+
+                // Set the global user instance
+                SharedInfo.getInstance().clearCurrentUser();
+
+                // Switch to login screen
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+         */
 
     }
 }

@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.habittracker.activities.LoginActivity;
 import com.example.habittracker.utils.BooleanCallback;
+import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserDetailsCallback;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,14 +36,15 @@ public class HabitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_habit);
 
         // TEST DATABASE
-        //testDatabase();
+        testDatabase();
 
         DatabaseManager db = DatabaseManager.get();
-        db.checkPassword("user1","12345",new BooleanCallback() {
+        /*
+        db.getUserDetails("user1",new UserDetailsCallback() {
             @Override
-            public void onCallbackSuccess(boolean exists) {
+            public void onCallbackSuccess(HashMap<String,Object> userDetails) {
                 //Do what you need to do with your list
-                Log.d("User",""+exists);
+                Log.d("User",""+userDetails);
             }
 
             @Override
@@ -48,9 +52,9 @@ public class HabitActivity extends AppCompatActivity {
                 Log.d("Error","Failed to get user");
             }
         });
-      
+        */
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
@@ -71,7 +75,7 @@ public class HabitActivity extends AppCompatActivity {
         userDocument.put("following", Arrays.asList("user2"));
         userDocument.put("followers", Arrays.asList("user2"));
         userDocument.put("pendingFollowReqs", Arrays.asList("user3"));
-        userDocument.put("pendingFollowerReqs", Arrays.asList("user3"));
+        userDocument.put("pendingFollowerReqs", Arrays.asList("user3", "user9", "user10"));
 
         // use database manager
         DatabaseManager.get().addUsersDocument(userid, userDocument);
@@ -84,7 +88,7 @@ public class HabitActivity extends AppCompatActivity {
         habitDocument.put("progress", 0);
 
         // use database manager
-        DatabaseManager.get().addHabitDocument(userid, title, habitDocument);
+        DatabaseManager.get().addHabitDocument(userid, habitDocument);
 
         // add data for the habit event document
         habitEventDocument.put("comment", "Comment 1");

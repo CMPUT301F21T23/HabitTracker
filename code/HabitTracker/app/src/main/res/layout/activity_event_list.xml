@@ -8,48 +8,57 @@
     tools:context=".HabitActivity">
 
     <FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/eventView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="630dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="5dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:context=".HabitActivity">
 
         <ListView
             android:id="@+id/event_list"
             android:layout_width="match_parent"
-            android:layout_height="645dp">
+            android:layout_height="675dp">
 
         </ListView>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_event_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="6dp"
             android:clickable="true"
             android:focusable="true"
-            android:layout_gravity="top|end"
             app:backgroundTint="@color/spotify"
-            app:srcCompat="@android:drawable/ic_input_add"/>
-        <TextView
-            android:id="@+id/sum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:textSize="22dp"/>
+            app:srcCompat="@android:drawable/ic_input_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:itemIconSize="35dp"
-            app:itemIconTint="@color/bottom_nav_foreground"
-            app:itemTextColor="#151515"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu" />
     </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="403dp"
+        android:layout_height="54dp"
+        android:layout_gravity="bottom"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        app:itemIconSize="35dp"
+        app:itemIconTint="@color/bottom_nav_foreground"
+        app:itemTextColor="#151515"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
