@@ -30,6 +30,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * ListActivity - activity responsible for holding the total list of habit for the user.
+ * implements: HabitInputDialogListener for bringing up add habit fragment
+ */
 public class ListActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
@@ -37,6 +41,10 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
     private ListView list = null;
     private CustomHabitList habitAdapter;
 
+    /**
+     * Gets the current listView of the activity
+     * @return {ListView}
+     */
     public ListView getList() {
         return list;
     }
@@ -44,6 +52,10 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
     // constant
     static final String EXTRA_HABIT = "habit";
 
+    /**
+     * Creates the activity that holds all the habits for the user.
+     * @param savedInstanceState {Bundle}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +69,10 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
         this.list.setAdapter(habitAdapter);
 
         add_button.setOnClickListener(new View.OnClickListener() {
+            /**
+             * When clicked on the floating add button
+             * @param view
+             */
             @Override
             public void onClick(View view) {
                 new HabitInputFragment().show(getSupportFragmentManager(), "ADD MEDICINE");
@@ -64,6 +80,13 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
         });
 
         this.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            /**
+             * when clicked on habit in the list
+             * @param adapter
+             * @param v
+             * @param position
+             * @param id
+             */
             public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
                 Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
                 intent.putExtra(EXTRA_HABIT, (Serializable) list.getItemAtPosition(position));
@@ -119,16 +142,13 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
      * @param habitList
      */
     private void repopulate (ArrayList<Habit> habitList) {
-        int orderCount = 0;
         this.habitAdapter.clear();
         for(Habit h:habitList){
             this.habitList.add(h);
             HashMap<String,Object> doc = h.toDocument();
-            doc.put("order",orderCount);
             DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),h.getTitle(),h.getTitle(), doc);
-            ProgressUpdater updater = new ProgressUpdater(h,orderCount);
+            ProgressUpdater updater = new ProgressUpdater(h);
             updater.update();
-            orderCount++;
         }
         this.habitAdapter.notifyDataSetChanged();
     }

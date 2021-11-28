@@ -494,6 +494,7 @@ public class DatabaseManager {
                         ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                         ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
                         int progress = Long.valueOf((long)doc.getData().get("progress")).intValue();
+                        int order = Long.valueOf((long)doc.getData().get("order")).intValue();
                         Calendar cal = Calendar.getInstance();
                         if(dateArray == null || daysArray == null){
                             continue;
@@ -514,6 +515,7 @@ public class DatabaseManager {
                                 date,
                                 daysArray,
                                 progress,
+                                order,
                                 shared,
                                 SharedInfo.getInstance().getCurrentUser()
 
@@ -959,6 +961,7 @@ public class DatabaseManager {
                                     ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                                     ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
                                     Long progress = (Long) doc.getData().get("progress");
+                                    Long order = (Long) doc.getData().get("order");
                                     Calendar cal = Calendar.getInstance();
                                     if(dateArray == null || daysArray == null){
                                         continue;
@@ -973,6 +976,7 @@ public class DatabaseManager {
                                             date,
                                             daysArray,
                                             progress.intValue(),
+                                            order.intValue(),
                                             true,
                                             new User(userid)
                                     );

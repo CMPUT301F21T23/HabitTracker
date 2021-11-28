@@ -307,7 +307,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 int order = 0;
                 for(Habit h:habitList){
-                    ProgressUpdater updater = new ProgressUpdater(h,order);
+                    ProgressUpdater updater = new ProgressUpdater(h);
                     updater.update();
                     order++;
                 }

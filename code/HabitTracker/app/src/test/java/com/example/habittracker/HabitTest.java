@@ -24,7 +24,7 @@ public class HabitTest {
                 "It makes me happy",
                 currentDate,
                 weekDays,
-                0,
+                0,0,
                 true,
                 mockUser
                 );

@@ -23,6 +23,7 @@ public class Habit implements Serializable {
     private Integer progress;
     private ArrayList<String> weekDays;
     private User user;
+    private int order;
 
     private boolean isPublic = false;
 
@@ -39,7 +40,7 @@ public class Habit implements Serializable {
      * @param startDate         {Date}      the date in which the habit was started
      * @param weekDays          {ArrayList<String>}  the days of the week during which the habit should be practiced
      */
-    public Habit (String titlePermanent, String reason, Date startDate, ArrayList<String> weekDays, int progress, boolean isPublic, User owner) {
+    public Habit (String titlePermanent, String reason, Date startDate, ArrayList<String> weekDays, int progress,int order, boolean isPublic, User owner) {
 
         this.title = titlePermanent;
         this.reason = reason;
@@ -47,6 +48,7 @@ public class Habit implements Serializable {
         this.progress = progress;
         this.isPublic = isPublic;
         this.user = owner;
+        this.order = order;
         this.weekDays = weekDays;
     }
 
@@ -64,6 +66,22 @@ public class Habit implements Serializable {
      */
     public boolean isPublic() {
         return isPublic;
+    }
+
+    /**
+     * Gets the order in the list the habit should appear
+     * @return
+     */
+    public int getOrder() {
+        return order;
+    }
+
+    /**
+     * sets the order the habit should appear
+     * @param order
+     */
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     /**
@@ -182,7 +200,7 @@ public class Habit implements Serializable {
 
         // the attribute names as specified in the schema and the values that correspond
         String [] attributes = {"title", "reason", "dateStarted", "whatDays", "progress","order", "isPublic"};
-        Object [] values = {title, reason, dateArrayList, weekDays, progress, 0, isPublic};
+        Object [] values = {title, reason, dateArrayList, weekDays, progress, order, isPublic};
 
         // populate the hash map
         for (int i = 0; i < attributes.length; i++) {

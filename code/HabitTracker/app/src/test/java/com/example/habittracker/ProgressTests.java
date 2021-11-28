@@ -42,7 +42,7 @@ public class ProgressTests {
                 "Reason",
                 cal.getTime(),
                 weekdays,
-                0,
+                0,0,
                 true,
                 mockUser
         );

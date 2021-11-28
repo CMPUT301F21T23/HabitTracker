@@ -12,17 +12,25 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+/**
+ * Progress Updater - Updates the progress using the database manager class
+ */
 public class ProgressUpdater {
     private Habit habit;
-    private int order;
 
-    public ProgressUpdater(Habit habit,int order){
+    /**
+     * public constructor for the class
+     * @param habit
+     */
+    public ProgressUpdater(Habit habit){
         this.habit = habit;
-        this.order = order;
     }
 
+    /**
+     * runs the updating of the habit using the current username
+     */
     public void update(){
-        DatabaseManager.get().getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(),habit.getTitle(),new HabitEventListCallback() {
+        DatabaseManager.get().getAllHabitEvents(habit.getUser().getUsername(),habit.getTitle(),new HabitEventListCallback() {
             /**
              * Called when success to get habit events
              * @param eventList {ArrayList<HabitEvent>}
@@ -33,8 +41,7 @@ public class ProgressUpdater {
                 HashMap<String,Integer> hash = ProgressUtil.getOverallProgress(habit,eventList, 1, 100);
                 HashMap<String,Object> doc = habit.toDocument();
                 doc.put("progress",hash.get("overall"));
-                doc.put("order",order);
-                DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),habit.getTitle(),habit.getTitle(),doc);
+                DatabaseManager.get().updateHabitDocument(habit.getUser().getUsername(),habit.getTitle(),habit.getTitle(),doc);
             }
 
             /**

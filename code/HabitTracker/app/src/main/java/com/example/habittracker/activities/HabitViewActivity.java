@@ -130,6 +130,7 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
             public void onClick(View view) {
                 Bundle bundle = new Bundle();
                 bundle.putString("old_habit_title", habit.getTitle());
+                bundle.putInt("order",habit.getOrder());
 
                 HabitInputFragment hif = new HabitInputFragment();
                 hif.setArguments(bundle);
@@ -167,7 +168,6 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                 Intent intent = new Intent(getApplicationContext(),ProgressTrackingActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("habit", habit);
-                bundle.putString("user",SharedInfo.getInstance().getCurrentUser().getUsername());
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

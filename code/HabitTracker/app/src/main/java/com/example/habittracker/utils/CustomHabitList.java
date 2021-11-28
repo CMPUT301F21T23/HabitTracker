@@ -22,6 +22,9 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * CustomHabitList - manages the list of habits
+ */
 public class CustomHabitList extends ArrayAdapter<Habit>{
     private final Context context;
     private final ArrayList<Habit> habitList;
@@ -81,6 +84,10 @@ public class CustomHabitList extends ArrayAdapter<Habit>{
         }
 
         moveUp.setOnClickListener(new View.OnClickListener() {
+            /**
+             * called when user presses the move up button on a habit reorder
+             * @param view
+             */
             @Override
             public void onClick(View view) {
                 if(position>0){
@@ -88,10 +95,10 @@ public class CustomHabitList extends ArrayAdapter<Habit>{
                     Habit h2 = habitList.get(position-1);
                     habitList.set(position-1,h1);
                     habitList.set(position,h2);
+                    h1.setOrder(position-1);
+                    h2.setOrder(position);
                     HashMap<String,Object> doc1 = h1.toDocument();
-                    doc1.put("order",position-1);
                     HashMap<String,Object> doc2 = h2.toDocument();
-                    doc2.put("order",position);
                     DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),h1.getTitle(),h1.getTitle(),doc1);
                     DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),h2.getTitle(),h2.getTitle(),doc2 );
                 }
@@ -100,6 +107,10 @@ public class CustomHabitList extends ArrayAdapter<Habit>{
         });
 
         moveDown.setOnClickListener(new View.OnClickListener() {
+            /**
+             * called when the use presses a move down command for a habit
+             * @param view
+             */
             @Override
             public void onClick(View view) {
                 if(position<habitList.size()-1){
@@ -107,30 +118,16 @@ public class CustomHabitList extends ArrayAdapter<Habit>{
                     Habit h2 = habitList.get(position+1);
                     habitList.set(position+1,h1);
                     habitList.set(position,h2);
+                    h1.setOrder(position+1);
+                    h2.setOrder(position);
                     HashMap<String,Object> doc1 = h1.toDocument();
-                    doc1.put("order",position+1);
                     HashMap<String,Object> doc2 = h2.toDocument();
-                    doc2.put("order",position);
                     DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),h1.getTitle(),h1.getTitle(),doc1);
                     DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),h2.getTitle(),h2.getTitle(),doc2 );
                 }
                 notifyDataSetChanged();
             }
         });
-
-//        if(reorder != null){
-//            reorder.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    final Button moveUp = view.findViewById(R.id.move_habit_up);
-//                    final Button moveDown = view.findViewById(R.id.move_habit_down);
-//                    toggleVis(moveDown);
-//                    toggleVis(moveUp);
-//                }
-//            });
-//        }
-
-
 
         // modify the text the views display so it's up to date
         habitTitle.setText(habit.getTitle());
@@ -168,6 +165,9 @@ public class CustomHabitList extends ArrayAdapter<Habit>{
         }
     }
 
+    /**
+     * clears the list of buttons to hide/show
+     */
     public void clearButtons(){
         buttonList.clear();
     }

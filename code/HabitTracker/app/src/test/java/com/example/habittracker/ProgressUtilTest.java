@@ -16,7 +16,7 @@ public class ProgressUtilTest {
     void testGetHabitDays() {
         ArrayList<String> weekDays = new ArrayList<>();
         weekDays.add("Mon");
-        Habit h = new Habit ("Title", "no reason",new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime(), weekDays,0, true, new User("test"));
+        Habit h = new Habit ("Title", "no reason",new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime(), weekDays,0,0, true, new User("test"));
 
         ArrayList<Integer> ans = ProgressUtil.getHabitDays(h);
 
