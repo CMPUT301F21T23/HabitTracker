@@ -305,9 +305,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCallbackSuccess(ArrayList<Habit> habitList) {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                int order = 0;
                 for(Habit h:habitList){
-                    ProgressUpdater updater = new ProgressUpdater(h);
+                    ProgressUpdater updater = new ProgressUpdater(h,order);
                     updater.update();
+                    order++;
                 }
                 startActivity(intent);
             }

@@ -14,9 +14,11 @@ import java.util.HashMap;
 
 public class ProgressUpdater {
     private Habit habit;
+    private int order;
 
-    public ProgressUpdater(Habit habit){
+    public ProgressUpdater(Habit habit,int order){
         this.habit = habit;
+        this.order = order;
     }
 
     public void update(){
@@ -31,6 +33,7 @@ public class ProgressUpdater {
                 HashMap<String,Integer> hash = ProgressUtil.getOverallProgress(habit,eventList, 1, 100);
                 HashMap<String,Object> doc = habit.toDocument();
                 doc.put("progress",hash.get("overall"));
+                doc.put("order",order);
                 DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),habit.getTitle(),habit.getTitle(),doc);
             }
 

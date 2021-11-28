@@ -126,6 +126,8 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
             HashMap<String,Object> doc = h.toDocument();
             doc.put("order",orderCount);
             DatabaseManager.get().updateHabitDocument(SharedInfo.getInstance().getCurrentUser().getUsername(),h.getTitle(),h.getTitle(), doc);
+            ProgressUpdater updater = new ProgressUpdater(h,orderCount);
+            updater.update();
             orderCount++;
         }
         this.habitAdapter.notifyDataSetChanged();

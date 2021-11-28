@@ -12,11 +12,6 @@ import java.util.GregorianCalendar;
 
 public class ProgressUtilTest {
 
-    /**I'll leave test case for getOverallProgress function to Nick*/
-
-
-
-
     @Test
     void testGetHabitDays() {
         ArrayList<String> weekDays = new ArrayList<>();
