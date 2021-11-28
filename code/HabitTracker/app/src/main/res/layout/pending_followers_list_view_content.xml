@@ -1,28 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/pendingFollowerId"
-        android:layout_width="149dp"
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
+        app:srcCompat="@drawable/ic_baseline_person_pin_profile_list" />
+
+    <TextView
+        android:id="@+id/pendingFollowerId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:paddingStart="0dp"
         android:text="Follower"
+        android:maxLines="1"
+        android:maxEms="6"
+        android:ellipsize="end"
         android:textSize="20sp" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+    </View>
 
     <Button
         android:id="@+id/accept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Accept" />
+        android:text="Accept"
+        android:textSize="10sp" />
 
     <Button
         android:id="@+id/decline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Decline" />
+        android:backgroundTint="@color/spotify_comp"
+        android:text="Decline"
+        android:textSize="10sp" />
 </LinearLayout>
