@@ -38,6 +38,7 @@
                 android:id="@+id/overall_progress_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/overall_progress_bar"
                 app:layout_constraintEnd_toEndOf="@+id/overall_progress_bar"
@@ -51,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Completed"
+                android:textColor="@color/spotify_comp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/overall_progress_bar"
                 app:layout_constraintTop_toTopOf="@+id/overall_progress_bar" />
@@ -83,6 +85,7 @@
                 android:id="@+id/consistency_progress_bar_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/consistency_progress_bar"
                 app:layout_constraintEnd_toEndOf="@+id/consistency_progress_bar"
@@ -96,6 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Consistency"
+                android:textColor="@color/spotify_comp"
                 app:layout_constraintEnd_toEndOf="@+id/consistency_progress_bar"
                 app:layout_constraintStart_toStartOf="@+id/consistency_progress_bar"
                 app:layout_constraintTop_toTopOf="@+id/consistency_progress_bar" />
@@ -112,6 +116,7 @@
         android:layout_marginEnd="64dp"
         android:text="Last 30 Days Progress"
         android:textAlignment="center"
+        android:textColor="@color/spotify_comp"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -120,13 +125,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graphTitle">
+        app:layout_constraintTop_toBottomOf="@+id/graphTitle"
+        app:layout_constraintVertical_bias="0.04000002">
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/progress_graph"
@@ -137,17 +143,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/tracking_back_button"
-        android:layout_width="154dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="8dp"
-        android:text="Back"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

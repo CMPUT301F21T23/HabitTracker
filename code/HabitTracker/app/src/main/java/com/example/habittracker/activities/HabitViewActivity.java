@@ -25,6 +25,7 @@ import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.activities.tracking.ProgressUtil;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
