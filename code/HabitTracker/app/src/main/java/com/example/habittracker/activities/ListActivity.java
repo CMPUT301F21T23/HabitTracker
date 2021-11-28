@@ -125,6 +125,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
 
                     }
                 });
+        this.habitAdapter.notifyDataSetChanged();
     }
 
     /**
