@@ -105,6 +105,7 @@
                 android:layout_marginTop="10dp"
                 android:autoSizeTextType="uniform"
                 android:onClick="registerPressed"
+                android:backgroundTint="#B91D82"
                 android:text="Register" />
 
         </LinearLayout>
