@@ -31,9 +31,11 @@ public class ProfilePendingFollowersActivityTest {
     User mockUser = new User("mockUser");
     @Rule
     public CustomActivityTestRule<ProfileActivity> rule =
+
             new CustomActivityTestRule<>(ProfileActivity.class, true, true, mockUser);
     String mockUser2 = "anthony johnson";
     String mockUser3 = "daniel cormier";
+
 
 
     /**

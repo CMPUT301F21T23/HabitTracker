@@ -16,6 +16,7 @@ import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.HabitListCallback;
@@ -32,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
-    private ArrayAdapter<Habit> habitAdapter;
+    private CustomHabitList habitAdapter;
 
     /**
      * Populates the screen's interactables (nav bar click, button clicks, etc..)
@@ -74,6 +75,7 @@ public class HomeActivity extends AppCompatActivity {
                     public void onCallbackSuccess(ArrayList<Habit> habitList) {
                         updateDisplay(habitList);
                     }
+
                     @Override
                     public void onCallbackFailed() {
 
@@ -98,6 +100,7 @@ public class HomeActivity extends AppCompatActivity {
                     habitList.add(habit);
                 }
             }
+            this.habitAdapter.notifyDataSetChanged();
         }
         habitAdapter.notifyDataSetChanged();
     }

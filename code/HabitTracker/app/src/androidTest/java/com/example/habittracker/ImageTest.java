@@ -66,7 +66,7 @@ public class ImageTest {
         assertTrue(solo.waitForText("All Habits", 1, 2000));
         solo.waitForText("habit", 1, 2000);
         ListActivity activity = (ListActivity) solo.getCurrentActivity();
-        final ListView HabitList = activity.list; // Get the listview
+        final ListView HabitList = activity.getList(); // Get the listview
         Habit habit = (Habit) HabitList.getItemAtPosition(0); // Get item from first position
         assertEquals("habit", habit.getTitle());
         solo.clickInList(1);
@@ -105,7 +105,8 @@ public class ImageTest {
         habitDoc.put("dateStarted", Arrays.asList(2021,11,1));
         habitDoc.put("title", "habit");
         habitDoc.put("reason", "");
-        habitDoc.put("progress", "");
+        habitDoc.put("order", 0);
+        habitDoc.put("progress", 0);
         habitDoc.put("whatDays", Arrays.asList("Mon", "Wed"));
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
                 .set(habitDoc);

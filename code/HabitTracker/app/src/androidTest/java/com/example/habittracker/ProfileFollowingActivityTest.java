@@ -32,9 +32,11 @@ public class ProfileFollowingActivityTest {
     User mockUser = new User("mockUser");
     @Rule
     public CustomActivityTestRule<ProfileActivity> rule =
+
             new CustomActivityTestRule<>(ProfileActivity.class, true, true, mockUser);
     String mockUser2 = "magic johnson";
     String mockUser3 = "michael jordan";
+
 
     /**
      * Runs before all tests and creates solo instance.

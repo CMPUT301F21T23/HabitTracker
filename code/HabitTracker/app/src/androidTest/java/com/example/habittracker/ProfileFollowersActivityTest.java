@@ -34,6 +34,7 @@ public class ProfileFollowersActivityTest {
     public CustomActivityTestRule<ProfileActivity> rule =
             new CustomActivityTestRule<>(ProfileActivity.class, true, true, mockUser);
 
+
     /**
      * Runs before all tests and creates solo instance.
      * @throws Exception

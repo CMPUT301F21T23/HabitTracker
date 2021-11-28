@@ -19,6 +19,7 @@ import android.widget.Switch;
 
 import com.example.habittracker.Habit;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CustomDatePicker;
 import com.example.habittracker.utils.SharedInfo;
 
@@ -140,11 +141,15 @@ public class HabitInputFragment extends DialogFragment {
 
                         Bundle bundle = getArguments();
                         String oldTitle = null;
+                        int order = 0;
                         // editing case
                         if (bundle!= null) {
                             oldTitle = bundle.getString("old_habit_title");
+                            order = bundle.getInt("order");
                         }
-                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays, isPublic, SharedInfo.getInstance().getCurrentUser());
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays,0, order, isPublic, SharedInfo.getInstance().getCurrentUser());
+                        ProgressUpdater updater = new ProgressUpdater(habit);
+                        updater.update();
                         // todo: will have to make UI to make it public/private
 
                         listener.onOkPressed(habit, oldTitle);

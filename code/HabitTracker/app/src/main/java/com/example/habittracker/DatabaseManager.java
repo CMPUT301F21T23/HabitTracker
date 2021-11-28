@@ -215,7 +215,7 @@ public class DatabaseManager {
                                         @Override
                                         public void onSuccess(Void aVoid) {
                                             Log.d(DB_TAG,
-                                                    String.format("HabitEvent successfully created for Habit with title %s",
+                                                    String.format("Habit successfully updated for Habit with title %s",
                                                     title));
                                         }
                                     })
@@ -223,7 +223,7 @@ public class DatabaseManager {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             Log.d(DB_TAG,
-                                                    String.format("HabitEvent failed to be created for Habit with title %s",
+                                                    String.format("Habit failed to be updated for Habit with title %s",
                                                     title));
                                         }
                                     });
@@ -352,12 +352,12 @@ public class DatabaseManager {
                 });
     }
 
-     /**
-      *  Delete a habit event for a given habit
-      * @param userid        {@code String} User ID
-      * @param habitTitle    {@code String} Habit Title
-      * @param eventID       {@code String} Event ID
-      */
+    /**
+     *  Delete a habit event for a given habit
+     * @param userid        {@code String} User ID
+     * @param habitTitle    {@code String} Habit Title
+     * @param eventID       {@code String} Event ID
+     */
     public void deleteHabitEventDocument(String userid, String habitTitle, String eventID) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
         CollectionReference colRef = usersColRef
@@ -484,7 +484,7 @@ public class DatabaseManager {
         CollectionReference doc = usersColRef
                 .document(user)
                 .collection(habitsColName);
-        doc.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        doc.orderBy("order").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -493,6 +493,8 @@ public class DatabaseManager {
                         //Log.d("",""+doc.getData().get("whatDays")+"-----"+doc.getData().get("dateStarted"));
                         ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                         ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
+                        int progress = Long.valueOf((long)doc.getData().get("progress")).intValue();
+                        int order = Long.valueOf((long)doc.getData().get("order")).intValue();
                         Calendar cal = Calendar.getInstance();
                         if(dateArray == null || daysArray == null){
                             continue;
@@ -512,8 +514,11 @@ public class DatabaseManager {
                                 (String)doc.getData().get("reason"),
                                 date,
                                 daysArray,
+                                progress,
+                                order,
                                 shared,
                                 SharedInfo.getInstance().getCurrentUser()
+
                         ));
                     }
                     callback.onCallbackSuccess(habitArray);
@@ -531,15 +536,13 @@ public class DatabaseManager {
      * @param habit
      * @param callback
      */
-    public void getAllHabitEvents(String user, Habit habit, HabitEventListCallback callback) {
+    public void getAllHabitEvents(String user, String habit, HabitEventListCallback callback) {
         // Users -> userid (key) -> Habits -> habitTitle (key) -> HabitEvents
 //        DocumentReference habitDocRef = null;
         usersColRef
                 .document(user)
                 .collection(habitsColName)
-//                .document(habit.getTitle())
-
-                .whereEqualTo("title", habit.getTitle())
+                .whereEqualTo("title", habit)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -958,6 +961,7 @@ public class DatabaseManager {
                                     ArrayList<String> daysArray = (ArrayList<String>) doc.getData().get("whatDays");
                                     ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
                                     Long progress = (Long) doc.getData().get("progress");
+                                    Long order = (Long) doc.getData().get("order");
                                     Calendar cal = Calendar.getInstance();
                                     if(dateArray == null || daysArray == null){
                                         continue;
@@ -971,6 +975,8 @@ public class DatabaseManager {
                                             (String) doc.getData().get("reason"),
                                             date,
                                             daysArray,
+                                            progress.intValue(),
+                                            order.intValue(),
                                             true,
                                             new User(userid)
                                     );

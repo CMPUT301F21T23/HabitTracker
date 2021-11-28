@@ -233,7 +233,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
         DatabaseManager dm = DatabaseManager.get();
         CollectionReference colRef;
         eventDataList.clear();
-        dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), temp_h, new HabitEventListCallback() {
+        dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), temp_h.getTitle(), new HabitEventListCallback() {
             /**
              * Override onCallbackSuccess function to get all habit events from firestore
              * database
