@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -69,7 +70,7 @@ public class FollowingArrayAdapter extends ArrayAdapter<User> {
         Button unfollowButton = convertView.findViewById(R.id.unfollow);
         if (pendingStatus.get(user) == true) {
             // this user has not accepted the follow request yet - follow request pending
-            unfollowButton.setText("Cancel Request");
+            unfollowButton.setText(" Cancel ");
         }
 
         // either unfollow a user or cancel a follow request when the unfollow button is pressed
