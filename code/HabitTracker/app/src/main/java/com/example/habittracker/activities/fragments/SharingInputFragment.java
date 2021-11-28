@@ -94,6 +94,10 @@ public class SharingInputFragment extends DialogFragment {
                     inputName.setError("Username field cannot be empty");
                     return;
                 }
+                if (followUserid.equals(SharedInfo.getInstance().getCurrentUser().getUsername())) {
+                    inputName.setError("You can't follow yourself!");
+                    return;
+                }
                 Toast.makeText(getContext(), "Processing your request!", Toast.LENGTH_SHORT).show();
                 DatabaseManager.get().sendFollowRequest(
                         SharedInfo.getInstance().getCurrentUser().getUsername(),
