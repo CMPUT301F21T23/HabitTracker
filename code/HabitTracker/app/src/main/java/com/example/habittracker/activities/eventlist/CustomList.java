@@ -41,12 +41,12 @@ import androidx.annotation.RequiresApi;
 
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
+
+import java.util.ArrayList;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * This is the CustomList class that allows us to display multiple strings in one row of
@@ -69,7 +69,6 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         super(context,0, events);
         this.events = events;
         this.context = context;
-
         mStorage = FirebaseStorage.getInstance();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
     }
@@ -89,16 +88,13 @@ public class CustomList extends ArrayAdapter<HabitEvent> {
         if(view == null){
             view = LayoutInflater.from(context).inflate(R.layout.event_list, parent,false);
         }
-        HabitEvent tempEvent = events.get(position);
-        TextView Title = (TextView) view.findViewById(R.id.contentView);;
+        HabitEvent tempEvent =events.get(position);
         TextView startDate = (TextView) view.findViewById(R.id.dateView);;
-        Title.setText(tempEvent.getHabit());
         Log.d("eventID", String.valueOf(tempEvent.getEventId()));
         startDate.setText(arrayListToString(tempEvent.getStartDate()));
 
         ImageView event_image = (ImageView) view.findViewById(R.id.event_image);;
-//        event_image.setImageResource(R.drawable.riding);
-        //System.out.println("blah" + tempEvent.getImageUrl());
+        System.out.println("blahh" + tempEvent.getImageUrl());
         Picasso.with(getContext())
                 .load(tempEvent.getImageUrl())
                 .placeholder(R.mipmap.ic_launcher)
