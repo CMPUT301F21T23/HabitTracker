@@ -36,7 +36,7 @@ import java.util.HashMap;
 /**
  * Intent test for EventListActivity.
  */
-public class EventListTest {
+public class ImageTest {
     private Solo solo;
     public User mockUser = new User("mockUser");
 
@@ -59,14 +59,14 @@ public class EventListTest {
      * test EventListActivity
      */
     @Test
-    public void testEventListActivity() {
+    public void testUploadImage() {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.list));
         solo.assertCurrentActivity("Wrong Activity", ListActivity.class);
         assertTrue(solo.waitForText("All Habits", 1, 2000));
         solo.waitForText("habit", 1, 2000);
         ListActivity activity = (ListActivity) solo.getCurrentActivity();
-        final ListView HabitList = activity.getList(); // Get the listview
+        final ListView HabitList = activity.list; // Get the listview
         Habit habit = (Habit) HabitList.getItemAtPosition(0); // Get item from first position
         assertEquals("habit", habit.getTitle());
         solo.clickInList(1);
@@ -75,9 +75,8 @@ public class EventListTest {
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
 
         solo.clickOnView(solo.getView(R.id.add_event_button));
-        solo.goBack();
-        solo.clickInList(0);
-        solo.goBack();
+        solo.clickOnView(solo.getView(R.id.addPhoto));
+        solo.waitForText("Gallery", 1, 2000);
     }
 
     /**

@@ -33,9 +33,13 @@ import java.util.HashMap;
 public class ListActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
+
     private ListView list = null;
     private CustomHabitList habitAdapter;
 
+    public ListView getList() {
+        return list;
+    }
 
     // constant
     static final String EXTRA_HABIT = "habit";

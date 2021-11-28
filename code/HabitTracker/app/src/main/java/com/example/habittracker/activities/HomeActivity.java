@@ -67,20 +67,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        Button event_list_button = findViewById(R.id.follow_button);
-        event_list_button.setOnClickListener(new View.OnClickListener() {
-
-            /**
-             * Performs an action (takes user to event list ivew) when milestone button is pressed.
-             * @param view  {@code View} the view that was pressed
-             */
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
-                startActivity(intent);
-            }
-        });
-
         // snapshot
         DatabaseManager.get().getAllHabits(
                 SharedInfo.getInstance().getCurrentUser().getUsername(),

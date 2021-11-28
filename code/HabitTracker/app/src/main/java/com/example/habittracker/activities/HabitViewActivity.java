@@ -23,6 +23,7 @@ import com.example.habittracker.Habit;
 import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.activities.tracking.ProgressUtil;
 import com.example.habittracker.utils.HabitEventListCallback;
@@ -166,6 +167,23 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("habit", habit);
                 bundle.putString("user",SharedInfo.getInstance().getCurrentUser().getUsername());
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
+        Button seeEventsButton = findViewById(R.id.see_event_button);
+        seeEventsButton.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Performs an action (moves user to events list) when the event button is clicked
+             * @para view {@code view}  the view that was clicked, the progress button view.
+             */
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", habit);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
