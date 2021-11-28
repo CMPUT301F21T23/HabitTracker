@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -77,6 +78,7 @@ public class FollowingArrayAdapter extends ArrayAdapter<User> {
         unfollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(getContext(), "Processing your request!", Toast.LENGTH_SHORT).show();
                 DatabaseManager.get().unfollowUser(SharedInfo.getInstance().getCurrentUser().getUsername(),
                         user.getUsername(),
                         pendingStatus.get(user),
@@ -92,6 +94,7 @@ public class FollowingArrayAdapter extends ArrayAdapter<User> {
                             @Override
                             public void onCallbackFailure(String reason) {
                                 Log.d(TAG, reason);
+                                Toast.makeText(getContext(), "Failed to unfollow " + user.getUsername(), Toast.LENGTH_SHORT).show();
                             }
                         }
                 );

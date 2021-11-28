@@ -741,7 +741,7 @@ public class DatabaseManager {
     }
 
     /**
-     * Unfollows a particular user.
+     * Unfollows a particular user or cancels a follow request to a user.
      * @param currentUserId {@code String} Current user's id
      * @param requestid     {@code String} The user to be unfollowed
      * @param pending       {@code Boolean} true if follow request is still pending, false otherwise
@@ -757,24 +757,92 @@ public class DatabaseManager {
         removeUserListItem(currentUserId, requestid, field, new UserListOperationCallback() {
             @Override
             public void onCallbackSuccess(String userid) {
+                String field2;
                 if (pending) {
-                    // also need to remove userid from the pendingFollowerReqs of requestid
-                    removeUserListItem(requestid, currentUserId, "pendingFollowerReqs",
-                            new UserListOperationCallback() {
-                                @Override
-                                public void onCallbackSuccess(String userid) {
-                                    callback.onCallbackSuccess(userid);
-                                }
-
-                                @Override
-                                public void onCallbackFailure(String reason) {
-                                    callback.onCallbackFailure(reason);
-                                }
-                            });
+                    // need to remove currentUserId from the pendingFollowerReqs of requestid
+                    field2 = "pendingFollowerReqs";
                 } else {
-                    callback.onCallbackSuccess(userid);
+                    // need to remove currentUserId from the followers list of requestid
+                    field2 = "followers";
                 }
+                removeUserListItem(requestid, currentUserId, field2,
+                        new UserListOperationCallback() {
+                            @Override
+                            public void onCallbackSuccess(String userid) {
+                                callback.onCallbackSuccess(userid);
+                            }
+                            @Override
+                            public void onCallbackFailure(String reason) {
+                                callback.onCallbackFailure(reason);
+                            }
+                        });
             }
+            @Override
+            public void onCallbackFailure(String reason) {
+                callback.onCallbackFailure(reason);
+            }
+        });
+    }
+
+    /**
+     * Removes a follower from the list of the current user's followers.
+     * @param currentUserId         {@code String} The current user's id
+     * @param requestid             {@code String} Id of the follower to be removed
+     * @param callback              {@code UserListOperationCallback} Callback object
+     */
+    public void removeFollower(String currentUserId, String requestid, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(currentUserId);
+        // remove requestid from the followers list of currentUserId
+        removeUserListItem(currentUserId, requestid, "followers", new UserListOperationCallback() {
+            @Override
+            public void onCallbackSuccess(String userid) {
+                // need to remove currentUserId from following list of request id
+                removeUserListItem(requestid, currentUserId, "following", new UserListOperationCallback() {
+                    @Override
+                    public void onCallbackSuccess(String userid) {
+                        callback.onCallbackSuccess(userid);
+                    }
+
+                    @Override
+                    public void onCallbackFailure(String reason) {
+                        callback.onCallbackFailure(reason);
+                    }
+                });
+            }
+
+            @Override
+            public void onCallbackFailure(String reason) {
+                callback.onCallbackFailure(reason);
+            }
+        });
+    }
+
+    /**
+     * Declines a follow request.
+     * @param currentUserId         {@code String} The current user's id
+     * @param requestid             {@code String} The requester's id
+     * @param callback              {@code UserListOperationCallback} Callback object
+     */
+    public void declineFollowRequest(String currentUserId, String requestid, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(currentUserId);
+        // remove requestid from the pending requests list of currentUserId
+        removeUserListItem(currentUserId, requestid, "pendingFollowerReqs", new UserListOperationCallback() {
+            @Override
+            public void onCallbackSuccess(String userid) {
+                // remove currentUserId from pendingFollowReqs list of requestid
+                removeUserListItem(requestid, currentUserId, "pendingFollowReqs", new UserListOperationCallback() {
+                    @Override
+                    public void onCallbackSuccess(String userid) {
+                        callback.onCallbackSuccess(userid);
+                    }
+
+                    @Override
+                    public void onCallbackFailure(String reason) {
+                        callback.onCallbackFailure(reason);
+                    }
+                });
+            }
+
             @Override
             public void onCallbackFailure(String reason) {
                 callback.onCallbackFailure(reason);
@@ -809,19 +877,35 @@ public class DatabaseManager {
 
     /**
      * Accepts a follow request for a user.
-     * @param userid            {@code String} The current user's id
+     * @param currentUserId     {@code String} The current user's id
      * @param requestid         {@code String} The user id of the person who sent the follow request
      * @param callback          {@code UserListOperationCallback} Callback objects
      */
-    public void acceptFollowRequest(String userid, String requestid, UserListOperationCallback callback) {
-        DocumentReference docRef = usersColRef.document(userid);
+    public void acceptFollowRequest(String currentUserId, String requestid, UserListOperationCallback callback) {
+        DocumentReference docRef = usersColRef.document(currentUserId);
         // remove the user from 'pendingFollowerReqs' and add them to 'followers'
         docRef.update("pendingFollowerReqs", FieldValue.arrayRemove(requestid),
                 "followers", FieldValue.arrayUnion(requestid))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        callback.onCallbackSuccess(requestid);
+                        // remove currentUserId from pendingFollowReqs of requestid and add it
+                        // to the following list of requestid
+                        DocumentReference docRef2 = usersColRef.document(requestid);
+                        docRef2.update("pendingFollowReqs", FieldValue.arrayRemove(currentUserId),
+                                "following", FieldValue.arrayUnion(currentUserId))
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        callback.onCallbackSuccess(requestid);
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        callback.onCallbackFailure(e.toString());
+                                    }
+                                });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
