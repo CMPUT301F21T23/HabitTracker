@@ -20,7 +20,7 @@
         android:paddingStart="0dp"
         android:text="Follower"
         android:maxLines="1"
-        android:maxEms="6"
+        android:maxEms="5"
         android:ellipsize="end"
         android:textSize="20sp" />
 
@@ -34,6 +34,7 @@
         android:id="@+id/accept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
         android:text="Accept"
         android:textSize="10sp" />
 
@@ -41,6 +42,7 @@
         android:id="@+id/decline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
         android:backgroundTint="@color/spotify_comp"
         android:text="Decline"
         android:textSize="10sp" />
