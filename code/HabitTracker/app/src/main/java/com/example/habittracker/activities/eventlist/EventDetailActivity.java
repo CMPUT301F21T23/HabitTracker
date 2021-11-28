@@ -86,7 +86,8 @@ public class EventDetailActivity extends AppCompatActivity {
 
     /**
      * Override onCreate method to populate settings for this detail view screen
-     * @param savedInstanceState
+     * @param savedInstanceState {@code savedInstanceState} the bundle passed from
+     *                                                     HabitListActivity
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +150,7 @@ public class EventDetailActivity extends AppCompatActivity {
         delete_bt.setOnClickListener(new View.OnClickListener() {
             /**
              * implement actions after clicking delete button
-             * @param v
+             * @param v {@code v}  the view that was clicked, the delete button view.
              */
             @Override
             public void onClick(View v) {
@@ -169,7 +170,7 @@ public class EventDetailActivity extends AppCompatActivity {
         selectPhoto.setOnClickListener(new View.OnClickListener() {
             /**
              * implement actions after clicking add photo button
-             * @param v
+             * @param v {@code v} the view that was clicked, the selectPhoto button view.
              */
             @Override
             public void onClick(View v) {
@@ -206,7 +207,7 @@ public class EventDetailActivity extends AppCompatActivity {
         edit_bt.setOnClickListener(new View.OnClickListener() {
             /**
              * implement actions after click edit button
-             * @param v
+             * @param v {@code v} the view that was clicked, the edit button view.
              */
             @Override
             public void onClick(View v) {
@@ -223,7 +224,7 @@ public class EventDetailActivity extends AppCompatActivity {
                 cancel_bt.setOnClickListener(new View.OnClickListener() {
                     /**
                      * implement actions after clicking cancel button
-                     * @param v
+                     * @param v {@code v} the view that was clicked, the cancel button view.
                      */
                     @Override
                     public void onClick(View v) {
@@ -242,7 +243,7 @@ public class EventDetailActivity extends AppCompatActivity {
                 confirm_bt.setOnClickListener(new View.OnClickListener() {
                     /**
                      * implement actions after clicking confirm button
-                     * @param v
+                     * @param v {@code v} the view that was clicked, the confirm button view.
                      */
                     @Override
                     public void onClick(View v) {
@@ -272,7 +273,7 @@ public class EventDetailActivity extends AppCompatActivity {
         add_bt.setOnClickListener(new View.OnClickListener() {
             /**
              * implement actions after clicking add button
-             * @param v
+             * @param v {@code v} the view that was clicked, the add button view.
              */
             @Override
             public void onClick(View v) {
