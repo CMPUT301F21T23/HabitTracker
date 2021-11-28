@@ -12,4 +12,5 @@
     <color name="delete_red">#D54C42</color>
     <color name="grey_1">#77777777</color>
     <color name="circle_grey">#666666</color>
+    <color name="progress_bar_overall">#23A0FF</color>
 </resources>

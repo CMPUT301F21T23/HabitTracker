@@ -24,6 +24,7 @@ public class HabitTest {
                 "It makes me happy",
                 currentDate,
                 weekDays,
+                0,0,
                 true,
                 mockUser
                 );
@@ -92,10 +93,11 @@ public class HabitTest {
         dateAsList.add(cal.get(Calendar.DAY_OF_MONTH));
         expected.put("dateStarted", dateAsList);
 
-        expected.put("isPublic", true);
         expected.put("whatDays", weekDays);
         expected.put("progress", 0); // provisional
+        expected.put("isPublic", true);
         expected.put("title", "Paint");
+        expected.put("order", 0);
 
         // the function to test
         HashMap<String, Object> test =  habit.toDocument();

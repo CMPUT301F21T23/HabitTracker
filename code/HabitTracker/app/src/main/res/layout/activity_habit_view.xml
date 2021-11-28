@@ -7,105 +7,105 @@
     android:layout_height="match_parent"
     tools:context=".HabitActivity">
 
-        <TextView
-            android:id="@+id/habitTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:text="Brush my Teeth"
-            android:gravity="center"
-            android:textColor="@color/spotify"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:shadowColor="@color/black"
-            android:shadowRadius="2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-        <View
-            android:id="@+id/separator"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            app:layout_constraintTop_toBottomOf="@id/habitTitle"
-            android:background="@android:color/darker_gray"/>
+    <TextView
+        android:id="@+id/habitTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="Brush my Teeth"
+        android:gravity="center"
+        android:textColor="@color/spotify"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:shadowColor="@color/black"
+        android:shadowRadius="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        app:layout_constraintTop_toBottomOf="@id/habitTitle"
+        android:background="@android:color/darker_gray"/>
 
-        <ScrollView
-            android:id="@+id/scrollView2"
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/separator"
+        app:layout_constraintBottom_toTopOf="@id/editBtn"
+        >
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/separator"
-            app:layout_constraintBottom_toTopOf="@id/editBtn"
-            >
+            android:layout_height="wrap_content"
+            android:paddingBottom="50dp"
+            android:orientation="vertical">
+
+
             <LinearLayout
+                android:id="@+id/date_holder"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:paddingLeft="@dimen/ic_left_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="50dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-
-                <LinearLayout
-                    android:id="@+id/date_holder"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp"
-                    android:paddingLeft="@dimen/ic_left_margin"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        app:tint="#0F9D76"
-                        app:srcCompat="@android:drawable/ic_menu_today" />
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="MONDAY, NOV 23, 2020"
-                        android:gravity="center"
-                        android:textSize="19sp"/>
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/separator2"
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    app:layout_constraintTop_toBottomOf="@id/date_holder"
-                    android:background="@android:color/darker_gray"/>
-
+                    android:layout_marginRight="10dp"
+                    app:tint="#0F9D76"
+                    app:srcCompat="@android:drawable/ic_menu_today" />
                 <TextView
-                    android:id="@+id/reason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/ic_left_margin"
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="MONDAY, NOV 23, 2020"
+                    android:gravity="center"
+                    android:textSize="19sp"/>
+            </LinearLayout>
 
-                    android:paddingTop="10dp"
-                    android:textStyle="bold"
-                    android:text="Reason"
-                    android:textColor="@color/spotify_comp"
-                    android:textAlignment="gravity"
-                    android:textSize="20sp" />
+            <View
+                android:id="@+id/separator2"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:layout_constraintTop_toBottomOf="@id/date_holder"
+                android:background="@android:color/darker_gray"/>
 
-                <TextView
-                    android:id="@+id/habitReason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/ic_left_margin"
-                    android:paddingBottom="10dp"
-                    android:text="To avoid gingivitis"
-                    android:gravity="center_vertical"
-                    android:textSize="19sp" />
+            <TextView
+                android:id="@+id/reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/ic_left_margin"
 
-                <View
-                    android:id="@+id/separator3"
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    app:layout_constraintTop_toBottomOf="@id/habitReason"
-                    android:layout_marginBottom="10dp"
-                    android:background="@android:color/darker_gray"/>
+                android:paddingTop="10dp"
+                android:textStyle="bold"
+                android:text="Reason"
+                android:textColor="@color/spotify_comp"
+                android:textAlignment="gravity"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/habitReason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/ic_left_margin"
+                android:paddingBottom="10dp"
+                android:text="To avoid gingivitis"
+                android:gravity="center_vertical"
+                android:textSize="19sp" />
+
+            <View
+                android:id="@+id/separator3"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:layout_constraintTop_toBottomOf="@id/habitReason"
+                android:layout_marginBottom="10dp"
+                android:background="@android:color/darker_gray"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -177,388 +177,387 @@
 
             </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:paddingStart="@dimen/ic_left_margin"
-                    android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:paddingStart="@dimen/ic_left_margin"
+                android:orientation="horizontal">
 
 
-                    <Button
-                        android:id="@+id/mon"
-                        android:layout_width="@dimen/date_circle_dim"
-                        android:layout_height="@dimen/date_circle_dim"
-                        android:adjustViewBounds="true"
-                        android:background="@drawable/ic_circle_background"
-                        android:clickable="false"
-                        android:minHeight="48dp"
-                        android:scaleType="fitXY"
-                        android:text="Mon"
-                        android:textSize="11sp"
-                        app:backgroundTint="@color/grey_1"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        >
-                    </View>
-
-                    <Button
-                        android:id="@+id/wed"
-                        android:layout_width="@dimen/date_circle_dim"
-                        android:layout_height="@dimen/date_circle_dim"
-                        android:adjustViewBounds="true"
-                        android:background="@drawable/ic_circle_background"
-                        android:clickable="false"
-                        android:minHeight="48dp"
-                        android:scaleType="fitXY"
-                        android:text="Wed"
-                        android:textSize="11sp"
-                        app:backgroundTint="@color/grey_1"
-                        app:layout_constraintStart_toStartOf="parent" />
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        >
-                    </View>
-
-                    <Button
-                        android:id="@+id/fri"
-                        android:layout_width="@dimen/date_circle_dim"
-                        android:layout_height="@dimen/date_circle_dim"
-                        android:adjustViewBounds="true"
-                        android:background="@drawable/ic_circle_background"
-                        android:clickable="false"
-                        android:minHeight="48dp"
-                        android:scaleType="fitXY"
-
-                        android:text="Fri"
-                        android:textSize="11sp"
-                        app:backgroundTint="@color/grey_1"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        >
-                    </View>
-                    <Button
-                        android:id="@+id/sun"
-                        android:layout_width="@dimen/date_circle_dim"
-                        android:layout_height="@dimen/date_circle_dim"
-                        android:adjustViewBounds="true"
-                        android:background="@drawable/ic_circle_background"
-                        android:clickable="false"
-                        android:minHeight="48dp"
-                        android:scaleType="fitXY"
-                        android:textSize="11sp"
-                        android:text="Sun"
-                        app:backgroundTint="@color/grey_1"
-                        app:layout_constraintStart_toStartOf="parent" />
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        >
-                    </View>
-                </LinearLayout>
-
-
-
-<!--code to make it into a scrollview rather than a honeycomb-->
-<!--                <HorizontalScrollView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:padding="@dimen/ic_left_margin">-->
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="81dp"-->
-<!--                        android:layout_marginBottom="10dp"-->
-<!--                        android:orientation="horizontal">-->
-
-<!--                        <Button-->
-<!--                            android:id="@+id/mon"-->
-<!--                            android:layout_width="@dimen/date_circle_dim"-->
-<!--                            android:layout_height="@dimen/date_circle_dim"-->
-<!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/ic_circle_background"-->
-<!--                            android:clickable="false"-->
-<!--                            android:minHeight="48dp"-->
-<!--                            android:scaleType="fitXY"-->
-<!--                            android:text="Mon"-->
-<!--                            android:textSize="11sp"-->
-<!--                            app:backgroundTint="@color/grey_1"-->
-<!--                            app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--                        <Button-->
-<!--                            android:id="@+id/tue"-->
-<!--                            android:layout_width="@dimen/date_circle_dim"-->
-<!--                            android:layout_height="@dimen/date_circle_dim"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/ic_circle_background"-->
-<!--                            android:clickable="false"-->
-<!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
-<!--                            android:minHeight="48dp"-->
-<!--                            android:scaleType="fitXY"-->
-<!--                            android:text="Tue"-->
-<!--                            android:textSize="11sp"-->
-<!--                            app:backgroundTint="@color/grey_1"-->
-<!--                            app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--                        <Button-->
-<!--                            android:id="@+id/wed"-->
-<!--                            android:layout_width="@dimen/date_circle_dim"-->
-<!--                            android:layout_height="@dimen/date_circle_dim"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/ic_circle_background"-->
-<!--                            android:clickable="false"-->
-<!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
-<!--                            android:minHeight="48dp"-->
-<!--                            android:scaleType="fitXY"-->
-<!--                            android:text="Wed"-->
-<!--                            android:textSize="11sp"-->
-<!--                            app:backgroundTint="@color/grey_1"-->
-<!--                            app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--                        <Button-->
-<!--                            android:id="@+id/thu"-->
-<!--                            android:layout_width="@dimen/date_circle_dim"-->
-<!--                            android:layout_height="@dimen/date_circle_dim"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/ic_circle_background"-->
-<!--                            android:clickable="false"-->
-<!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
-<!--                            android:minHeight="48dp"-->
-<!--                            android:scaleType="fitXY"-->
-<!--                            android:text="Thu"-->
-<!--                            android:textSize="11sp"-->
-<!--                            app:backgroundTint="@color/grey_1"-->
-<!--                            app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--                        <Button-->
-<!--                            android:id="@+id/fri"-->
-<!--                            android:layout_width="@dimen/date_circle_dim"-->
-<!--                            android:layout_height="@dimen/date_circle_dim"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/ic_circle_background"-->
-<!--                            android:clickable="false"-->
-<!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
-<!--                            android:minHeight="48dp"-->
-<!--                            android:scaleType="fitXY"-->
-<!--                            android:text="Fri"-->
-<!--                            android:textSize="11sp"-->
-<!--                            app:backgroundTint="@color/grey_1"-->
-<!--                            app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--                        <Button-->
-<!--                            android:id="@+id/sat"-->
-<!--                            android:layout_width="@dimen/date_circle_dim"-->
-<!--                            android:layout_height="@dimen/date_circle_dim"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/ic_circle_background"-->
-<!--                            android:clickable="false"-->
-<!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
-<!--                            android:minHeight="48dp"-->
-<!--                            android:scaleType="fitXY"-->
-<!--                            android:text="Sat"-->
-<!--                            android:textSize="11sp"-->
-<!--                            app:backgroundTint="@color/grey_1"-->
-<!--                            app:layout_constraintStart_toStartOf="parent" />-->
-
-<!--                        <Button-->
-<!--                            android:id="@+id/sun"-->
-<!--                            android:layout_width="@dimen/date_circle_dim"-->
-<!--                            android:layout_height="@dimen/date_circle_dim"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/ic_circle_background"-->
-<!--                            android:clickable="false"-->
-<!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
-<!--                            android:minHeight="48dp"-->
-<!--                            android:scaleType="fitXY"-->
-<!--                            android:textSize="11sp"-->
-<!--                            android:text="Sun"-->
-<!--                            app:backgroundTint="@color/grey_1"-->
-<!--                            app:layout_constraintStart_toStartOf="parent" />-->
-<!--                    </LinearLayout>-->
-<!--                </HorizontalScrollView>-->
+                <Button
+                    android:id="@+id/mon"
+                    android:layout_width="@dimen/date_circle_dim"
+                    android:layout_height="@dimen/date_circle_dim"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/ic_circle_background"
+                    android:clickable="false"
+                    android:minHeight="48dp"
+                    android:scaleType="fitXY"
+                    android:text="Mon"
+                    android:textSize="11sp"
+                    app:backgroundTint="@color/grey_1"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <View
-                    android:id="@+id/separator4"
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    app:layout_constraintBottom_toTopOf="@id/extra"
-                    android:background="@android:color/darker_gray"/>
-
-                <LinearLayout
-                    android:id="@+id/see_more"
-                    android:layout_width="match_parent"
-                    android:paddingTop="10dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:weightSum="6"
-                    android:paddingLeft="@dimen/ic_left_margin"
-                    android:orientation="horizontal">
+                    android:layout_weight="1"
+                    >
+                </View>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_weight="1.5"
-                        android:layout_height="match_parent">
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-
-                        android:layout_weight="0.1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-
-                        <ImageView
-                            android:id="@+id/imageView3"
-                            android:paddingLeft="5dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            app:tint="@color/spotify_comp"
-                            android:scaleType="fitXY"
-                            android:alpha=".75"
-                            app:srcCompat="@drawable/stats" />
-
-                        <Button
-                            android:id="@+id/see_progress_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Statistics"
-                            app:layout_constraintStart_toStartOf="parent">
-                        </Button>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_weight="1.5"
-                        android:layout_height="match_parent">
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:id="@+id/imageView4"
-                            android:layout_width="match_parent"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
-                            android:alpha=".75"
-                            app:tint="@color/spotify_comp"
-                            android:layout_height="wrap_content"
-                            app:srcCompat="@drawable/notebook_event" />
-
-                        <Button
-                            android:id="@+id/see_events_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Events"
-                            app:layout_constraintStart_toStartOf="parent">
-                        </Button>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_weight="1.5"
-                        android:layout_height="match_parent">
-                    </LinearLayout>
-
-                </LinearLayout>
+                <Button
+                    android:id="@+id/wed"
+                    android:layout_width="@dimen/date_circle_dim"
+                    android:layout_height="@dimen/date_circle_dim"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/ic_circle_background"
+                    android:clickable="false"
+                    android:minHeight="48dp"
+                    android:scaleType="fitXY"
+                    android:text="Wed"
+                    android:textSize="11sp"
+                    app:backgroundTint="@color/grey_1"
+                    app:layout_constraintStart_toStartOf="parent" />
                 <View
-                    android:id="@+id/separator5"
-                    android:layout_width="match_parent"
-                    android:layout_height="3dp"
-                    app:layout_constraintBottom_toTopOf="@id/extra"
-                    android:background="@android:color/darker_gray"/>
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    >
+                </View>
+
+                <Button
+                    android:id="@+id/fri"
+                    android:layout_width="@dimen/date_circle_dim"
+                    android:layout_height="@dimen/date_circle_dim"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/ic_circle_background"
+                    android:clickable="false"
+                    android:minHeight="48dp"
+                    android:scaleType="fitXY"
+
+                    android:text="Fri"
+                    android:textSize="11sp"
+                    app:backgroundTint="@color/grey_1"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    >
+                </View>
+                <Button
+                    android:id="@+id/sun"
+                    android:layout_width="@dimen/date_circle_dim"
+                    android:layout_height="@dimen/date_circle_dim"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/ic_circle_background"
+                    android:clickable="false"
+                    android:minHeight="48dp"
+                    android:scaleType="fitXY"
+                    android:textSize="11sp"
+                    android:text="Sun"
+                    app:backgroundTint="@color/grey_1"
+                    app:layout_constraintStart_toStartOf="parent" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    >
+                </View>
+            </LinearLayout>
+
+
+
+            <!--code to make it into a scrollview rather than a honeycomb-->
+            <!--                <HorizontalScrollView-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:padding="@dimen/ic_left_margin">-->
+
+            <!--                    <LinearLayout-->
+            <!--                        android:layout_width="match_parent"-->
+            <!--                        android:layout_height="81dp"-->
+            <!--                        android:layout_marginBottom="10dp"-->
+            <!--                        android:orientation="horizontal">-->
+
+            <!--                        <Button-->
+            <!--                            android:id="@+id/mon"-->
+            <!--                            android:layout_width="@dimen/date_circle_dim"-->
+            <!--                            android:layout_height="@dimen/date_circle_dim"-->
+            <!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
+            <!--                            android:adjustViewBounds="true"-->
+            <!--                            android:background="@drawable/ic_circle_background"-->
+            <!--                            android:clickable="false"-->
+            <!--                            android:minHeight="48dp"-->
+            <!--                            android:scaleType="fitXY"-->
+            <!--                            android:text="Mon"-->
+            <!--                            android:textSize="11sp"-->
+            <!--                            app:backgroundTint="@color/grey_1"-->
+            <!--                            app:layout_constraintStart_toStartOf="parent" />-->
+
+            <!--                        <Button-->
+            <!--                            android:id="@+id/tue"-->
+            <!--                            android:layout_width="@dimen/date_circle_dim"-->
+            <!--                            android:layout_height="@dimen/date_circle_dim"-->
+            <!--                            android:adjustViewBounds="true"-->
+            <!--                            android:background="@drawable/ic_circle_background"-->
+            <!--                            android:clickable="false"-->
+            <!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
+            <!--                            android:minHeight="48dp"-->
+            <!--                            android:scaleType="fitXY"-->
+            <!--                            android:text="Tue"-->
+            <!--                            android:textSize="11sp"-->
+            <!--                            app:backgroundTint="@color/grey_1"-->
+            <!--                            app:layout_constraintStart_toStartOf="parent" />-->
+
+            <!--                        <Button-->
+            <!--                            android:id="@+id/wed"-->
+            <!--                            android:layout_width="@dimen/date_circle_dim"-->
+            <!--                            android:layout_height="@dimen/date_circle_dim"-->
+            <!--                            android:adjustViewBounds="true"-->
+            <!--                            android:background="@drawable/ic_circle_background"-->
+            <!--                            android:clickable="false"-->
+            <!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
+            <!--                            android:minHeight="48dp"-->
+            <!--                            android:scaleType="fitXY"-->
+            <!--                            android:text="Wed"-->
+            <!--                            android:textSize="11sp"-->
+            <!--                            app:backgroundTint="@color/grey_1"-->
+            <!--                            app:layout_constraintStart_toStartOf="parent" />-->
+
+            <!--                        <Button-->
+            <!--                            android:id="@+id/thu"-->
+            <!--                            android:layout_width="@dimen/date_circle_dim"-->
+            <!--                            android:layout_height="@dimen/date_circle_dim"-->
+            <!--                            android:adjustViewBounds="true"-->
+            <!--                            android:background="@drawable/ic_circle_background"-->
+            <!--                            android:clickable="false"-->
+            <!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
+            <!--                            android:minHeight="48dp"-->
+            <!--                            android:scaleType="fitXY"-->
+            <!--                            android:text="Thu"-->
+            <!--                            android:textSize="11sp"-->
+            <!--                            app:backgroundTint="@color/grey_1"-->
+            <!--                            app:layout_constraintStart_toStartOf="parent" />-->
+
+            <!--                        <Button-->
+            <!--                            android:id="@+id/fri"-->
+            <!--                            android:layout_width="@dimen/date_circle_dim"-->
+            <!--                            android:layout_height="@dimen/date_circle_dim"-->
+            <!--                            android:adjustViewBounds="true"-->
+            <!--                            android:background="@drawable/ic_circle_background"-->
+            <!--                            android:clickable="false"-->
+            <!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
+            <!--                            android:minHeight="48dp"-->
+            <!--                            android:scaleType="fitXY"-->
+            <!--                            android:text="Fri"-->
+            <!--                            android:textSize="11sp"-->
+            <!--                            app:backgroundTint="@color/grey_1"-->
+            <!--                            app:layout_constraintStart_toStartOf="parent" />-->
+
+            <!--                        <Button-->
+            <!--                            android:id="@+id/sat"-->
+            <!--                            android:layout_width="@dimen/date_circle_dim"-->
+            <!--                            android:layout_height="@dimen/date_circle_dim"-->
+            <!--                            android:adjustViewBounds="true"-->
+            <!--                            android:background="@drawable/ic_circle_background"-->
+            <!--                            android:clickable="false"-->
+            <!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
+            <!--                            android:minHeight="48dp"-->
+            <!--                            android:scaleType="fitXY"-->
+            <!--                            android:text="Sat"-->
+            <!--                            android:textSize="11sp"-->
+            <!--                            app:backgroundTint="@color/grey_1"-->
+            <!--                            app:layout_constraintStart_toStartOf="parent" />-->
+
+            <!--                        <Button-->
+            <!--                            android:id="@+id/sun"-->
+            <!--                            android:layout_width="@dimen/date_circle_dim"-->
+            <!--                            android:layout_height="@dimen/date_circle_dim"-->
+            <!--                            android:adjustViewBounds="true"-->
+            <!--                            android:background="@drawable/ic_circle_background"-->
+            <!--                            android:clickable="false"-->
+            <!--                            android:layout_marginEnd="@dimen/ic_left_margin"-->
+            <!--                            android:minHeight="48dp"-->
+            <!--                            android:scaleType="fitXY"-->
+            <!--                            android:textSize="11sp"-->
+            <!--                            android:text="Sun"-->
+            <!--                            app:backgroundTint="@color/grey_1"-->
+            <!--                            app:layout_constraintStart_toStartOf="parent" />-->
+            <!--                    </LinearLayout>-->
+            <!--                </HorizontalScrollView>-->
+
+            <View
+                android:id="@+id/separator4"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:layout_constraintBottom_toTopOf="@id/extra"
+                android:background="@android:color/darker_gray"/>
+
+            <LinearLayout
+                android:id="@+id/see_more"
+                android:layout_width="match_parent"
+                android:paddingTop="10dp"
+                android:layout_height="wrap_content"
+                android:weightSum="6"
+                android:paddingLeft="@dimen/ic_left_margin"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:id="@+id/extra"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1.5"
+                    android:layout_height="match_parent">
+                </LinearLayout>
 
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/switch1"
-                        android:clickable="false"
-                        android:fontFamily="sans-serif"
-                        android:textSize="20sp"
-                        android:textColor="@color/spotify_comp"
-                        android:textStyle="bold"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+
+                    android:layout_weight="0.1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+
+                    <ImageView
+                        android:id="@+id/imageView3"
+                        android:paddingLeft="5dp"
                         android:layout_width="match_parent"
-                        android:layout_marginLeft="@dimen/ic_left_margin"
-                        android:layout_marginRight="@dimen/ic_left_margin"
                         android:layout_height="wrap_content"
-                        android:text="Share Habit" />
+                        android:adjustViewBounds="true"
+                        app:tint="@color/spotify_comp"
+                        android:scaleType="fitXY"
+                        android:alpha=".75"
+                        app:srcCompat="@drawable/stats" />
 
+                    <Button
+                        android:id="@+id/see_progress_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Statistics"
+                        app:layout_constraintStart_toStartOf="parent">
+                    </Button>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1.5"
+                    android:layout_height="match_parent">
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/imageView4"
+                        android:layout_width="match_parent"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:alpha=".75"
+                        app:tint="@color/spotify_comp"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/notebook_event" />
+
+                    <Button
+                        android:id="@+id/see_event_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Events"
+                        app:layout_constraintStart_toStartOf="parent">
+                    </Button>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1.5"
+                    android:layout_height="match_parent">
                 </LinearLayout>
 
             </LinearLayout>
+            <View
+                android:id="@+id/separator5"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                app:layout_constraintBottom_toTopOf="@id/extra"
+                android:background="@android:color/darker_gray"/>
 
-        </ScrollView>
+            <LinearLayout
+                android:id="@+id/extra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/filler"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollView2"></LinearLayout>
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switch1"
+                    android:clickable="false"
+                    android:fontFamily="sans-serif"
+                    android:textSize="20sp"
+                    android:textColor="@color/spotify_comp"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="70dp"
+                    android:layout_marginRight="70dp"
+                    android:layout_height="wrap_content"
+                    android:text="Share Habit" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            app:itemIconSize="35dp"
-            app:itemIconTint="@color/bottom_nav_foreground"
-            app:itemTextColor="#151515"
-            app:labelVisibilityMode="labeled"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/scrollView2"
-            app:menu="@menu/bottom_nav_menu" />
+            </LinearLayout>
 
-        <Button
-            android:id="@+id/deleteBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/spotify_comp"
-            android:text="DELETE"
+        </LinearLayout>
 
-            app:layout_constraintBaseline_toBaselineOf="@+id/editBtn"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/editBtn" />
+    </ScrollView>
 
-        <Button
-            android:id="@+id/editBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="EDIT"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+    <LinearLayout
+        android:id="@+id/filler"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView2"></LinearLayout>
 
-            app:layout_constraintLeft_toRightOf="@id/deleteBtn"
-            app:layout_constraintRight_toRightOf="parent"
-            />
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        app:itemIconSize="35dp"
+        app:itemIconTint="@color/bottom_nav_foreground"
+        app:itemTextColor="#151515"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/scrollView2"
+        app:menu="@menu/bottom_nav_menu" />
 
+    <Button
+        android:id="@+id/deleteBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/spotify_comp"
+        android:text="DELETE"
+
+        app:layout_constraintBaseline_toBaselineOf="@+id/editBtn"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/editBtn" />
+
+    <Button
+        android:id="@+id/editBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="EDIT"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+
+        app:layout_constraintLeft_toRightOf="@id/deleteBtn"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

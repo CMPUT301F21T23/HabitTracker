@@ -5,25 +5,36 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
+import android.graphics.drawable.RotateDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
 import com.example.habittracker.DatabaseManager;
 
 import com.example.habittracker.Habit;
+import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
+import com.example.habittracker.activities.tracking.ProgressUtil;
+import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -108,6 +119,7 @@ public class HabitViewActivity extends AppCompatActivity {
         }
 
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
+
         Button editButton = findViewById(R.id.editBtn);
         editButton.setOnClickListener(new View.OnClickListener() {
 
@@ -165,6 +177,22 @@ public class HabitViewActivity extends AppCompatActivity {
             onOkPressed(habit, oldTitle);
         }
 
+        Button seeEventsButton = findViewById(R.id.see_event_button);
+        seeEventsButton.setOnClickListener(new View.OnClickListener() {
+
+            /**
+             * Performs an action (moves user to events list) when the event button is clicked
+             * @para view {@code view}  the view that was clicked, the progress button view.
+             */
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("habit", habit);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     /**

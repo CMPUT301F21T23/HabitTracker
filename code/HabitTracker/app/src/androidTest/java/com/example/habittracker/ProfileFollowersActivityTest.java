@@ -11,6 +11,7 @@ import androidx.test.rule.ActivityTestRule;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.activities.profile.ProfileFollowersActivity;
 import com.example.habittracker.activities.profile.ProfileFollowingActivity;
+import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
@@ -20,15 +21,19 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class ProfileFollowersActivityTest {
     private Solo solo;
+
+    User mockUser = new User("mockUser");
+    String mockUser2 = "magic johnson";
     @Rule
-    public ActivityTestRule<ProfileActivity> rule =
-            new ActivityTestRule<>(ProfileActivity.class, true, true);
-    User mockUser;
+    public CustomActivityTestRule<ProfileActivity> rule =
+            new CustomActivityTestRule<>(ProfileActivity.class, true, true, mockUser);
+
 
     /**
      * Runs before all tests and creates solo instance.
@@ -36,8 +41,6 @@ public class ProfileFollowersActivityTest {
      */
     @Before
     public void setUp() throws Exception{
-        mockUser = new User("mockUser");
-        SharedInfo.getInstance().setCurrentUser(mockUser);
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
         solo.clickOnButton("Followers");
         addMockUser();
@@ -57,13 +60,21 @@ public class ProfileFollowersActivityTest {
      * Adds a mock user document to Firestore.
      */
     public void addMockUser() {
+        ArrayList<String> emptyList = new ArrayList<>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         HashMap<String, Object> mockDoc = new HashMap<>();
-        mockDoc.put("followers", Arrays.asList("milkyman"));
-        mockDoc.put("following", Arrays.asList("strangeman"));
-        mockDoc.put("pendingFollowReqs", Arrays.asList("happyman"));
-        mockDoc.put("pendingFollowerReqs", Arrays.asList("sadman"));
+        mockDoc.put("followers", Arrays.asList(mockUser2));
+        mockDoc.put("following", emptyList);
+        mockDoc.put("pendingFollowReqs", emptyList);
+        mockDoc.put("pendingFollowerReqs", emptyList);
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
+                .set(mockDoc);
+
+        mockDoc.put("followers", emptyList);
+        mockDoc.put("following", emptyList);
+        mockDoc.put("pendingFollowReqs", emptyList);
+        mockDoc.put("pendingFollowerReqs", emptyList);
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser2)
                 .set(mockDoc);
     }
 
@@ -74,17 +85,10 @@ public class ProfileFollowersActivityTest {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
                 .delete();
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser2)
+                .delete();
     }
 
-    /**
-     * Tests whether the back button works correctly
-     */
-    @Test
-    public void backButton() {
-        solo.assertCurrentActivity("Wrong Activity", ProfileFollowersActivity.class);
-        solo.clickOnButton("Back");
-        solo.assertCurrentActivity("Activity not switched properly", ProfileActivity.class);
-    }
 
     /**
      * Tests whether followers are shown correctly in ProfileFollowersActivity
@@ -93,7 +97,7 @@ public class ProfileFollowersActivityTest {
     public void checkListItem() {
         solo.assertCurrentActivity("Wrong Activity", ProfileFollowersActivity.class);
         // follower - milkyman
-        assertTrue(solo.waitForText("milkyman", 1, 3000));
+        assertTrue(solo.waitForText(mockUser2, 1, 4000));
     }
 
     /**
@@ -113,6 +117,6 @@ public class ProfileFollowersActivityTest {
         solo.clickOnButton("Remove");
         // wait one second for the database operation to complete
         solo.waitForText("no text", 1, 1000);
-        assertFalse(solo.searchText("milkyman"));
+        assertFalse(solo.searchText(mockUser2));
     }
 }

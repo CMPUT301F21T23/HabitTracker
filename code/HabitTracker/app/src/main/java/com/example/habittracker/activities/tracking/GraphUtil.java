@@ -43,7 +43,7 @@ public class GraphUtil {
          addSeriesToGraph(graph,seriesIdeal);
          if(autoAxisScale){
              //setXAxisScale(graph,series.getLowestValueX(),series.getHighestValueX());
-             setYAxisScale(graph,Math.min(0,series.getLowestValueY()),Math.max(idealPerDay,series.getHighestValueY()));
+             setYAxisScale(graph,Math.min(0,series.getLowestValueY()),Math.max(idealPerDay,series.getHighestValueY()+1));
          }
     }
 
@@ -59,15 +59,18 @@ public class GraphUtil {
 
         ArrayList<Integer> daysOfHabit = ProgressUtil.getHabitDays(habit);
 
+        //setup start time and end times
+        Calendar habitCal = Calendar.getInstance();
+        habitCal.setTime(habitStart);
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
-        Calendar habitTime = Calendar.getInstance();
-        habitTime.setTime(habitStart);
         end.setTime(start.getTime());
+        start.setTime(habitCal.getTime());
+
         start.add(Calendar.MONTH,-1);
         //check if habit start is within last month, otherwise set start to a month ago
         if(!habitStart.before(start.getTime())){
-            start.set(habitTime.get(Calendar.YEAR),habitTime.get(Calendar.MONTH),habitTime.get(Calendar.DAY_OF_MONTH));
+            start.setTime(habitStart);
         }
 
 
@@ -98,15 +101,19 @@ public class GraphUtil {
 
         ArrayList<Integer> daysOfHabit = ProgressUtil.getHabitDays(habit);
 
+        //setup start time and end times
+        Calendar habitCal = Calendar.getInstance();
+        habitCal.setTime(habitStart);
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         end.setTime(start.getTime());
+        start.setTime(habitCal.getTime());
+
         start.add(Calendar.MONTH,-1);
         //check if habit start is within last month, otherwise set start to a month ago
-        if(habitStart.before(start.getTime())){
-            habitStart = start.getTime();
+        if(!habitStart.before(start.getTime())){
+            start.setTime(habitStart);
         }
-        start.setTime(habitStart);
 
         for (Date date = start.getTime(); !start.after(end); start.add(Calendar.DATE, 1), date = start.getTime()) {
             int numOnDay = 0;

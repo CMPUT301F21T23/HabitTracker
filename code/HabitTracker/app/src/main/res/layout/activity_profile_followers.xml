@@ -7,96 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".HabitActivity">
 
-    <FrameLayout
+    <TextView
+        android:id="@+id/text_followers"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/container"
-        >
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:text="Followers"
+        android:textAlignment="center"
+        android:textColor="@color/spotify_comp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+<!--    <ListView-->
+<!--        android:id="@+id/followersList"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="585dp"-->
+<!--        android:choiceMode="singleChoice"-->
+<!--        android:clickable="true"-->
+<!--        android:focusable="true" />-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:minWidth="20dp"
-                    android:minHeight="10dp"
-                    android:padding="4dp"
-                    android:text="Back"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/followers_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:paddingTop="0dp"
-                android:text="Peeps Who Follow You (Not in a Creepy Way):"
-                android:textAlignment="gravity"
-                android:textSize="18sp" />
-
-            <ListView
-                android:id="@+id/followersList"
-                android:layout_width="match_parent"
-                android:layout_height="585dp"
-                android:choiceMode="singleChoice"
-                android:clickable="true"
-                android:focusable="true" />
-
-        </LinearLayout>
-    </FrameLayout>
-    <LinearLayout
-        android:id="@+id/usernameEntry"
+    <ListView
+        android:id="@+id/followersList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        android:visibility="invisible">
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_followers"
+        app:layout_constraintVertical_bias="1.0" />
 
-        <EditText
-            android:id="@+id/username"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="Enter username"
-            android:textColor="#000000" />
-
-        <Button
-            android:id="@+id/buttonConfirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="0dp"
-            android:text="CONFIRM"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="0dp"
-            android:text="CANCEL"
-            android:textSize="12sp" />
-
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

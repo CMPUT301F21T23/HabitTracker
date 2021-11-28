@@ -16,6 +16,7 @@ import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.HabitListCallback;
@@ -32,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
-    private ArrayAdapter<Habit> habitAdapter;
+    private CustomHabitList habitAdapter;
 
     /**
      * Populates the screen's interactables (nav bar click, button clicks, etc..)
@@ -66,20 +67,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        Button event_list_button = findViewById(R.id.follow_button);
-        event_list_button.setOnClickListener(new View.OnClickListener() {
-
-            /**
-             * Performs an action (takes user to event list ivew) when milestone button is pressed.
-             * @param view  {@code View} the view that was pressed
-             */
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
-                startActivity(intent);
-            }
-        });
-
         // snapshot
         DatabaseManager.get().getAllHabits(
                 SharedInfo.getInstance().getCurrentUser().getUsername(),
@@ -88,6 +75,7 @@ public class HomeActivity extends AppCompatActivity {
                     public void onCallbackSuccess(ArrayList<Habit> habitList) {
                         updateDisplay(habitList);
                     }
+
                     @Override
                     public void onCallbackFailed() {
 
@@ -112,6 +100,7 @@ public class HomeActivity extends AppCompatActivity {
                     habitList.add(habit);
                 }
             }
+            this.habitAdapter.notifyDataSetChanged();
         }
         habitAdapter.notifyDataSetChanged();
     }

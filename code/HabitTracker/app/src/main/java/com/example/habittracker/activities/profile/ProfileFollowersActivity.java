@@ -36,14 +36,6 @@ public class ProfileFollowersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_followers);
 
-        // finish the activity upon pressing the back button
-        Button back_button = findViewById(R.id.back);
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
         // get the View objects
         followersListView = findViewById(R.id.followersList);

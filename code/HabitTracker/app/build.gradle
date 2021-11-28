@@ -53,6 +53,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     implementation 'com.google.android.gms:play-services-maps:18.0.0'
+    implementation 'com.google.firebase:firebase-storage:20.0.0'
+    implementation 'com.google.firebase:firebase-database:20.0.2'
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.2")
     implementation group: 'at.favre.lib', name: 'bcrypt', version:'0.9.0'
@@ -67,4 +69,5 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }

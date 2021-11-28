@@ -23,6 +23,7 @@ import android.widget.ToggleButton;
 
 import com.example.habittracker.Habit;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CustomDatePicker;
 import com.example.habittracker.utils.SharedInfo;
 
@@ -155,7 +156,14 @@ public class HabitInputFragment extends DialogFragment {
                         boolean isPublic = inputShare.isChecked();
 
                         ArrayList<String> weekDays = getWeekDaysChecked();
-                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays, isPublic, SharedInfo.getInstance().getCurrentUser());
+                        Bundle bundle = getArguments();
+                        int order = 0;
+                        if (bundle!= null) {
+                            order = bundle.getInt("order");
+                        }
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays,0, order, isPublic, SharedInfo.getInstance().getCurrentUser());
+                        ProgressUpdater updater = new ProgressUpdater(habit);
+                        updater.update();
 
                         listener.onOkPressed(habit, null);
                         alertDialog.dismiss();

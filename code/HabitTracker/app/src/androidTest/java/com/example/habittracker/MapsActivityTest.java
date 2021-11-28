@@ -6,19 +6,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
-import android.widget.EditText;
-import android.widget.ListView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.habittracker.activities.eventlist.LocationActivity;
+import com.example.habittracker.activities.eventlist.EventDetailActivity;
 import com.example.habittracker.activities.eventlist.MapsActivity;
-import com.example.habittracker.activities.profile.ProfileActivity;
-import com.example.habittracker.activities.profile.ProfileFollowersActivity;
-import com.example.habittracker.activities.profile.ProfileFollowingActivity;
-import com.example.habittracker.utils.SharedInfo;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -33,7 +26,7 @@ public class MapsActivityTest {
     public ActivityTestRule<MapsActivity> rule = new ActivityTestRule<>(MapsActivity.class, true, true);
 
     @Rule
-    public ActivityTestRule<LocationActivity> rule2 = new ActivityTestRule<>(LocationActivity.class, true, true);
+    public ActivityTestRule<EventDetailActivity> rule2 = new ActivityTestRule<>(EventDetailActivity.class, true, true);
 
     /**
      *
@@ -44,17 +37,23 @@ public class MapsActivityTest {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
 
+    /**
+     * start test
+     * @throws Exception
+     */
     @Test
     public void start() throws Exception{
         Activity activity = rule.getActivity();
     }
 
+    /**
+     * test transition to Event Detail Activity
+     */
     @Test
     public void checkTransition(){
         solo.assertCurrentActivity("Wrong Activity", MapsActivity.class);
-
         solo.goBack();
-        solo.assertCurrentActivity("Wrong Activity", LocationActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", EventDetailActivity.class);
     }
 
 
@@ -66,4 +65,5 @@ public class MapsActivityTest {
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();
     }
+
 }

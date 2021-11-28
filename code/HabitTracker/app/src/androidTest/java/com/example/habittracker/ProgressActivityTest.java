@@ -7,6 +7,7 @@ import com.example.habittracker.activities.HabitViewActivity;
 import com.example.habittracker.activities.ListActivity;
 import com.example.habittracker.activities.ProgressTrackingActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
+import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
@@ -23,10 +24,11 @@ public class ProgressActivityTest {
 
 
     private Solo solo;
+    User mockUser = new User("mockUser");
     @Rule
-    public ActivityTestRule<ProfileActivity> rule =
-            new ActivityTestRule<>(ProfileActivity.class, true, true);
-    User mockUser;
+    public CustomActivityTestRule<ProfileActivity> rule =
+            new CustomActivityTestRule<>(ProfileActivity.class, true, true,mockUser);
+
 
     /**
      * Runs before all tests and creates solo instance.
@@ -34,8 +36,6 @@ public class ProgressActivityTest {
      */
     @Before
     public void setUp() throws Exception{
-        mockUser = new User("mockUser");
-        SharedInfo.getInstance().setCurrentUser(mockUser);
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
         addMockUser();
     }
@@ -65,9 +65,10 @@ public class ProgressActivityTest {
                 .set(mockDoc);
         HashMap<String, Object> habitDoc = new HashMap<>();
         habitDoc.put("dateStarted", Arrays.asList(2021,11,1));
-        habitDoc.put("display", "habit");
+        habitDoc.put("title", "habit");
         habitDoc.put("reason", "");
-        habitDoc.put("progress", "");
+        habitDoc.put("order", 0);
+        habitDoc.put("progress", 0);
         habitDoc.put("whatDays", Arrays.asList("Mon", "Wed"));
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
                 .set(habitDoc);

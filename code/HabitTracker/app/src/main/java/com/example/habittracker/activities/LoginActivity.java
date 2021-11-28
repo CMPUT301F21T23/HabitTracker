@@ -10,9 +10,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.habittracker.DatabaseManager;
+import com.example.habittracker.Habit;
 import com.example.habittracker.R;
 import com.example.habittracker.User;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CheckPasswordCallback;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserExistsCallback;
 
@@ -297,7 +300,26 @@ public class LoginActivity extends AppCompatActivity {
      * This cannot be called from within the callback, so it is brought out here.
      */
     public void switchToHomeActivity() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
+
+        DatabaseManager.get().getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
+            @Override
+            public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                int order = 0;
+                for(Habit h:habitList){
+                    ProgressUpdater updater = new ProgressUpdater(h);
+                    updater.update();
+                    order++;
+                }
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCallbackFailed() {
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 }

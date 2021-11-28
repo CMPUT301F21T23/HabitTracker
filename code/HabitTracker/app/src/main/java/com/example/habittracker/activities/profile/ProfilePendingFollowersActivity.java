@@ -31,13 +31,6 @@ public class ProfilePendingFollowersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_follow_requests);
-        Button back_button = findViewById(R.id.back);
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
         // get the View objects
         pendingFollowersListView = findViewById(R.id.pendingFollowersList);

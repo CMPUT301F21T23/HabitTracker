@@ -140,6 +140,7 @@ public class SharingActivityTest {
         testHabit1Doc.put("isPublic", true);
         testHabit1Doc.put("whatDays", Arrays.asList("Mon", "Wed", "Sat"));
         testHabit1Doc.put("progress", 90);
+        testHabit1Doc.put("order",0);
         testHabit1Doc.put("display", testHabit1);
         docRef = usersColRef.document(testUserid2).collection(DatabaseManager.get().getHabitsColName())
                 .document(testHabit1);
@@ -154,6 +155,7 @@ public class SharingActivityTest {
         testHabit2Doc.put("isPublic", false);
         testHabit2Doc.put("whatDays", Arrays.asList("Sun", "Wed", "Sat"));
         testHabit2Doc.put("progress", 33);
+        testHabit2Doc.put("order",0);
         testHabit2Doc.put("display", testHabit2);
         docRef = usersColRef.document(testUserid2).collection(DatabaseManager.get().getHabitsColName())
                 .document(testHabit2);
@@ -237,6 +239,7 @@ public class SharingActivityTest {
         solo.clickOnButton("SEND");
         // wait 3 seconds for database operations to complete
         solo.waitForText("no text", 1, 3000);
+        solo.clickOnButton("OK");
 
         // go to the ProfileFollowingActivity
         solo.clickOnView(solo.getView(R.id.profile));
