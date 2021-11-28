@@ -81,6 +81,7 @@ public class EventDetailActivity extends AppCompatActivity {
     private Button cancel_bt;
     private Button confirm_bt;
     private Button add_bt;
+    private String location;
     private boolean editFlag;
     OnFragmentInteractionListener listener;
 
@@ -162,6 +163,14 @@ public class EventDetailActivity extends AppCompatActivity {
                 temp_intent.putExtras(bundle);
                 startActivity(temp_intent);
                 finish();
+            }
+        });
+
+        addLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EventDetailActivity.this, MapsActivity.class);
+                startActivityForResult(intent, 2);
             }
         });
 
@@ -349,6 +358,12 @@ public class EventDetailActivity extends AppCompatActivity {
                     mImageUri = getImageUri(EventDetailActivity.this, bitmap);
                 }
                 break;
+        }
+
+        if (requestCode == 2){
+            String message = data.getStringExtra("location");
+            location = message;
+            location1.setText(location);
         }
     }
 
