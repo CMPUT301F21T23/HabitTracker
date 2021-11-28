@@ -44,13 +44,6 @@ public class ProfileFollowingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_following);
-        Button back_button = findViewById(R.id.back);
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
         // get the View objects
         followingListView = findViewById(R.id.followingList);

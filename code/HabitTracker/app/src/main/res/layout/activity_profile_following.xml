@@ -7,59 +7,35 @@
     android:layout_height="match_parent"
     tools:context=".HabitActivity">
 
-    <FrameLayout
+    <TextView
+        android:id="@+id/text_following"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/container"
-        >
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:text="Following"
+        android:textAlignment="center"
+        android:textColor="@color/spotify_comp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1"
-                    android:minWidth="20dp"
-                    android:minHeight="10dp"
-                    android:padding="4dp"
-                    android:text="Back"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/followers_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="10dp"
-                android:paddingTop="0dp"
-                android:text="You are Following:"
-                android:textAlignment="gravity"
-                android:textSize="20sp" />
-
-            <ListView
-                android:id="@+id/followingList"
-                android:layout_width="match_parent"
-                android:layout_height="595dp"
-                android:choiceMode="singleChoice"
-                android:clickable="true"
-                android:focusable="true" />
-
-        </LinearLayout>
-    </FrameLayout>
+    <ListView
+        android:id="@+id/followingList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_following"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
