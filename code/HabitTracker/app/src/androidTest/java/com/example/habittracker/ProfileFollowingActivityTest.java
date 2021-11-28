@@ -13,6 +13,7 @@ import androidx.test.rule.ActivityTestRule;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.activities.profile.ProfileFollowersActivity;
 import com.example.habittracker.activities.profile.ProfileFollowingActivity;
+import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
@@ -27,10 +28,11 @@ import java.util.HashMap;
 
 public class ProfileFollowingActivityTest {
     private Solo solo;
+    User mockUser = new User("mockUser");
     @Rule
-    public ActivityTestRule<ProfileActivity> rule =
-            new ActivityTestRule<>(ProfileActivity.class, true, true);
-    User mockUser;
+    public CustomActivityTestRule<ProfileActivity> rule =
+            new CustomActivityTestRule<>(ProfileActivity.class, true, true,mockUser);
+
 
     /**
      * Runs before all tests and creates solo instance.
@@ -38,8 +40,6 @@ public class ProfileFollowingActivityTest {
      */
     @Before
     public void setUp() throws Exception{
-        mockUser = new User("mockUser");
-        SharedInfo.getInstance().setCurrentUser(mockUser);
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
         solo.clickOnButton("Following");
         addMockUser();

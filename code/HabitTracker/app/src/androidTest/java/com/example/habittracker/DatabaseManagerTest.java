@@ -1,12 +1,15 @@
 package com.example.habittracker;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.habittracker.activities.LoginActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
+import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
@@ -16,6 +19,7 @@ import com.example.habittracker.utils.UserListOperationCallback;
 import com.google.android.gms.common.data.DataBufferSafeParcelable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -39,11 +43,11 @@ import java.util.concurrent.TimeUnit;
 public class DatabaseManagerTest {
 
     private Solo solo;
+    User mockUser = new User("mockUser");
     @Rule
-    public ActivityTestRule<ProfileActivity> rule =
-            new ActivityTestRule<>(ProfileActivity.class, true, true);
+    public CustomActivityTestRule<ProfileActivity> rule = new CustomActivityTestRule<>(ProfileActivity.class, true, true,mockUser);;
+
     FirebaseFirestore db;
-    User mockUser;
 
     /**
      * Runs before all tests and creates solo instance.
@@ -51,11 +55,11 @@ public class DatabaseManagerTest {
      */
     @Before
     public void setUp() throws Exception{
-        mockUser = new User("mockUser");
-        SharedInfo.getInstance().setCurrentUser(mockUser);
-        solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
         db = FirebaseFirestore.getInstance();
         addMockUser();
+        solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
+
+
     }
 
     /**
@@ -64,17 +68,25 @@ public class DatabaseManagerTest {
      */
     @After
     public void tearDown() throws Exception{
-        solo.finishOpenedActivities();
         deleteMockUser();
     }
 
     /**
      * Deletes the mock user added to the database.
      */
-    public void deleteMockUser() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
-                .delete();
+    public void deleteMockUser() throws InterruptedException {
+        CountDownLatch authSignal = new CountDownLatch(1);
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").whereEqualTo("title","Habit1")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for(DocumentSnapshot doc:task.getResult().getDocuments()){
+                    doc.getReference().delete();
+                }
+                authSignal.countDown();
+            }
+        });
+        authSignal.await(10, TimeUnit.SECONDS);
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
                 .delete();
 
@@ -92,7 +104,6 @@ public class DatabaseManagerTest {
         mockDoc.put("pendingFollowerReqs", Arrays.asList("sadman", "stalkerman"));
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
                 .set(mockDoc);
-
     }
 
     @Test
@@ -127,71 +138,33 @@ public class DatabaseManagerTest {
         CountDownLatch authSignal = new CountDownLatch(1);
         HashMap<String,Object> doc = new HashMap<>();
         DatabaseManager dbm = DatabaseManager.get();
-        dbm.addHabitDocument(mockUser.getUsername(), "Habit1", doc);
+        doc.put("title","Habit1");
+        dbm.addHabitDocument(mockUser.getUsername(), doc);
         dbm.deleteHabitDocument(mockUser.getUsername(),"Habit1");
-        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1")
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    if(task.getResult().exists()) {
-                        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1")
-                                .delete();
-                        authSignal.countDown();
-                        throw new RuntimeException("Habit wasn't deleted.");
-                    }
-                }
-                authSignal.countDown();
-            }
-        });
-        authSignal.await(10, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void deleteHabitEventTest() throws InterruptedException {
-        CountDownLatch authSignal = new CountDownLatch(1);
-        HashMap<String,Object> doc = new HashMap<>();
-        doc.put("test","test");
-        DatabaseManager dbm = DatabaseManager.get();
-        dbm.addHabitDocument(mockUser.getUsername(), "Habit1", doc);
-        dbm.addHabitEventDocument(mockUser.getUsername(), "Habit1", doc);
-        dbm.getAllHabitEvents(mockUser.getUsername(), "Habit1", new HabitEventListCallback() {
-            @Override
-            public void onCallbackSuccess(ArrayList<HabitEvent> eventArrayList) {
-                if(eventArrayList.size()==0){
-                    authSignal.countDown();
-                    throw new RuntimeException("No Habit Event");
-                }
-                for(HabitEvent he: eventArrayList){
-                    dbm.deleteHabitEventDocument(mockUser.getUsername(), "Habit1", he.getEventId());
-                }
-                authSignal.countDown();
-            }
-
-            @Override
-            public void onCallbackFailed() {
-                authSignal.countDown();
-                throw new RuntimeException("Error");
-            }
-        });
-        authSignal.await(10, TimeUnit.SECONDS);
-        CountDownLatch authSignal2 = new CountDownLatch(1);
-        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1").collection(dbm.getHabitEventsColName())
+        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).whereEqualTo("title","Habit1")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for(QueryDocumentSnapshot doc: task.getResult()){
+                for(DocumentSnapshot doc: task.getResult().getDocuments()){
                     if(doc.exists()) {
-                        authSignal2.countDown();
-                        throw new RuntimeException("Habit Event wasn't deleted.");
+                        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).whereEqualTo("title","Habit1").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                for(DocumentSnapshot doc: task.getResult().getDocuments()){
+                                    if(doc.exists()){
+                                        authSignal.countDown();
+                                        throw new RuntimeException("User wasn't added.");
+                                    }
+                                }
+                            }
+                        });
+                        authSignal.countDown();
                     }
-                    db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1")
-                            .delete();
                 }
-                authSignal2.countDown();
+                authSignal.countDown();
             }
         });
-        authSignal2.await(10, TimeUnit.SECONDS);
+        authSignal.await(10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -199,7 +172,8 @@ public class DatabaseManagerTest {
         CountDownLatch authSignal = new CountDownLatch(1);
         HashMap<String,Object> doc = new HashMap<>();
         DatabaseManager dbm = DatabaseManager.get();
-        dbm.addHabitDocument(mockUser.getUsername(), "Habit1", doc);
+        doc.put("title","Habit1");
+        dbm.addHabitDocument(mockUser.getUsername(), doc);
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1")
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -228,8 +202,9 @@ public class DatabaseManagerTest {
         CountDownLatch authSignal = new CountDownLatch(1);
         HashMap<String,Object> doc = new HashMap<>();
         doc.put("test","test");
+        doc.put("title","Habit1");
         DatabaseManager dbm = DatabaseManager.get();
-        dbm.addHabitDocument(mockUser.getUsername(), "Habit1", doc);
+        dbm.addHabitDocument(mockUser.getUsername(), doc);
         dbm.addHabitEventDocument(mockUser.getUsername(), "Habit1", doc);
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1").collection(dbm.getHabitEventsColName())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -243,8 +218,8 @@ public class DatabaseManagerTest {
                     db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1")
                             .delete();
                     authSignal.countDown();
-
                 }
+                authSignal.countDown();
             }
         });
         authSignal.await(10, TimeUnit.SECONDS);
@@ -255,27 +230,28 @@ public class DatabaseManagerTest {
         CountDownLatch authSignal = new CountDownLatch(1);
         HashMap<String,Object> doc = new HashMap<>();
         doc.put("test","first");
+        doc.put("title","Habit1");
         DatabaseManager dbm = DatabaseManager.get();
-        dbm.addHabitDocument(mockUser.getUsername(), "Habit1", doc);
+        dbm.addHabitDocument(mockUser.getUsername(), doc);
         doc.put("test","second");
         dbm.updateHabitDocument(mockUser.getUsername(), "Habit1", "Habit1", doc);
-        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1")
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        CountDownLatch authSignal_wait = new CountDownLatch(1);
+        authSignal_wait.await(2, TimeUnit.SECONDS);
+        db.collection(dbm.getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).whereEqualTo("title","Habit1")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    if(!task.getResult().getData().get("test").equals("second")) {
-                        authSignal.countDown();
-                        throw new RuntimeException("Habit wasn't changed.");
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                boolean found = false;
+                for(QueryDocumentSnapshot doc:task.getResult()){
+                    if(doc.getData().get("test").equals("second")){
+                        found = true;
                     }
-                    db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).document("Habit1")
-                            .delete();
-                    authSignal.countDown();
                 }
-                else{
+                if(!found){
                     authSignal.countDown();
-                    throw new RuntimeException("Error accessing.");
+                    throw new RuntimeException("Edited Habit doesn't exist.");
                 }
+                authSignal.countDown();
             }
         });
         authSignal.await(10, TimeUnit.SECONDS);

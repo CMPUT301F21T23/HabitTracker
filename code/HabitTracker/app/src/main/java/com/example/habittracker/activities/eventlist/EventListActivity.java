@@ -183,7 +183,7 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
                 eventDataList.clear();
 
                 for (int i = 0;i<habit_list.size();i++) {
-                    dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), habitList.get(i), new HabitEventListCallback() {
+                    dm.getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(), habitList.get(i).getTitle(), new HabitEventListCallback() {
                         @Override
                         public void onCallbackSuccess(ArrayList<HabitEvent> eventArrayList) {
                             for (HabitEvent doc : eventArrayList) {

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -61,6 +62,8 @@ public class CustomHabitList extends ArrayAdapter<Habit>{
         // get the views
         TextView habitTitle = view.findViewById(R.id.habitTitle);
         TextView habitReason = view.findViewById(R.id.habitReason);
+        ProgressBar progressBar = view.findViewById(R.id.progressBar);
+        TextView progressText = view.findViewById(R.id.progressValue);
 
         final Button moveUp = view.findViewById(R.id.move_habit_up);
         final Button moveDown = view.findViewById(R.id.move_habit_down);
@@ -132,6 +135,8 @@ public class CustomHabitList extends ArrayAdapter<Habit>{
         // modify the text the views display so it's up to date
         habitTitle.setText(habit.getTitle());
         habitReason.setText(habit.getReason());
+        progressBar.setProgress(habit.getProgress());
+        progressText.setText(habit.getProgress()+"%");
 
         return (view);
     }

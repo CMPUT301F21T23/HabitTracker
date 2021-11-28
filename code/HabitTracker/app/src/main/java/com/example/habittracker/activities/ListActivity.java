@@ -107,6 +107,8 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
     public void onOkPressed(Habit habit, String prevTitle) {
         // add habit to database
         habit.addToDB();
+        ProgressUpdater updater = new ProgressUpdater(habit);
+        updater.update();
         habitAdapter.add(habit);
     }
 
