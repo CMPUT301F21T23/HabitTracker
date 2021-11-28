@@ -25,12 +25,19 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * This class, HabitEditActivity holds the activity where the user is able to edit a habit
+ */
 public class HabitEditActivity extends AppCompatActivity {
 
     static final String EXTRA_UPDATE_STAT = "update_status";
     private ArrayList<String> daysChecked = new ArrayList<>();
     private Habit habit;
 
+    /**
+     * Renders UI for this activity
+     * @param savedInstanceState    {@code Bundle}  the bundle
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
