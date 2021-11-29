@@ -33,7 +33,6 @@ public class ProfileActivity extends AppCompatActivity {
         //setContentView(R.layout.profile.xml);
         setContentView(R.layout.activity_profile);
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
-
         //setContentView(R.layout.login);
 /*
         profileList = findViewById(R.id.profileList);
