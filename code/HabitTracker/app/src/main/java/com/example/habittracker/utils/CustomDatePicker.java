@@ -101,6 +101,7 @@ public class CustomDatePicker implements DatePickerDialog.OnDateSetListener {
             setDate = sdf.parse(edittext.getText().toString());
         } catch (ParseException e) {
             e.printStackTrace();
+            setDate = new Date();
         }
         return ( setDate );
     }

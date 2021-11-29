@@ -152,6 +152,9 @@ public class HabitInputFragment extends DialogFragment {
                     @Override
                     public void onClick(View view) {
                         String title = inputTitle.getText().toString();
+                        if (title.equals("")) {
+                            title = "No title";
+                        }
                         String reason = inputReason.getText().toString();
                         boolean isPublic = inputShare.isChecked();
 
