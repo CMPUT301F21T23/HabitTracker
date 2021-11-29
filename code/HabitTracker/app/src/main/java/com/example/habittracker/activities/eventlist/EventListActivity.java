@@ -20,6 +20,7 @@ import com.example.habittracker.HabitEvent;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.fragments.OnFragmentInteractionListener;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -68,6 +69,8 @@ public class EventListActivity extends AppCompatActivity implements OnFragmentIn
 
         Intent intent = getIntent();
         temp_h = (Habit) intent.getSerializableExtra("habit");
+        ProgressUpdater updater = new ProgressUpdater(temp_h);
+        updater.update();
 
 
 
