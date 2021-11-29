@@ -3,6 +3,8 @@ package com.example.habittracker.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,12 +12,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.habittracker.DatabaseManager;
-import com.example.habittracker.Habit;
 import com.example.habittracker.R;
 import com.example.habittracker.User;
-import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CheckPasswordCallback;
-import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.UserExistsCallback;
 
@@ -39,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText usernameField;
     EditText passwordField;
     boolean loggedIn = false;
+    //EditText inputUsername = findViewById(R.id.editTextUsername);
+    //EditText inputPassword = findViewById(R.id.editTextPassword);
 
     // Hashing code taken from https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/#PBKDF2WithHmacSHA1
     // Functions generateStrongPasswordHash, getSalt, toHex, validatePassword, fromHex are copied from the link.
@@ -158,6 +159,29 @@ public class LoginActivity extends AppCompatActivity {
         DatabaseManager.get().addUsersDocument(userid, userDocument);
     }
 
+    /**
+     *
+     * @param error
+     */
+    public void usernameError(String error) {
+        usernameField.setError(error);
+        usernameField.getBackground().mutate().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+    }
+
+    /**
+     *
+     * @param error
+     */
+    public void passwordError(String error) {
+        passwordField.setError(error);
+        passwordField.getBackground().mutate().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+    }
+
+    public void resetError() {
+        usernameField.getBackground().mutate().setColorFilter(Color.parseColor("#1DB954"), PorterDuff.Mode.SRC_ATOP);
+        passwordField.getBackground().mutate().setColorFilter(Color.parseColor("#1DB954"), PorterDuff.Mode.SRC_ATOP);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,6 +190,8 @@ public class LoginActivity extends AppCompatActivity {
 
         usernameField = findViewById(R.id.editTextUsername);
         passwordField = findViewById(R.id.editTextPassword);
+
+        resetError();
     }
 
     /**
@@ -175,10 +201,12 @@ public class LoginActivity extends AppCompatActivity {
      * @throws NoSuchAlgorithmException
      */
     public void loginPressed(View view) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        resetError();
         String username = usernameField.getText().toString();
 
         if (username.length() == 0) {
-            Toast.makeText(LoginActivity.this, "Username cannot be empty!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LoginActivity.this, "Username cannot be empty!", Toast.LENGTH_SHORT).show();
+            usernameError("Username field cannot be empty");
             return;
         }
 
@@ -213,7 +241,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             System.out.println("Hashes DON'T match!");
                             // Password doesn't match
-                            Toast.makeText(LoginActivity.this, "Incorrect password!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(LoginActivity.this, "Incorrect password!", Toast.LENGTH_SHORT).show();
+                            passwordError("Incorrect password!");
                         }
                     }
 
@@ -231,7 +260,8 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("User " + username + " does not exist!");
 
                 // Username doesn't exist
-                Toast.makeText(LoginActivity.this, "This user doesn't exist. Please register.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(LoginActivity.this, "This user doesn't exist. Please register.", Toast.LENGTH_SHORT).show();
+                usernameError("This user doesn't exist. Please register.");
             }
         });
     }
@@ -243,20 +273,24 @@ public class LoginActivity extends AppCompatActivity {
      * @throws NoSuchAlgorithmException
      */
     public void registerPressed(View view) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        resetError();
         //DatabaseManager.get().getUsersColName()
 
         String username = usernameField.getText().toString();
 
         if (username.length() == 0) {
-            Toast.makeText(LoginActivity.this, "Username cannot be empty!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LoginActivity.this, "Username cannot be empty!", Toast.LENGTH_SHORT).show();
+            usernameError("Username cannot be empty!");
             return;
         }
         if (passwordField.getText().toString().length() < 6) {
-            Toast.makeText(LoginActivity.this, "Password must be at least 6 characters long!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LoginActivity.this, "Password must be at least 6 characters long!", Toast.LENGTH_SHORT).show();
+            passwordError("Password must be at least 6 characters long!");
             return;
         }
         if (username.equals(passwordField.getText().toString())) {
-            Toast.makeText(LoginActivity.this, "Username cannot be identical to the password!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LoginActivity.this, "Username cannot be identical to the password!", Toast.LENGTH_SHORT).show();
+            passwordError("Password cannot be identical to the username!");
             return;
         }
 
@@ -272,7 +306,10 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("User","User exists");
 
                 // This user already exists
-                Toast.makeText(LoginActivity.this, "User already exists. Please log in.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(LoginActivity.this, "User already exists. Please log in.", Toast.LENGTH_SHORT).show();
+                //usernameField.setBackgroundColor(Color.RED);
+                //usernameField.setHighlightColor(Color.RED);
+                usernameError("User already exists. Please log in.");
             }
 
             @Override
@@ -284,7 +321,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Register this new user
                 System.err.println(username + " " + hashedPassword);
                 //userdb.put(username, hashedPassword);
-                Toast.makeText(LoginActivity.this, "New user registered.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "New user registered and logged in.", Toast.LENGTH_SHORT).show();
                 loggedIn = true;
 
                 // Push this stuff into the cloud database
@@ -300,26 +337,7 @@ public class LoginActivity extends AppCompatActivity {
      * This cannot be called from within the callback, so it is brought out here.
      */
     public void switchToHomeActivity() {
-
-        DatabaseManager.get().getAllHabits(SharedInfo.getInstance().getCurrentUser().getUsername(), new HabitListCallback() {
-            @Override
-            public void onCallbackSuccess(ArrayList<Habit> habitList) {
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                int order = 0;
-                for(Habit h:habitList){
-                    ProgressUpdater updater = new ProgressUpdater(h);
-                    updater.update();
-                    order++;
-                }
-                startActivity(intent);
-            }
-
-            @Override
-            public void onCallbackFailed() {
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(intent);
-            }
-        });
-
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
     }
 }
