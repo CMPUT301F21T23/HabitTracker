@@ -962,6 +962,10 @@ public class DatabaseManager {
                                     ArrayList<Long> dateArray = (ArrayList<Long>) doc.getData().get("dateStarted");
                                     Long progress = (Long) doc.getData().get("progress");
                                     Long order = (Long) doc.getData().get("order");
+                                    if (order == null){
+                                        order = Long.parseLong("0");
+                                    }
+
                                     Calendar cal = Calendar.getInstance();
                                     if(dateArray == null || daysArray == null){
                                         continue;
