@@ -66,6 +66,7 @@ public class EventDetailActivity extends AppCompatActivity {
     private Habit habit;
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TAKE_PHOTO_REQUEST = 2;
+    private static final int SELECT_LOCATION_REQUEST = 3;
     public static final int RESULT_OK = -1; // From android.app.Activity http://developer.android.com/reference/android/app/Activity.html#RESULT_OK
     private Uri mImageUri;
     private StorageTask mUploadTask;
@@ -171,7 +172,7 @@ public class EventDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(EventDetailActivity.this, MapsActivity.class);
-                startActivityForResult(intent, 2);
+                startActivityForResult(intent, SELECT_LOCATION_REQUEST);
             }
         });
 
@@ -196,7 +197,7 @@ public class EventDetailActivity extends AppCompatActivity {
                 alertdialog.setItems(items, new DialogInterface.OnClickListener() {
                     /**
                      * Override onClick function and display a dialog to
-                     * allow user select imgae from gallery or camera
+                     * allow user select image from gallery or camera
                      * @param dialog
                      * @param item
                      */
@@ -359,12 +360,11 @@ public class EventDetailActivity extends AppCompatActivity {
                     mImageUri = getImageUri(EventDetailActivity.this, bitmap);
                 }
                 break;
-        }
-
-        if (requestCode == 2){
-            String message = data.getStringExtra("location");
-            location = message;
-            location1.setText(location);
+            case SELECT_LOCATION_REQUEST:
+                String message = data.getStringExtra("location");
+                location = message;
+                location1.setText(location);
+                break;
         }
     }
 
@@ -459,12 +459,12 @@ public class EventDetailActivity extends AppCompatActivity {
         }
         //return imageUrl;
     }
-/*
-    private String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }*/
+    /*
+        private String getFileExtension(Uri uri) {
+            ContentResolver cR = getContentResolver();
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            return mime.getExtensionFromMimeType(cR.getType(uri));
+        }*/
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(EventDetailActivity.this, EventListActivity.class);
