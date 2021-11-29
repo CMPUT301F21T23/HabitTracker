@@ -15,6 +15,7 @@ import com.example.habittracker.utils.HabitDeleteCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.SharingListCallback;
+import com.example.habittracker.utils.StringCallback;
 import com.example.habittracker.utils.UserExistsCallback;
 import com.example.habittracker.utils.UserListOperationCallback;
 import com.google.android.gms.common.data.DataBufferSafeParcelable;
@@ -90,6 +91,10 @@ public class DatabaseManagerTest {
         authSignal.await(10, TimeUnit.SECONDS);
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
                 .delete();
+        db.collection(DatabaseManager.get().getUsersColName()).document("sadman")
+                .delete();
+        db.collection(DatabaseManager.get().getUsersColName()).document("happyman")
+                .delete();
 
     }
 
@@ -105,6 +110,12 @@ public class DatabaseManagerTest {
         mockDoc.put("pendingFollowerReqs", Arrays.asList("sadman", "stalkerman"));
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
                 .set(mockDoc);
+        HashMap<String, Object> mockDoc2 = new HashMap<>();
+        mockDoc2.put("pendingFollowReqs",mockUser.getUsername());
+        db.collection(DatabaseManager.get().getUsersColName()).document("sadman")
+                .set(mockDoc2);
+        db.collection(DatabaseManager.get().getUsersColName()).document("happyman")
+                .set(mockDoc2);
     }
 
     @Test
@@ -383,13 +394,13 @@ public class DatabaseManagerTest {
     @Test
     public void acceptFollowRequestTest() throws InterruptedException {
         CountDownLatch authSignal = new CountDownLatch(1);
-        DatabaseManager.get().acceptFollowRequest(mockUser.getUsername(), "happyman", new UserListOperationCallback() {
+        DatabaseManager.get().acceptFollowRequest(mockUser.getUsername(), "sadman", new UserListOperationCallback() {
             @Override
             public void onCallbackSuccess(String userid) {
                 DatabaseManager.get().getUserListItems(mockUser.getUsername(), "followers", new SharingListCallback() {
                     @Override
                     public void onCallbackSuccess(ArrayList<String> dataList) {
-                        if(!dataList.contains("happyman")){
+                        if(!dataList.contains("sadman")){
                             authSignal.countDown();
                             throw new RuntimeException("Didn't add user to followers.");
                         }
@@ -408,6 +419,117 @@ public class DatabaseManagerTest {
             public void onCallbackFailure(String reason) {
                 authSignal.countDown();
                 throw new RuntimeException("Error accessing.");
+            }
+        });
+        authSignal.await(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void unfollowRequestTest() throws InterruptedException {
+        CountDownLatch authSignal = new CountDownLatch(1);
+        DatabaseManager.get().unfollowUser(mockUser.getUsername(), "happyman", true, new UserListOperationCallback() {
+                    @Override
+                    public void onCallbackSuccess(String userid) {
+                        DatabaseManager.get().getUserListItems(mockUser.getUsername(), "following", new SharingListCallback() {
+                            @Override
+                            public void onCallbackSuccess(ArrayList<String> dataList) {
+                                if(dataList.contains("happyman")){
+                                    authSignal.countDown();
+                                    throw new RuntimeException("User not unfollowed.");
+                                }
+                                authSignal.countDown();
+                            }
+
+                            @Override
+                            public void onCallbackFailure(String reason) {
+                                authSignal.countDown();
+                                throw new RuntimeException("Failed to get followers. "+reason);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCallbackFailure(String reason) {
+                        throw new RuntimeException("Failed to un follow. "+reason);
+
+                    }
+        });
+        authSignal.await(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void sendFollowRequestTest() throws InterruptedException {
+        CountDownLatch authSignal = new CountDownLatch(1);
+        DatabaseManager.get().sendFollowRequest(mockUser.getUsername(), "sadman", new StringCallback() {
+                    @Override
+                    public void onCallbackSuccess(String msg) {
+                        DatabaseManager.get().getPendingFollowers("sadman", new SharingListCallback() {
+                            @Override
+                            public void onCallbackSuccess(ArrayList<String> dataList) {
+                                if(!dataList.contains(mockUser.getUsername())){
+                                    authSignal.countDown();
+                                    throw new RuntimeException("User not added to followers properly");
+                                }
+                                authSignal.countDown();
+                            }
+
+                            @Override
+                            public void onCallbackFailure(String reason) {
+                                authSignal.countDown();
+                                throw new RuntimeException("Failed to get pending followers "+reason);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCallbackFailure(String reason) {
+                        authSignal.countDown();
+                        throw new RuntimeException("Failed to send request "+reason);
+                    }
+                });
+        authSignal.await(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void declineFollowRequestTest() throws InterruptedException {
+        CountDownLatch authSignal = new CountDownLatch(1);
+        DatabaseManager.get().sendFollowRequest(mockUser.getUsername(), "sadman", new StringCallback() {
+            @Override
+            public void onCallbackSuccess(String msg) {
+                DatabaseManager.get().declineFollowRequest("sadman", mockUser.getUsername(), new UserListOperationCallback() {
+                    @Override
+                    public void onCallbackSuccess(String userid) {
+                        DatabaseManager.get().getPendingFollowers("sadman", new SharingListCallback() {
+                            @Override
+                            public void onCallbackSuccess(ArrayList<String> dataList) {
+                                if(dataList.contains(mockUser.getUsername())){
+                                    authSignal.countDown();
+                                    throw new RuntimeException("User wasn't removed from pending");
+                                }
+                                authSignal.countDown();
+                            }
+
+                            @Override
+                            public void onCallbackFailure(String reason) {
+                                authSignal.countDown();
+                                throw new RuntimeException("Failed to get requests "+reason);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCallbackFailure(String reason) {
+                        authSignal.countDown();
+                        throw new RuntimeException("Failed to decline request "+reason);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCallbackFailure(String reason) {
+                authSignal.countDown();
+                throw new RuntimeException("Failed to send request "+reason);
             }
         });
         authSignal.await(10, TimeUnit.SECONDS);

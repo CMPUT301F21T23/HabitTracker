@@ -63,7 +63,7 @@ public class EventListTest {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.list));
         solo.assertCurrentActivity("Wrong Activity", ListActivity.class);
-        solo.waitForText("All Habits", 1, 2000);
+        assertTrue(solo.waitForText("My Habits", 1, 2000));
         solo.waitForText("habit", 1, 2000);
         ListActivity activity = (ListActivity) solo.getCurrentActivity();
         final ListView HabitList = activity.getList(); // Get the listview
