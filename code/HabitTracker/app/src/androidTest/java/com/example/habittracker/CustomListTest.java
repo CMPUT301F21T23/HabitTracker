@@ -58,7 +58,7 @@ public class CustomListTest {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         solo.clickOnView(solo.getView(R.id.list));
         solo.assertCurrentActivity("Wrong Activity", ListActivity.class);
-        assertTrue(solo.waitForText("All Habits", 1, 2000));
+        solo.waitForText("All Habits", 1, 2000);
         solo.waitForText("habit", 1, 2000);
         ListActivity activity = (ListActivity) solo.getCurrentActivity();
         solo.waitForText("no text", 1, 1000);
@@ -67,8 +67,7 @@ public class CustomListTest {
         Habit habit = (Habit) HabitList.getItemAtPosition(0); // Get item from first position
         assertEquals("habit", habit.getTitle());
         solo.clickInList(1);
-        solo.waitForText("SEE EVENTS", 1, 2000);
-        solo.clickOnButton("SEE EVENTS");
+        solo.clickOnView(solo.getView(R.id.see_event_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
 
         solo.clickInList(0);

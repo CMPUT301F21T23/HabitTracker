@@ -62,7 +62,10 @@ public class HabitViewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         habit = (Habit) intent.getSerializableExtra(ListActivity.EXTRA_HABIT);
 
+
         if (habit != null) {
+            ProgressUpdater updater = new ProgressUpdater(habit);
+            updater.update();
             // set habit title
             TextView habit_title = findViewById(R.id.habitTitle);
             habit_title.setText(habit.getTitle());
