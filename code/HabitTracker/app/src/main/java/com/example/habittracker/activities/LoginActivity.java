@@ -340,4 +340,10 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        // The login screen should NOT allow the user to press back!
+        //super.onBackPressed();
+    }
 }

@@ -71,7 +71,7 @@ public class ImageTest {
         assertEquals("habit", habit.getTitle());
         solo.clickInList(1);
         solo.waitForText("Events", 1, 2000);
-        solo.clickOnButton("Events");
+        solo.clickOnView(solo.getView(R.id.see_event_button));
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
 
         solo.clickOnView(solo.getView(R.id.add_event_button));
