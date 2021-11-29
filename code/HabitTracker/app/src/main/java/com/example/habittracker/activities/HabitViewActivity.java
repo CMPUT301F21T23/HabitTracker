@@ -27,7 +27,9 @@ import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.activities.tracking.ProgressUtil;
+import com.example.habittracker.utils.HabitDeleteCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 
 import java.io.Serializable;
@@ -147,9 +149,19 @@ public class HabitViewActivity extends AppCompatActivity {
                         .get()
                         .deleteHabitDocument(
                                 SharedInfo.getInstance().getCurrentUser().getUsername(),
-                                habit.getTitle());
-                Intent intent = new Intent(getApplicationContext(),ListActivity.class);
-                startActivity(intent);
+                                habit.getTitle(),
+                                new HabitDeleteCallback() {
+                                    @Override
+                                    public void onCallbackSuccess() {
+                                        Intent intent = new Intent(getApplicationContext(),ListActivity.class);
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onCallbackFailure(String reason) {
+
+                                    }
+                                });
             }
         });
 
