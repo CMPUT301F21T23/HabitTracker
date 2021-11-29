@@ -11,6 +11,7 @@ import com.example.habittracker.activities.LoginActivity;
 import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.CheckPasswordCallback;
+import com.example.habittracker.utils.HabitDeleteCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.SharedInfo;
 import com.example.habittracker.utils.SharingListCallback;
@@ -140,7 +141,17 @@ public class DatabaseManagerTest {
         DatabaseManager dbm = DatabaseManager.get();
         doc.put("title","Habit1");
         dbm.addHabitDocument(mockUser.getUsername(), doc);
-        dbm.deleteHabitDocument(mockUser.getUsername(),"Habit1");
+        dbm.deleteHabitDocument(mockUser.getUsername(), "Habit1", new HabitDeleteCallback() {
+            @Override
+            public void onCallbackSuccess() {
+
+            }
+
+            @Override
+            public void onCallbackFailure(String reason) {
+
+            }
+        });
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection(dbm.getHabitsColName()).whereEqualTo("title","Habit1")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

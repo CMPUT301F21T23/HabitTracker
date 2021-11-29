@@ -5,8 +5,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 
+import com.example.habittracker.activities.HabitEditActivity;
 import com.example.habittracker.utils.CheckPasswordCallback;
 import com.example.habittracker.utils.HabitCallback;
+import com.example.habittracker.utils.HabitDeleteCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
@@ -240,7 +242,7 @@ public class DatabaseManager {
      * @param userid        {@code String} User ID
      * @param habitTitle    {@code String} The title of the habit to be deleted
      */
-    public void deleteHabitDocument(String userid, String habitTitle) {
+    public void deleteHabitDocument(String userid, String habitTitle, HabitDeleteCallback callback) {
         // delete the actual habit
          usersColRef
                 .document(userid)
@@ -266,13 +268,16 @@ public class DatabaseManager {
                                             public void onSuccess(Void aVoid) {
                                                 Log.d(DB_TAG, String.format("Habit successfully deleted for Habit with title %s",
                                                         habitTitle));
+                                                callback.onCallbackSuccess();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Log.d(DB_TAG, String.format("Habit failed to be deleted for Habit with title %s",
-                                                        habitTitle));
+                                                String reason = String.format("Habit failed to be deleted for Habit with title %s",
+                                                        habitTitle);
+                                                Log.d(DB_TAG, reason);
+                                                callback.onCallbackFailure(reason);
                                             }
                                         });
                             }

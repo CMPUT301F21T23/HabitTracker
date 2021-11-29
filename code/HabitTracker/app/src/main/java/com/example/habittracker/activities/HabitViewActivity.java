@@ -27,9 +27,12 @@ import com.example.habittracker.activities.eventlist.EventListActivity;
 import com.example.habittracker.activities.fragments.HabitInputFragment;
 import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.activities.tracking.ProgressUtil;
+import com.example.habittracker.utils.HabitDeleteCallback;
 import com.example.habittracker.utils.HabitEventListCallback;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +44,7 @@ import java.util.Locale;
 /**
  * HabitViewActivity class: the activity that displays details concerning a Habit
  */
-public class HabitViewActivity extends AppCompatActivity implements HabitInputFragment.HabitInputDialogListener {
+public class HabitViewActivity extends AppCompatActivity {
 
     private Habit habit;
 
@@ -128,13 +131,9 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
              */
             @Override
             public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                bundle.putString("old_habit_title", habit.getTitle());
-                bundle.putInt("order",habit.getOrder());
-
-                HabitInputFragment hif = new HabitInputFragment();
-                hif.setArguments(bundle);
-                hif.show(getSupportFragmentManager(), "EDIT EVENT");
+                Intent intent = new Intent(getApplicationContext(),HabitEditActivity.class);
+                intent.putExtra(ListActivity.EXTRA_HABIT, (Serializable) habit);
+                startActivity(intent);
             }
         });
 
@@ -150,9 +149,19 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                         .get()
                         .deleteHabitDocument(
                                 SharedInfo.getInstance().getCurrentUser().getUsername(),
-                                habit.getTitle());
-                Intent intent = new Intent(getApplicationContext(),ListActivity.class);
-                startActivity(intent);
+                                habit.getTitle(),
+                                new HabitDeleteCallback() {
+                                    @Override
+                                    public void onCallbackSuccess() {
+                                        Intent intent = new Intent(getApplicationContext(),ListActivity.class);
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onCallbackFailure(String reason) {
+
+                                    }
+                                });
             }
         });
 
@@ -172,6 +181,13 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                 startActivity(intent);
             }
         });
+
+        // get the update status from the bundle.
+        boolean updated = intent.getBooleanExtra(HabitEditActivity.EXTRA_UPDATE_STAT, false);
+        if (updated) {
+            String oldTitle = intent.getStringExtra("old_habit_title");
+            onOkPressed(habit, oldTitle);
+        }
 
         Button seeEventsButton = findViewById(R.id.see_event_button);
         seeEventsButton.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +213,6 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
      * @param habit     {Habit}
      * @param prevTitle {String}    The title of the previously modified habit
      */
-    @Override
     public void onOkPressed(Habit habit, String prevTitle) {
         String newTitle = habit.getTitle();
 
@@ -209,9 +224,6 @@ public class HabitViewActivity extends AppCompatActivity implements HabitInputFr
                         prevTitle,
                         newTitle,
                         habitHm);
-
-        Intent intent = new Intent(getApplicationContext(),ListActivity.class);
-        startActivity(intent);
     }
 
 }

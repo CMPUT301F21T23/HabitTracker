@@ -125,6 +125,7 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
 
                     }
                 });
+        this.habitAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -135,6 +136,11 @@ public class ListActivity extends AppCompatActivity implements HabitInputFragmen
         // add habit to database
         habit.addToDB();
         habitAdapter.add(habit);
+
+        Intent intent = new Intent(getApplicationContext(),HabitViewActivity.class);
+        intent.putExtra(EXTRA_HABIT, (Serializable) habit);
+        startActivity(intent);
+
     }
 
     /**

@@ -19,7 +19,7 @@ Let's try to stay organized!
         *  **Milestone:** if this is something you want to get done by the half-way point milestone, add it. Otherwise, it may remain empty.
 2. **LINK ISSUE TO USER STORY**
     * Find the issue page for the user story X
-    * In the user story issue page, Add as a checklist the ID of the issue you just created.
+    * In the user story issue page, Add as a checklist the ID of the issue you just created
         * This would look like:
         - [ ] #X
         - [ ]
