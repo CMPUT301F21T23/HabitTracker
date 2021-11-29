@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -64,12 +65,13 @@ public class FollowersArrayAdapter extends ArrayAdapter<User> {
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseManager.get().removeUserListItem(SharedInfo.getInstance().getCurrentUser().getUsername(),
+                Toast.makeText(getContext(), "Processing your request!", Toast.LENGTH_SHORT).show();
+                DatabaseManager.get().removeFollower(SharedInfo.getInstance().getCurrentUser().getUsername(),
                         followerId,
-                        "followers",
                         new UserListOperationCallback() {
                             @Override
                             public void onCallbackSuccess(String userid) {
+                                // update the array adapter
                                 followersList.remove(position);
                                 FollowersArrayAdapter.super.notifyDataSetChanged();
                             }
@@ -77,6 +79,7 @@ public class FollowersArrayAdapter extends ArrayAdapter<User> {
                             @Override
                             public void onCallbackFailure(String reason) {
                                 Log.d(TAG, reason);
+                                Toast.makeText(getContext(), "Failed to remove " + followerId, Toast.LENGTH_SHORT).show();
                             }
                         });
             }

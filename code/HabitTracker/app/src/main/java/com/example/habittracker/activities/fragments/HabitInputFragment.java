@@ -8,17 +8,24 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.ToggleButton;
 
 import com.example.habittracker.Habit;
 import com.example.habittracker.R;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CustomDatePicker;
+import com.example.habittracker.utils.SharedInfo;
 
 import java.util.ArrayList;
 
@@ -66,15 +73,49 @@ public class HabitInputFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_habit_input, null);
         inputTitle = view.findViewById(R.id.title);
         inputReason = view.findViewById(R.id.reason);
+        SwitchCompat inputShare = view.findViewById(R.id.shared);
 
         // adds a responsive DatePicker
         CustomDatePicker datePicker = new CustomDatePicker(getActivity(), view, R.id.dateToStart);
+
+        ToggleButton mondayCheck = view.findViewById(R.id.mon);
+        ToggleButton tuesdayCheck = view.findViewById(R.id.tue);
+        ToggleButton wednesdayCheck = view.findViewById(R.id.wed);
+        ToggleButton thursdayCheck = view.findViewById(R.id.thu);
+        ToggleButton fridayCheck = view.findViewById(R.id.fri);
+        ToggleButton saturdayCheck = view.findViewById(R.id.sat);
+        ToggleButton sundayCheck = view.findViewById(R.id.sun);
+
+        ArrayList <String> weekDays = new ArrayList<>();
+        ToggleButton[] boxes = {
+                mondayCheck,
+                tuesdayCheck,
+                wednesdayCheck,
+                thursdayCheck,
+                fridayCheck,
+                saturdayCheck,
+                sundayCheck
+        };
+
+        // Create listener for all of the togglebuttons
+        CompoundButton.OnCheckedChangeListener checkListener = (buttonView, isChecked) -> {
+            if (isChecked) {
+                buttonView.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.spotify));
+            }
+            else {
+                buttonView.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.grey_1));
+            }
+        };
+        // Add listener to all the buttons
+        for (ToggleButton button : boxes) {
+            button.setOnCheckedChangeListener(checkListener);
+        }
 
         // build the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog alertDialog = builder
                 .setView(view)
-                .setTitle("Add/Edit Habit")
+                .setTitle("Add Habit")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("OK", null)
                 .create();
@@ -96,26 +137,7 @@ public class HabitInputFragment extends DialogFragment {
                      * @return the arraylist
                      */
                     private ArrayList <String> getWeekDaysChecked() {
-                        CheckBox mondayCheck = view.findViewById(R.id.monday);
-                        CheckBox tuesdayCheck = view.findViewById(R.id.tuesday);
-                        CheckBox wednesdayCheck = view.findViewById(R.id.wednesday);
-                        CheckBox thursdayCheck = view.findViewById(R.id.thursday);
-                        CheckBox fridayCheck = view.findViewById(R.id.friday);
-                        CheckBox saturdayCheck = view.findViewById(R.id.saturday);
-                        CheckBox sundayCheck = view.findViewById(R.id.sunday);
-
-                        ArrayList <String> weekDays = new ArrayList<>();
-                        CheckBox [] boxes = {
-                                mondayCheck,
-                                tuesdayCheck,
-                                wednesdayCheck,
-                                thursdayCheck,
-                                fridayCheck,
-                                saturdayCheck,
-                                sundayCheck
-                        };
-
-                        for (CheckBox box : boxes) {
+                        for (ToggleButton box : boxes) {
                             if (box.isChecked()) {
                                 weekDays.add(box.getText().toString());
                             }
@@ -130,20 +152,23 @@ public class HabitInputFragment extends DialogFragment {
                     @Override
                     public void onClick(View view) {
                         String title = inputTitle.getText().toString();
+                        if (title.equals("")) {
+                            title = "No title";
+                        }
                         String reason = inputReason.getText().toString();
+                        boolean isPublic = inputShare.isChecked();
 
                         ArrayList<String> weekDays = getWeekDaysChecked();
-
                         Bundle bundle = getArguments();
-                        String oldTitle = null;
-                        // editing case
+                        int order = 0;
                         if (bundle!= null) {
-                            oldTitle = bundle.getString("old_habit_title");
+                            order = bundle.getInt("order");
                         }
-                        Habit habit = new Habit(title, title, reason, datePicker.getSetDate(), weekDays);
-                        // todo: will have to make UI to make it public/private
+                        Habit habit = new Habit(title, reason, datePicker.getSetDate(), weekDays,0, order, isPublic, SharedInfo.getInstance().getCurrentUser());
+                        ProgressUpdater updater = new ProgressUpdater(habit);
+                        updater.update();
 
-                        listener.onOkPressed(habit, oldTitle);
+                        listener.onOkPressed(habit, null);
                         alertDialog.dismiss();
                     }
                 });

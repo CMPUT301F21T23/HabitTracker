@@ -105,7 +105,6 @@ public class HabitEvent implements Serializable {
      */
     public String getHabit() { return this.habitId; }
 
-
     /**
      * Gets the location of the habit event
      * @return location
@@ -122,14 +121,25 @@ public class HabitEvent implements Serializable {
         this.location = location;
     }
 
+
+    /**
+     * Gets the habit id and performs an action accordingly to the desired outcome
+     * @param habit     {String}    the title of the habit you want the id of
+     * @param action    {int}       the type of action to be performed after finding the id
+     */
+    public void setHabitInDB(String habit, int action) {
+        DatabaseManager.get().getAndSetHabitId(this.userId, habit, this, action);
+    }
+
     /**
      * Allows editing/setting of the habit name
      * @param habit {String} the habit name
      */
     public void setHabit(String habit) {
-        this.habitEventDocument.put("Habit", habit);
         this.habitId = habit;
+        this.habitEventDocument.put("Habit", habit);
     }
+
     /**
      * add new habit event to the database
      */
@@ -179,5 +189,23 @@ public class HabitEvent implements Serializable {
      */
     public Date getCalendar() {
         return this.date_calendar;
+    }
+
+    /**
+     * Setter for imageUrl
+     * @param imageUrl
+     */
+    public void setImageUrl(String imageUrl) {
+        habitEventDocument.put("imageUrl", imageUrl);
+        this.imageUrl = imageUrl;
+    }
+
+    /**
+     * Getter for imageUrl
+     * @return imageUrl: String
+     */
+    public String getImageUrl() {
+        return this.imageUrl;
+        //return "https://firebasestorage.googleapis.com/v0/b/habittracker-9232f.appspot.com/o/uploads%2F1636920826943.png?alt=media&token=9046a941-44df-437d-895d-73ffef423ef7";
     }
 }

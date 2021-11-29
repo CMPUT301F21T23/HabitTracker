@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.habittracker.DatabaseManager;
@@ -19,6 +20,7 @@ import com.example.habittracker.HabitEvent;
 import com.example.habittracker.R;
 import com.example.habittracker.User;
 import com.example.habittracker.activities.tracking.GraphUtil;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.activities.tracking.ProgressUtil;
 import com.example.habittracker.utils.HabitEventListCallback;
 import com.example.habittracker.utils.HabitListCallback;
@@ -89,22 +91,13 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_tracking);
 
-        Button back_button = findViewById(R.id.tracking_back_button);
-
-        // button listener for closing the current activity
-        // param: View
-        back_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
 
         // Bundle for intent's extra arguments
         Bundle b = this.getIntent().getExtras();
         Habit value = null;
-        if(b != null)
+        if(b != null) {
             value = (Habit) b.getSerializable("habit");
+        }
         if(value == null) {
             Log.d("Error Progress", "No habit given to progress activity.");
             //close activity
@@ -114,7 +107,9 @@ public class ProgressTrackingActivity extends AppCompatActivity {
         setHabit(value);
 
         //Code idea from https://stackoverflow.com/questions/50650224/wait-until-firestore-data-is-retrieved-to-launch-an-activity
-        getDb().getAllHabitEvents(SharedInfo.getInstance().getCurrentUser().getUsername(),getHabit(),new HabitEventListCallback() {
+        //Log.d("test",getHabit().getUser().getUsername());
+        getDb().getAllHabitEvents(getHabit().getUser().getUsername(), getHabit().getTitle(), new HabitEventListCallback() {
+
             /**
              * Called when success to get habit events
              * @param eventList {ArrayList<HabitEvent>}
@@ -145,20 +140,19 @@ public class ProgressTrackingActivity extends AppCompatActivity {
     void makeGraph(Habit habit){
         //get all UI elements
         GraphView graph = (GraphView) findViewById(R.id.progress_graph);
-        TextView progressStats = findViewById(R.id.progress_stats_text_view);
-        TextView overallProgressText = findViewById(R.id.overall_progress_text_view);
-        TextView recentProgressText = findViewById(R.id.recent_progress_text_view);
+        ProgressBar consistBar = findViewById(R.id.consistency_progress_bar);
+        ProgressBar overallBar = findViewById(R.id.overall_progress_bar);
+        TextView overallText = findViewById(R.id.overall_progress_value);
+        TextView consistText = findViewById(R.id.consistency_progress_bar_value);
 
         //get the overall score
 //        Log.d("Integer",""+eventList.get(0).getStartDate().get(0).getClass().getName());
         HashMap<String,Integer> scorePlusStats = ProgressUtil.getOverallProgress(habit,eventList,1,100);
         //display score and stats
-        overallProgressText.setText("Overall Progress: "+scorePlusStats.get("score")+ "%\nPercent of time you are following ideal.");
-        recentProgressText.setText("Recent Progress: "+scorePlusStats.get("recent")+ "%\n Last 30 days percent of time following ideal.");
-        String progressStatsText = "Days on ideal: "+scorePlusStats.get("ideal")+"\n"+
-                "Days under ideal: "+scorePlusStats.get("under")+"\n"+
-                "Days over ideal: "+scorePlusStats.get("over");
-        progressStats.setText(progressStatsText);
+        overallBar.setProgress(scorePlusStats.get("overall"));
+        consistBar.setProgress(scorePlusStats.get("consistency"));
+        overallText.setText(scorePlusStats.get("overall")+"%");
+        consistText.setText(scorePlusStats.get("consistency")+"%");
 
         //add habit to the graph
         GraphUtil.addHabitToGraph(graph,habit,eventList,1,"You", Color.BLUE,true);

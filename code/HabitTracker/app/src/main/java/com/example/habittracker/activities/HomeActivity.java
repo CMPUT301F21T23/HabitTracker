@@ -1,6 +1,5 @@
 package com.example.habittracker.activities;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -17,14 +16,11 @@ import com.example.habittracker.Habit;
 import com.example.habittracker.NavBarManager;
 import com.example.habittracker.R;
 import com.example.habittracker.activities.eventlist.EventListActivity;
+import com.example.habittracker.activities.tracking.ProgressUpdater;
 import com.example.habittracker.utils.CustomHabitList;
 import com.example.habittracker.utils.DateConverter;
+import com.example.habittracker.utils.HabitListCallback;
 import com.example.habittracker.utils.SharedInfo;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +33,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private ArrayList<Habit> habitList = new ArrayList<>();
     private ListView list = null;
-    private ArrayAdapter<Habit> habitAdapter;
+    private CustomHabitList habitAdapter;
 
     /**
      * Populates the screen's interactables (nav bar click, button clicks, etc..)
@@ -49,7 +45,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
 
-        list = findViewById(R.id.today_habits_list_view);
+        list = findViewById(R.id.sharing_list_view);
 
         this.habitAdapter = new CustomHabitList(this, habitList);
         this.list.setAdapter(habitAdapter);
@@ -71,79 +67,41 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        Button event_list_button = findViewById(R.id.event_list_button);
-        event_list_button.setOnClickListener(new View.OnClickListener() {
-
-            /**
-             * Performs an action (takes user to event list ivew) when milestone button is pressed.
-             * @param view  {@code View} the view that was pressed
-             */
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), EventListActivity.class);
-                startActivity(intent);
-            }
-        });
-
         // snapshot
-        DatabaseManager
-                .get()
-                .getHabitsColRef(SharedInfo.getInstance().getCurrentUser().getUsername())
-                .addSnapshotListener(
-                new EventListener<QuerySnapshot>() {
-                    /**
-                     * Populates daily habit view when visiting this activity again or changes occur
-                     * (or really, an event occurs)
-                     * @param value {@code QuerySnapshot}               the snapshot result
-                     * @param error {@code FirebaseFirestoreException}  in case of error, result.
-                     */
+        DatabaseManager.get().getAllHabits(
+                SharedInfo.getInstance().getCurrentUser().getUsername(),
+                new HabitListCallback() {
                     @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        // Clear the old list
-                        habitList.clear();
-                        repopulate(value, error);
-                        habitAdapter.notifyDataSetChanged();
+                    public void onCallbackSuccess(ArrayList<Habit> habitList) {
+                        updateDisplay(habitList);
                     }
-                }
-        );
+
+                    @Override
+                    public void onCallbackFailed() {
+
+                    }
+                });
     }
 
     /**
      * Repopulates the activity that lists all habits belonging to a user
-     * @param value {QuerySnapshot}                 the snapshot value
-     * @param error {FirebaseFirestoreException}    error, if any
+     * @param habitlist {ArrayList<Habit>} list containing all habits of the user
      */
-    private void repopulate (QuerySnapshot value, FirebaseFirestoreException error) {
-        String [] attributes = {"reason", "dateStarted", "whatDays", "progress", "display"};
+    private void updateDisplay (ArrayList<Habit> habitlist) {
+        habitList.clear();
+        for (Habit habit : habitlist) {
 
-        if (error == null) {
-            for (QueryDocumentSnapshot doc : value) {
-                ArrayList<String> weekDays = (ArrayList<String>) doc.get(attributes[2]);
-
-                // check if the habit should be performed in today's day of the week
-                if ( (weekDays != null) && (weekDays.contains(DateConverter.getCurrentWeekDay())) ) {
-
-                    // check if the habit started today or before today.
-                    ArrayList<Long> dateTest = (ArrayList<Long>) doc.get(attributes[1]);
-                    Date startDate = DateConverter.arrayListToDate(dateTest);
-                    Date today = new Date();
-
-                    if (today.after(startDate)) {
-                        String habitTitle = doc.getId();
-                        String displayTitle = (String) doc.getData().get(attributes[4]);
-                        String habitReason = (String) doc.getData().get(attributes[0]);
-
-                        habitList.add(
-                                new Habit(
-                                        habitTitle,
-                                        displayTitle,
-                                        habitReason,
-                                        startDate,
-                                        weekDays
-                                ));
-                    }
+            ArrayList<String> weekDays = habit.getWeekDays();
+            // check if the habit should be performed in today's day of the week
+            if ( (weekDays != null) && (weekDays.contains(DateConverter.getCurrentWeekDay())) ) {
+                // check if the habit started today or before today.
+                Date today = new Date();
+                if (today.after(habit.getStartDate())) {
+                    habitList.add(habit);
                 }
             }
+            this.habitAdapter.notifyDataSetChanged();
         }
+        habitAdapter.notifyDataSetChanged();
     }
-    }
+}

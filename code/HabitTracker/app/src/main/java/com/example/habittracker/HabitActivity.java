@@ -36,23 +36,9 @@ public class HabitActivity extends AppCompatActivity {
         setContentView(R.layout.activity_habit);
 
         // TEST DATABASE
-        testDatabase();
+        //testDatabase();
 
         DatabaseManager db = DatabaseManager.get();
-        /*
-        db.getUserDetails("user1",new UserDetailsCallback() {
-            @Override
-            public void onCallbackSuccess(HashMap<String,Object> userDetails) {
-                //Do what you need to do with your list
-                Log.d("User",""+userDetails);
-            }
-
-            @Override
-            public void onCallbackFailed() {
-                Log.d("Error","Failed to get user");
-            }
-        });
-        */
         NavBarManager nav = new NavBarManager(this,findViewById(R.id.bottom_navigation));
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
@@ -88,7 +74,7 @@ public class HabitActivity extends AppCompatActivity {
         habitDocument.put("progress", 0);
 
         // use database manager
-        DatabaseManager.get().addHabitDocument(userid, title, habitDocument);
+        DatabaseManager.get().addHabitDocument(userid, habitDocument);
 
         // add data for the habit event document
         habitEventDocument.put("comment", "Comment 1");

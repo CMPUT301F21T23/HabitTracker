@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -63,20 +64,21 @@ public class PendingFollowersArrayAdapter extends ArrayAdapter<User> {
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseManager.get().removeUserListItem(
-                        SharedInfo.getInstance().getCurrentUser().getUsername(),
+                Toast.makeText(getContext(), "Processing your request!", Toast.LENGTH_SHORT).show();
+                DatabaseManager.get().declineFollowRequest(SharedInfo.getInstance().getCurrentUser().getUsername(),
                         userid,
-                        "pendingFollowerReqs",
                         new UserListOperationCallback() {
                             @Override
                             public void onCallbackSuccess(String userid) {
-                                // remove the user from the pending list
+                                // update the ArrayAdapter
                                 pendingFollowersList.remove(position);
                                 PendingFollowersArrayAdapter.super.notifyDataSetChanged();
                             }
+
                             @Override
                             public void onCallbackFailure(String reason) {
                                 Log.d(TAG, reason);
+                                Toast.makeText(getContext(), "Failed to decline " + userid, Toast.LENGTH_SHORT).show();
                             }
                         });
             }
@@ -87,13 +89,13 @@ public class PendingFollowersArrayAdapter extends ArrayAdapter<User> {
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseManager.get().acceptFollowRequest(
-                        SharedInfo.getInstance().getCurrentUser().getUsername(),
+                Toast.makeText(getContext(), "Processing your request!", Toast.LENGTH_SHORT).show();
+                DatabaseManager.get().acceptFollowRequest(SharedInfo.getInstance().getCurrentUser().getUsername(),
                         userid,
                         new UserListOperationCallback() {
                             @Override
                             public void onCallbackSuccess(String userid) {
-                                // remove the user from the pending list
+                                // update the ArrayAdapter
                                 pendingFollowersList.remove(position);
                                 PendingFollowersArrayAdapter.super.notifyDataSetChanged();
                             }
@@ -101,9 +103,9 @@ public class PendingFollowersArrayAdapter extends ArrayAdapter<User> {
                             @Override
                             public void onCallbackFailure(String reason) {
                                 Log.d(TAG, reason);
+                                Toast.makeText(getContext(), "Failed to accept " + userid, Toast.LENGTH_SHORT).show();
                             }
-                        }
-                );
+                        });
             }
         });
         return convertView;

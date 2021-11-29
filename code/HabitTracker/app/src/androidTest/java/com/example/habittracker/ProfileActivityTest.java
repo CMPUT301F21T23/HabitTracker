@@ -9,6 +9,7 @@ import com.example.habittracker.activities.profile.ProfileActivity;
 import com.example.habittracker.activities.profile.ProfileFollowersActivity;
 import com.example.habittracker.activities.profile.ProfileFollowingActivity;
 import com.example.habittracker.activities.profile.ProfilePendingFollowersActivity;
+import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.SharedInfo;
 import com.robotium.solo.Solo;
 
@@ -24,8 +25,8 @@ import org.junit.Test;
 public class ProfileActivityTest {
     private Solo solo;
     @Rule
-    public ActivityTestRule<ProfileActivity> rule =
-            new ActivityTestRule<>(ProfileActivity.class, true, true);
+    public CustomActivityTestRule<ProfileActivity> rule =
+            new CustomActivityTestRule<>(ProfileActivity.class, true, true,new User("mockUser"));
 
 
     /**
@@ -35,7 +36,6 @@ public class ProfileActivityTest {
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
-        SharedInfo.getInstance().setCurrentUser(new User("mockUser"));
     }
 
     /**

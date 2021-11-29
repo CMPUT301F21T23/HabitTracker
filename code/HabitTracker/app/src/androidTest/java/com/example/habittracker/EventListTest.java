@@ -14,10 +14,9 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.habittracker.activities.ListActivity;
-import com.example.habittracker.activities.SharingActivity;
 import com.example.habittracker.activities.eventlist.EventListActivity;
-import com.example.habittracker.activities.fragments.AddEventFragment;
 import com.example.habittracker.activities.profile.ProfileActivity;
+import com.example.habittracker.testUtils.CustomActivityTestRule;
 import com.example.habittracker.utils.DateConverter;
 import com.example.habittracker.utils.SharedInfo;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,41 +38,12 @@ import java.util.HashMap;
  */
 public class EventListTest {
     private Solo solo;
-    @Rule
-    public ActivityTestRule<ProfileActivity> rule =
-            new ActivityTestRule<>(ProfileActivity.class, true, true);
-    User mockUser;
+    public User mockUser = new User("mockUser");
 
-//    /**
-//     * Adds a mock user document to Firestore.
-//     */
-//    @Before
-//    public void addMockTarget() throws Exception{
-//        User mockUser = new User("yongquan");
-//        SharedInfo.getInstance().setCurrentUser(mockUser);
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        HashMap<String, Object> mockDoc = new HashMap<>();
-//        mockDoc.put("followers", Arrays.asList("milkyman"));
-//        mockDoc.put("following", Arrays.asList("strangeman"));
-//        mockDoc.put("pendingFollowReqs", Arrays.asList("happyman"));
-//        mockDoc.put("pendingFollowerReqs", Arrays.asList("sadman"));
-//        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
-//                .set(mockDoc);
-//        String [] weekdays = {"MON","WED"};
-//        Habit h1 = new Habit("Habit 1", "no reason", Calendar.getInstance().getTime(), weekdays);
-//        HashMap<String, Object> mockDoc2 = new HashMap<>();
-//        mockDoc2.put("dateStarted", DateConverter.dateToArrayList(Calendar.getInstance().getTime()));
-//        mockDoc2.put("whatDays", weekdays);
-//        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
-//                .collection(DatabaseManager.get().getHabitsColName()).document(h1.getTitle()).set(mockDoc2);
-//
-//        HashMap<String, Object> mockDoc3 = new HashMap<>();
-//        mockDoc3.put("startDate", DateConverter.dateToArrayList(Calendar.getInstance().getTime()));
-//        mockDoc3.put("Habit", "Habit 1");
-//        db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername())
-//                .collection(DatabaseManager.get().getHabitsColName()).document(h1.getTitle())
-//                .collection(DatabaseManager.get().getHabitEventsColName()).add(mockDoc3);
-//    }
+    @Rule
+    public CustomActivityTestRule<ProfileActivity> rule = new CustomActivityTestRule<>(
+            ProfileActivity.class, true, true, mockUser
+    );
 
     /**
      * Runs before all tests and creates solo instance.
@@ -81,8 +51,6 @@ public class EventListTest {
      */
     @Before
     public void setUp() throws Exception{
-        mockUser = new User("mockUser");
-        SharedInfo.getInstance().setCurrentUser(mockUser);
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
         addMockUser();
     }
@@ -93,72 +61,24 @@ public class EventListTest {
     @Test
     public void testEventListActivity() {
         solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
-        solo.clickOnView(solo.getView(R.id.home));
-        solo.clickOnView(solo.getView(R.id.event_list_button));
-        solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
-        solo.clickOnView(solo.getView(R.id.add_event_button));
-        assertTrue(solo.waitForText("Add Event", 1, 2000));
-        solo.clickOnView(solo.getView(android.R.id.button2));
-        assertTrue(solo.waitForText("habit", 1, 2000));
-        EventListActivity activity = (EventListActivity) solo.getCurrentActivity();
-        final ListView eventList = activity.eventList; // Get the listview
-        HabitEvent event = (HabitEvent) eventList.getItemAtPosition(0); // Get item from first position
-        assertEquals("habit", event.getHabit());
+        solo.clickOnView(solo.getView(R.id.list));
+        solo.assertCurrentActivity("Wrong Activity", ListActivity.class);
+        assertTrue(solo.waitForText("All Habits", 1, 2000));
+        solo.waitForText("habit", 1, 2000);
+        ListActivity activity = (ListActivity) solo.getCurrentActivity();
+        final ListView HabitList = activity.getList(); // Get the listview
+        Habit habit = (Habit) HabitList.getItemAtPosition(0); // Get item from first position
+        solo.waitForText("no text", 1, 1000);
+        assertEquals("habit", habit.getTitle());
         solo.clickInList(1);
-        assertTrue(solo.waitForText("Edit event/Delete event", 1, 2000));
-    }
-
-    /**
-     * test add new habit event
-     */
-    @Test
-    public void testAddNewHabitEvent() {
-        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
-        solo.clickOnView(solo.getView(R.id.home));
-        solo.clickOnView(solo.getView(R.id.event_list_button));
+        solo.waitForText("SEE EVENTS", 1, 2000);
+        solo.clickOnButton("SEE EVENTS");
         solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
+
         solo.clickOnView(solo.getView(R.id.add_event_button));
-        solo.waitForText("Add Event",1,20000);
-        solo.pressSpinnerItem(0,0);
-        assertTrue(solo.isSpinnerTextSelected(0,"habit"));
-        solo.clickOnView(solo.getView(R.id.date_editText));
-        solo.setDatePicker(0, 2021, 10, 1);
-        solo.clickOnView(solo.getView(android.R.id.button1));
-        assertTrue(solo.waitForText("2021-11-01",1,2000));
-        solo.enterText((EditText) solo.getView(R.id.comment_body), "a comment");
-        assertTrue(solo.waitForText("a comment",1,2000));
-        // add the event
-        solo.clickOnView(solo.getView(android.R.id.button1));
-
-        //The listview can only display 2 items at a time, select 1 means the last item of listview
+        solo.goBack();
         solo.clickInList(0);
-        solo.clickOnView(solo.getView(android.R.id.button3));
-    }
-
-    /**
-     * test edit/delete habit event
-     */
-    @Test
-    public void testEditDeleteHabitEvent() {
-        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
-        solo.clickOnView(solo.getView(R.id.home));
-        solo.clickOnView(solo.getView(R.id.event_list_button));
-        solo.assertCurrentActivity("Wrong Activity", EventListActivity.class);
-        solo.clickInList(0);
-        solo.waitForText("Edit event/Delete event",1,2000);
-        solo.pressSpinnerItem(0,0);
-        assertTrue(solo.isSpinnerTextSelected(0,"habit"));
-        solo.clickOnView(solo.getView(R.id.date_editText));
-        solo.setDatePicker(0, 2021, 10, 1);
-        solo.clickOnView(solo.getView(android.R.id.button1));
-        assertTrue(solo.waitForText("2021-11-01",1,2000));
-        solo.clearEditText((EditText) solo.getView(R.id.comment_body));
-        solo.enterText((EditText) solo.getView(R.id.comment_body), "another comment");
-        assertTrue(solo.waitForText("another comment",1,2000));
-        // add the event
-        solo.clickOnView(solo.getView(android.R.id.button1));
-
-
+        solo.goBack();
     }
 
     /**
@@ -185,9 +105,10 @@ public class EventListTest {
                 .set(mockDoc);
         HashMap<String, Object> habitDoc = new HashMap<>();
         habitDoc.put("dateStarted", Arrays.asList(2021,11,1));
-        habitDoc.put("display", "habit");
+        habitDoc.put("title", "habit");
         habitDoc.put("reason", "");
-        habitDoc.put("progress", "");
+        habitDoc.put("order", 0);
+        habitDoc.put("progress", 0);
         habitDoc.put("whatDays", Arrays.asList("Mon", "Wed"));
         db.collection(DatabaseManager.get().getUsersColName()).document(mockUser.getUsername()).collection("Habits").document("habit")
                 .set(habitDoc);
